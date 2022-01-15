@@ -1,7 +1,6 @@
 import CeramicClient from '@ceramicnetwork/http-client'
 import * as nearApiJs from 'near-api-js'
 import { get, set, del } from './storage'
-import { Core } from '@self.id/core'
 import { IDX } from '@ceramicstudio/idx'
 import { TileDocument } from '@ceramicnetwork/stream-tile'
 import { createDefinition, publishSchema } from '@ceramicstudio/idx-tools'

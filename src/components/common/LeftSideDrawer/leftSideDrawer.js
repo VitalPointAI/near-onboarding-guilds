@@ -17,6 +17,9 @@ import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import AddBoxIcon from '@mui/icons-material/AddBox'
+import EditIcon from '@mui/icons-material/Edit'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import DiamondIcon from '@mui/icons-material/Diamond'
 import Avatar from '@mui/material/Avatar'
 import GroupIcon from '@mui/icons-material/Group'
 import ExploreIcon from '@mui/icons-material/Explore'
@@ -54,20 +57,10 @@ export default function LeftSideDrawer(props) {
 
 const classes = useStyles()
 const matches = useMediaQuery('(max-width:500px)')
-const [options, setOptions] = useState({
-  doneLabel: 'Continue!',
-  showButtons: true,
-  overlayOpacity: 0.5,
-  scrollTo: 'element',
-  skipLabel: "Skip",
-  showProgress: true
-})
+
 const [anchorEl, setAnchorEl] = useState(null);
-const [addPersonaClicked, setAddPersonaClicked] = useState(false)
-const [addDaoClicked, setAddDaoClicked] = useState(false)
-const [addFTClicked, setAddFTClicked] = useState(false)
+const [editProfileClicked, setEditProfileClicked] = useState(false)
 const [notificationsClicked, setNotificationsClicked] = useState(false)
-const [stepsEnabled, setStepsEnabled] = useState(false)
 const [newNotifications, setNewNotifications] = useState(0)
 
 const { state, update } = useContext(appStore);
@@ -147,35 +140,17 @@ const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
 }
 
-function handleAddPersonaClick(property){
-    setAddPersonaClicked(property)
+function handleEditProfileClick(property){
+    setEditProfileClicked(property)
 }
 
-const addPersonaClick = (event) => {
-    setAddPersonaClicked(true)
+const editProfileClick = (event) => {
+    setEditProfileClicked(true)
     handleClick(event)
-}
-
-function handleAddDaoClick(property){
-    setAddDaoClicked(property)
-}
-
-function handleAddFTClick(property){
-    setAddFTClicked(property)
 }
 
 function handleNotificationClick(property){
   setNotificationsClicked(property)
-}
-
-const addDaoClick = (event) => {
-    setAddDaoClicked(true)
-    handleClick(event)
-}
-
-const addFTClick = (event) => {
-    setAddFTClicked(true)
-    handleClick(event)
 }
 
 // const notificationsClick = (event) => {
@@ -201,8 +176,7 @@ const list = (anchor) => (
     onKeyDown={toggleDrawer(anchor, false)}
 >
 {!matches ? (
-  <>
-    <div className='toolbar'>
+  <div className='toolbar'>
     <List>
       <Link to='/'>
         <ListItem button key={1}>
@@ -261,92 +235,96 @@ const list = (anchor) => (
       </ListItem>
     </List>
     <Divider />
-    </div>
-  </>
+  </div>
   ) :
     wallet.signedIn ? (
       <>
-      <List>
-      <Link to='/'>
-        <ListItem button key={1}>
-          <ListItemIcon><PieChartIcon /></ListItemIcon>
-          <ListItemText primary='Dashboard'/>
+        <List>
+            <Link to='/'>
+                <ListItem button key={1}>
+                <ListItemIcon><PieChartIcon /></ListItemIcon>
+                <ListItemText primary='Dashboard'/>
+                </ListItem>
+            </Link>
+        </List>
+        <Divider />
+
+        <Typography variant='h6'>Account</Typography>
+        <List>
+        <ListItem button key={2} onClick={(e) => editProfileClick(e)}>
+            <ListItemIcon><EditIcon /></ListItemIcon>
+            <ListItemText primary='Edit Profile'/>
         </ListItem>
-      </Link>
-    </List>
-    <Divider />
-    <Typography variant='h6'>Personas</Typography>
-    <List>
-      <Link to='/personas'>
-        <ListItem button key={2}>
-          <ListItemIcon><Avatar src={<ImageLoader image={defaultProfileImage}/>} className={classes.small}/></ListItemIcon>
-          <ListItemText primary='My Personas'/>
+        <Link to={`/trove/${accountId}`}>
+        <ListItem button key={3} onClick={(e) => editProfileClick(e)}>
+            <ListItemIcon><FavoriteIcon color="secondary" /></ListItemIcon>
+            <ListItemText primary='My Trove'/>
         </ListItem>
-      </Link>
-      <ListItem button key={3} onClick={(e) => addPersonaClick(e)}>
-        <ListItemIcon><AddBoxIcon /></ListItemIcon>
-        <ListItemText primary='Create Persona'/>
-      </ListItem>
-    </List>
-    <Divider />
-    <Typography variant='h6'>Communities</Typography>
-    <List>      
-    <Link to='/explore'>
-      <ListItem button key={5}>
-        <ListItemIcon><ExploreIcon /></ListItemIcon>
-        <ListItemText primary='Explore Communities'/>
-      </ListItem>
-    </Link>
-    <ListItem button key={6} onClick={(e) => addDaoClick(e)}>
-        <ListItemIcon><AddBoxIcon /></ListItemIcon>
-        <ListItemText primary='Create Community'/>
-      </ListItem>
-    </List>
-    <Divider />
-    <Typography variant='h6'>Fungible Tokens</Typography>
-    <List>
-      <Link to='/fts'>
-        <ListItem className='exploreTokens' button key={7}>
-          <ListItemIcon><ExploreIcon /></ListItemIcon>
-          <ListItemText primary='Explore Tokens'/>
+        </Link>
+        <Link to={`/gems/${accountId}`}>
+            <ListItem className='exploreTokens' button key={7}>
+            <ListItemIcon><Diamond /></ListItemIcon>
+            <ListItemText primary='My $GEMS'/>
+            </ListItem>
+        </Link>
+        </List>
+        <Divider />
+
+        <Typography variant='h6'>Spaces</Typography>
+        <List>      
+        <Link to='/manage'>
+        <ListItem button key={5}>
+            <ListItemIcon><ExploreIcon /></ListItemIcon>
+            <ListItemText primary='Manage Spaces'/>
         </ListItem>
-      </Link>
-      <ListItem className='createFT' button key={8} onClick={(e) => addFTClick(e)}>
-        <ListItemIcon><AddBoxIcon /></ListItemIcon>
-        <ListItemText primary='Create Token'/>
-      </ListItem>
-    </List>
-    <Divider />
+        </Link>
+        <Link to='/explore'>
+        <ListItem button key={6}>
+            <ListItemIcon><ExploreIcon /></ListItemIcon>
+            <ListItemText primary='Explore Spaces'/>
+        </ListItem>
+        </Link>
+        </List>
+        <Divider />
+        <Typography variant='h6'>Rewards</Typography>
+        <List>
+        <Link to='/gems'>
+            <ListItem className='exploreTokens' button key={7}>
+            <ListItemIcon><Diamond /></ListItemIcon>
+            <ListItemText primary='Explore Tokens'/>
+            </ListItem>
+        </Link>
+        <ListItem className='createFT' button key={8} onClick={(e) => addFTClick(e)}>
+            <ListItemIcon><AddBoxIcon /></ListItemIcon>
+            <ListItemText primary='Create Token'/>
+        </ListItem>
+        </List>
+        <Divider />
     </>
     ) : null }
     
-    <Typography variant='h6'>Catalyst Support</Typography>
+    <Typography variant='h6'>Space Gem</Typography>
     <List>
-    <a href='https://vitalpoint.ai/catalyst'>
+    <a href='/'>
       <ListItem button key={7}>
         <ListItemIcon><InfoIcon /></ListItemIcon>
-        <ListItemText primary='About Catalyst'/>
+        <ListItemText primary='About Space Gem'/>
       </ListItem>
     </a>
-    <a href='https://vitalpoint.ai/catalyst-for-developers'>
-      <ListItem button key={8}>
-        <ListItemIcon><CodeIcon /></ListItemIcon>
-        <ListItemText primary='Developers'/>
-      </ListItem>
-    </a>
-    <a href='https://vitalpoint.ai/docs-catalyst/'>
+    <a href='/'>
       <ListItem button key={9}>
         <ListItemIcon><SchoolIcon /></ListItemIcon>
         <ListItemText primary='Learn'/>
       </ListItem>
     </a>
-    <a href='https://vitalpoint.ai/catalyst-contact/'>
+    <a href='/'>
       <ListItem button key={10}>
         <ListItemIcon><ContactSupportIcon /></ListItemIcon>
         <ListItemText primary='Contact'/>
       </ListItem>
     </a>
     </List>
+    
 </div>
 )
 
@@ -360,19 +338,9 @@ return (
         {list('left')}
         </Drawer>
 
-        {addPersonaClicked ? <AddPersonaForm
+        {editProfileClicked ? <EditProfileForm
             state={state}
-            handleAddPersonaClick={handleAddPersonaClick}
-        /> : null }
-
-        {addDaoClicked ? <AddDaoForm
-            state={state}
-            handleAddDaoClick={handleAddDaoClick}
-        /> : null }
-
-        {addFTClicked ? <AddFTForm
-          state={state}
-          handleAddFTClick={handleAddFTClick}
+            handleEditProfileClick={handleEditProfileClick}
         /> : null }
 
         {notificationsClicked ? 
@@ -384,5 +352,5 @@ return (
         }
 
     </React.Fragment>   
-)
+    )
 }
