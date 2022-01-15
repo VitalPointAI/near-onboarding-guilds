@@ -3,6 +3,7 @@ import { get, set, del } from '../utils/storage'
 import { APP_OWNER_ACCOUNT, ceramic } from '../utils/ceramic'
 import { registry } from '../utils/registry'
 import { config } from './config'
+import { factory } from '../utils/factory'
 
 export const {
     FUNDING_DATA, 
@@ -112,7 +113,8 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
     // initiate global contracts
     const didRegistryContract = await registry.initiateDidRegistryContract(wallet.account())
-
+    const factoryContract = await factory.initFactoryContract(wallet.account())
+    
     if(wallet.signedIn){
         console.log('here')
         // ********* Check and action redirects after DAO and proposal creation *************
@@ -157,7 +159,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             did = curUserIdx.id
         }
         
-        let registeredDid = await ceramic.getDid(account.accountId, didRegistryContract )
+        let registeredDid = await ceramic.getDid(account.accountId, factoryContract, didRegistryContract)
         if(registeredDid){
             did = registeredDid
         }

@@ -376,7 +376,7 @@ class Ceramic {
 
     const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
 
-    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient)
+    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, legacyContract, appClient)
   
     // Retrieve cached aliases
     let rootAliases = get(ALIASES, [])
@@ -548,16 +548,27 @@ class Ceramic {
   }
 
   
-  async getDid(accountId, contract) {
+  async getDid(accountId, factoryContract, registryContract) {
+    let dao
     let did = false
     
-     try {
-      user = await contract.getDaoByAccount({accountId: accountId})
-      did = user.did
-      } catch (err) {
-        console.log('error retrieving identity', err)
+    try{
+      did = await registryContract.getDID({accountId: accountId})
+      if(did){
+        return did
       }
+    } catch (err) {
+      console.log('error retrieving did from legacy', err)
+    }
     
+    if (!did){
+     try {
+      dao = await factoryContract.getDaoByAccount({accountId: accountId})
+      did = dao.did
+      } catch (err) {
+        console.log('error retrieving did', err)
+      }
+    }
     return did
   }
 }

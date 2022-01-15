@@ -30,6 +30,8 @@ import SchoolIcon from '@mui/icons-material/School'
 import ContactSupportIcon from '@mui/icons-material/ContactSupport'
 import PieChartIcon from '@mui/icons-material/PieChart'
 import NotificationsIcon from '@mui/icons-material/Notifications'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import SettingsIcon from '@mui/icons-material/Settings'
 import Badge from '@mui/material/Badge'
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
 
@@ -215,7 +217,7 @@ const list = (anchor) => (
     <List>      
     <Link to='/add-space'>
         <ListItem className='manageSpaces' button key={3} onClick={(e) => addPersonaClick(e)}>
-            <ListItemIcon><AddBoxIcon /></ListItemIcon>
+            <ListItemIcon><SettingsIcon /></ListItemIcon>
             <ListItemText primary='Manage Spaces'/>
         </ListItem>
     </Link>
@@ -289,21 +291,18 @@ const list = (anchor) => (
         <Typography variant='h6'>Rewards</Typography>
         <List>
         <Link to='/gems'>
-            <ListItem className='exploreTokens' button key={7}>
-            <ListItemIcon><DiamondIcon /></ListItemIcon>
-            <ListItemText primary='Explore Tokens'/>
+            <ListItem className='exploreRewards' button key={7}>
+            <ListItemIcon><EmojiEventIcon /></ListItemIcon>
+            <ListItemText primary='Explore Rewards'/>
             </ListItem>
         </Link>
-        <ListItem className='createFT' button key={8} onClick={(e) => addFTClick(e)}>
-            <ListItemIcon><AddBoxIcon /></ListItemIcon>
-            <ListItemText primary='Create Token'/>
-        </ListItem>
         </List>
+        
         <Divider />
     </>
     ) : null }
     
-    <Typography variant='h6'>Space Gem</Typography>
+    <Typography variant='h6' style={{marginTop:'50px'}}></Typography>
     <List>
     <a href='/'>
       <ListItem button key={7}>
