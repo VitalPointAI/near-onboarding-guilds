@@ -263,7 +263,7 @@ const list = (anchor) => (
         </Link>
         <Link to={`/gems/${accountId}`}>
             <ListItem className='exploreTokens' button key={7}>
-            <ListItemIcon><Diamond /></ListItemIcon>
+            <ListItemIcon><DiamondIcon /></ListItemIcon>
             <ListItemText primary='My $GEMS'/>
             </ListItem>
         </Link>

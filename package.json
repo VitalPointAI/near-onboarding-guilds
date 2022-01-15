@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "npm run build:contract && npm run build:web",
+    "clean": "rimraf ./dist && rimraf .parcel-cache",
+    "cleandist": "rimraf ./dist",
+    "build": "npm run clean && env-cmd -f ./.env node ./node_modules/.bin/parcel build src/index.html --no-scope-hoist",
     "build:contract": "node contract/compile.js",
     "build:contract:debug": "node contract/compile.js --debug",
     "build:web": "parcel build src/index.html --public-url ./",
@@ -18,6 +20,7 @@
     "@babel/core": "~7.13.1",
     "@babel/preset-env": "~7.13.5",
     "@babel/preset-react": "~7.12.5",
+    "babel-plugin-react-html-attrs": "^3.0.5",
     "babel-jest": "~26.6.2",
     "env-cmd": "~10.1.0",
     "gh-pages": "~3.1.0",
@@ -25,7 +28,8 @@
     "jest-environment-node": "~26.6.2",
     "near-cli": "~1.5.3",
     "nodemon": "~2.0.3",
-    "parcel-bundler": "~1.12.4",
+    "parcel": "^2.2.0",
+    "rimraf": "^3.0.2",
     "react-test-renderer": "~17.0.1",
     "shelljs": "~0.8.4"
   },
@@ -54,7 +58,7 @@
     "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "graphql": "^15.7.2",
-    "ipfs-http-client": "^54.0.1",
+    "ipfs-http-client": "^55.0.0",
     "jsonwebtoken": "^8.5.1",
     "key-did-provider-ed25519": "^1.1.0",
     "key-did-resolver": "^1.4.4",
@@ -83,16 +87,7 @@
       "<rootDir>/node_modules/"
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": [
+    "last 1 Chrome versions"
+  ]
 }
