@@ -62,13 +62,13 @@ const useStyles = makeStyles((theme) => ({
       maxWidth: 400,
     },
     heading: {
-      fontSize: theme.typography.pxToRem(15),
+      fontSize: '15px',
       flexBasis: '33.33%',
       flexShrink: 0,
     },
     secondaryHeading: {
-      fontSize: theme.typography.pxToRem(15),
-      color: theme.palette.text.secondary,
+      fontSize: '15px',
+      color: "#000000",
     },
     large: {
         width: '100px',
