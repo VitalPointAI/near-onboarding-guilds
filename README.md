@@ -1,7 +1,17 @@
-space-gems
+## Space Gem ##
 ==================
 
 This [React] app was initialized with [create-near-app]
+
+Space Gem allows anyone to implement coworking programs by providing a solution that allows users to reserve work spaces and parking spots within any existing space.  The use of smart contracts simplifies the administration associated with coworking arrangements for both the operator and user while increasing security and efficiency.
+
+Users will be able to select specific work spaces and parking spots based on preferences such as proximity to parking or amenities as well as specific work space and accessibility requirements.  The availability of real time occupancy data allows the user to avoid busy periods and confirm availability prior to departing for the office.  The optional ability to share locations within or outside of a friend group allows users to book spaces adjacent to coworkers or friends through verifiable user identities on the blockchain.
+
+Operators are able to map existing facilities within Space Gem enabling a multitude of work spaces and parking spots to be reserved.  Specific capabilities within working spaces, such as conference rooms, specific IT equipment, washrooms, proximity to amenities, and accessible parking or workspaces may be highlighted within Space Gem enabling the user to query as desired. Verifiable user identities combined with smart contracts will improve the security of agreements while simplifying and automating administration.
+
+Real time data analytics on availability, usage and transactions will enhance operators’ and end users’ decision making.  Operators will be able to better understand users requirements in order to adapt workspaces while users will be able to quickly and easily understand availability and usage patterns to optimize their coworking experience.  Users and operators will be able to access agreements and personal transactions securely and efficiently in a single location.  
+
+Space Gem will simplify and increase the security associated with the administration and management of coworking facilities for the operator while incentivizing usage for the end user.  Built on trust, a blockchain solution will greatly enhance the experience associated with the rapidly growing trend of coworking arrangements by saving considerable time and effort for the user and operator.  The availability of analytics deriving from a single source of truth will serve as a permeable membrane to reduce unnecessary administration, duplication and inefficiency.  Space Gem will serve to greatly improve and enhance coworking digital platforms by leveraging the benefits of blockchain technology.
 
 
 Quick Start
