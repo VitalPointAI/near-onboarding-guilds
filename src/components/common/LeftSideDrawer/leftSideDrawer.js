@@ -290,7 +290,7 @@ const list = (anchor) => (
         <List>
         <Link to='/gems'>
             <ListItem className='exploreTokens' button key={7}>
-            <ListItemIcon><Diamond /></ListItemIcon>
+            <ListItemIcon><DiamondIcon /></ListItemIcon>
             <ListItemText primary='Explore Tokens'/>
             </ListItem>
         </Link>

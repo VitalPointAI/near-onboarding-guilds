@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ImageLoader from '../ImageLoader/imageLoader'
 import spaceGemLogo from '../../../img/space-gem-logo.png'
-import projectLogo from '../../../img/placeholder-logo.png'
+import projectLogo from '../../../img/pistolshrimp.png'
 import './footer.css'
 
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -38,6 +38,7 @@ const Footer = ({}) => {
         </div>
         </div>
         :
+        <>
         <div className="footer-mobile">
         <div className="left">
             <a href="https://vitalpoint.ai">
@@ -47,16 +48,19 @@ const Footer = ({}) => {
             <div className="footertext">
                 <Typography variant="body2" style={{fontSize: '90%'}}>A Pistol Shrimp project.<br></br>
                 Space management<br></br>
-                of the future.</Typography>
+                of the future.</Typography><br></br>
+                <span className="blue">Privacy<span className="black"> | </span>TOS</span></Typography>
             
             </div>
         </div>
         <div className="footerright">
-        <Typography variant="body2" style={{fontSize: '90%'}}>Space Gem is open source.<br></br>
-            Provided "as is".<br></br>No warranty of any kind.<br></br>Use at own risk.<br></br>
-            <span className="blue">Privacy<span className="black"> | </span>TOS</span></Typography>
+            <Typography variant="body2" style={{fontSize: '90%'}}>Space Gem is open source.<br></br>
+            Provided "as is".<br></br>
+            No warranty of any kind.<br></br>
+            Use at own risk.
         </div>
         </div>
+        </>
     )
 }
 

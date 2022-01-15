@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: '20px',
     textAlign: 'center',
-    color: theme.palette.text.secondary,
+    color: '#000000',
   },
   customCard: {
     maxWidth: 300,
@@ -50,13 +50,13 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   heading: {
-    fontSize: theme.typography.pxToRem(24),
+    fontSize: '24px',
     flexBasis: '33.33%',
     flexShrink: 0,
   },
   secondaryHeading: {
-    fontSize: theme.typography.pxToRem(18),
-    color: theme.palette.text.secondary,
+    fontSize: '18px',
+    color: '#000000',
   },
   progress: {
     width: '100%',
@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#f5f5f9',
       color: 'rgba(0, 0, 0, 0.87)',
       maxWidth: 300,
-      fontSize: theme.typography.pxToRem(12),
+      fontSize: '12px',
       border: '1px solid #dadde9',
     },
   }))(Tooltip)
