@@ -18,6 +18,9 @@
 /build
 .env
 /contract/target
+/.cache
+/dist
+
 # misc
 .DS_Store
 .env.local
