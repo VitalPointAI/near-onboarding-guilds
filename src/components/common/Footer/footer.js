@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ImageLoader from '../ImageLoader/imageLoader'
 import spaceGemLogo from '../../../img/space-gem-logo.png'
-import projectLogo from '../../../img/project-logo.png'
+import projectLogo from '../../../img/placeholder-logo.png'
 import './footer.css'
 
 import useMediaQuery from '@mui/material/useMediaQuery'

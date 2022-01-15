@@ -1,19 +1,12 @@
 import React, { useState, useEffect, useContext} from 'react'
 import { Link } from 'react-router-dom'
-import { get, set, del } from '../../utils/storage'
 import ImageLoader from '../ImageLoader/imageLoader'
 import clsx from 'clsx'
-import { appStore, onAppMount } from '../../state/app'
+import { appStore, onAppMount } from '../../../state/app'
 import defaultProfileImage from '../../../img/default-profile.png'
-// import AddPersonaForm from '../AddPersona/addPersona'
-// import AddDaoForm from '../CreateDAO/addDao'
-// import AddFTForm from '../CreateFT/createFT'
-// import { DASHBOARD_DEPARTURE, NEW_NOTIFICATIONS} from '../../state/near'
-// import NotificationCard from '../Notifications/notifications'
-import {ceramic} from '../../../utils/ceramic'
 
 // Material UI
-import { makeStyles } from '@mui/material/styles'
+import { makeStyles, useTheme } from '@mui/styles'
 import Drawer from '@mui/material/Drawer'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
@@ -51,8 +44,8 @@ const useStyles = makeStyles((theme) => ({
         
     },
     small: {
-        width: theme.spacing(3),
-        height: theme.spacing(3),
+        width: '50',
+        height: '50',
         float: 'right',
       },
   }));

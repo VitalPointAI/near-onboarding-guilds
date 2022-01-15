@@ -1,21 +1,9 @@
 import React from 'react'
 
 // Material UI components
-import { makeStyles } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 
-const useStyles = makeStyles((theme) => ({
-  accountButton: {
-    margin: theme.spacing(0),
-    float: 'right',
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0
-  },
-  }));
-
 export default function RandomPhrase(props) {
-
-    const classes = useStyles()
     
     const randomPhrases = [
         'Space Gem is an open web application',

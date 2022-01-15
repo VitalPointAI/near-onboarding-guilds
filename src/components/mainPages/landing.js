@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Material UI Components
-import { makeStyles } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
@@ -116,4 +116,4 @@ const Landing = () => {
     )
 }
 
-export default FrontPage
+export default Landing

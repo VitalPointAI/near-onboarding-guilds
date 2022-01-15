@@ -1,24 +1,22 @@
 import React, {useState, useEffect, useContext} from 'react'
-import { useParams } from 'react-router-dom'
-import { appStore, onAppMount } from '../../state/app'
+import { appStore, onAppMount } from '../../../state/app'
 import LeftSideDrawer from '../LeftSideDrawer/leftSideDrawer'
 import LogoutButton from '../LogoutButton/logoutButton'
 import LoginButton from '../LogInButton/loginButton'
 import AccountInfo from '../AccountInfo/accountInfo'
 import Logo from '../Logo/logo'
 //import NotificationCard from '../Notifications/notifications'
-import {ceramic} from '../../utils/ceramic'
+import {ceramic} from '../../../utils/ceramic'
 
 // Material UI
-import Grid from '@material-ui/core/Grid'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
-import Button from '@material-ui/core/Button'
-import Badge from '@material-ui/core/Badge'
-import NotificationsIcon from '@material-ui/icons/Notifications'
-import IconButton from '@material-ui/core/IconButton'
-import Popover from '@material-ui/core/Popover'
-import '../../App.css'
-import TributeProposal from '../TributeProposal/tributeProposal'
+import Grid from '@mui/material/Grid'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import Button from '@mui/material/Button'
+import Badge from '@mui/material/Badge'
+import NotificationsIcon from '@mui/icons-material/Notifications'
+import IconButton from '@mui/material/IconButton'
+import Popover from '@mui/material/Popover'
+import '../../../global.css'
 
 const Header = ({ state, handleUpdate }) => {
     const [newNotifications, setNewNotifications] = useState(0)
@@ -32,12 +30,6 @@ const Header = ({ state, handleUpdate }) => {
         isUpdated,
         accountId
     } = state
-
-    const {
-        contractId
-    } = useParams()
-
- 
 
     useEffect(
         () => {

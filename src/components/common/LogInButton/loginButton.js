@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles } from '@mui/material/styles'
+import { makeStyles } from '@mui/styles'
 import { login } from '../../../state/near'
 
 // Material UI components
@@ -8,11 +8,11 @@ import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone'
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    margin: theme.spacing(0),
+    margin: 0,
     float: 'right'
   },
   accountButton: {
-    margin: theme.spacing(0),
+    margin: 0,
     float: 'right',
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0

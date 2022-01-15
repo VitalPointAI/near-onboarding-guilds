@@ -10,9 +10,9 @@ import {
   } from "react-router-dom"
 import RandomPhrase from './components/common/RandomPhrase/randomPhrase'
 import { KEY_REDIRECT } from './utils/ceramic'
-import { Container } from './components/Container'
-import { Receiver } from './components/Receiver'
-import { PersonaPage } from './components/mainPages/personas'
+//import { Container } from './components/Container'
+//import { Receiver } from './components/Receiver'
+//import { PersonaPage } from './components/mainPages/personas'
 // import ExploreDaos from './components/mainPages/exploreDaos'
 // import AppFramework from './components/AppFramework/appFramework'
 // import NewKey from './components/mainPages/newKey'
@@ -32,8 +32,8 @@ import { Home } from './components/mainPages/home'
 // import CommunityStreamIntro from './components/mainPages/communityStreamIntro'
 
 // Material-UI Components
-import { CircularProgress } from '@mui/material/CircularProgress'
-import { makeStyles } from '@mui/material/styles'
+import { makeStyles } from '@mui/styles'
+import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
 
 // helpers
@@ -99,21 +99,21 @@ const App = () => {
         </div></>)
     }
 
-    if (accountData) {
-        children = <Receiver {...{ state, dispatch }} />
-    }
+    // if (accountData) {
+    //     children = <Receiver {...{ state, dispatch }} />
+    // }
 
-    if (funding) {
-        children = <div class="container container-custom">
-            <h2>DO NOT CLOSE OR REFRESH THIS PAGE</h2>
-            <h2>Creating Persona...</h2>
-        </div>
-    }
+    // if (funding) {
+    //     children = <div class="container container-custom">
+    //         <h2>DO NOT CLOSE OR REFRESH THIS PAGE</h2>
+    //         <h2>Creating Persona...</h2>
+    //     </div>
+    // }
 
-    if (wallet) {
-        children = <PersonaPage {...{ state, dispatch, update }} />
+    // if (wallet) {
+    //     children = <PersonaPage {...{ state, dispatch, update }} />
 
-    }
+    // }
     
     return(
         <Router>

@@ -4,7 +4,7 @@ import SeedSetup from '../SeedSetup/seedSetup'
 import Header from '../Header/header'
 
 // Material UI components
-import { makeStyles } from '@mui/material/styles'
+import { makeStyles } from '@mui/styles'
 
 const useStyles = makeStyles((theme) => ({
     root: {

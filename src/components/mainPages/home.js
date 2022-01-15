@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { get, set, del } from '../utils/storage'
-import { appStore, onAppMount } from '../state/app';
+import { get, set, del } from '../../utils/storage'
+import { appStore, onAppMount } from '../../state/app';
 import { flexClass } from '../../App'
-import Footer from '../components/common/Footer/footer'
+import Footer from '../../components/common/Footer/footer'
 import SeedSetup from '../SeedSetup/seedSetup'
-import Header from '../common/Header/header'
-import RandomPhrase from '../common/RandomPhrase/randomPhrase'
-import Landing from '../components/mainPages/landing'
+import Header from '../../components/common/Header/header'
+import RandomPhrase from '../../components/common/RandomPhrase/randomPhrase'
+import Landing from '../../components/mainPages/landing'
+import { KEY_REDIRECT } from '../../utils/ceramic'
 
 // Material UI & styling
-import { makeStyles } from '@mui/material/styles'
+import { makeStyles } from '@mui/styles'
 import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
 import '../../global.css'
@@ -69,7 +70,7 @@ export const Home = ({ children }) => {
                     : (<>
                         <div className={classes.root}>
                         <Header state={state}/>
-                            <Dashboard />
+                            <Landing />
                         </div>
                         <Footer />
                         </>)

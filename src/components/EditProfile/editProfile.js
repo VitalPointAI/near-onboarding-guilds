@@ -2,14 +2,14 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { appStore, onAppMount } from '../../state/app'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
-import FileUpload from '../IPFSupload/ipfsUpload'
+import FileUpload from '../common/IPFSUpload/fileUpload'
 import { flexClass } from '../../App'
 import { ceramic, IPFS_PROVIDER } from '../../utils/ceramic' 
 import { config } from '../../state/config'
 import * as nearAPI from 'near-api-js'
 
 // Material UI components
-import { makeStyles } from '@mui/material/styles'
+import { makeStyles } from '@mui/styles'
 import InfoIcon from '@mui/icons-material/Info'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -31,7 +31,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Input from '@mui/material/Input'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
-import Rating from '@material-ui/lab/Rating'
+import Rating from '@mui/material/Rating'
 import FormLabel from '@mui/material/FormLabel'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     progress: {
       width: '100%',
       '& > * + *': {
-        marginTop: theme.spacing(2),
+        marginTop: '10px',
       },
     },
     input: {
@@ -71,12 +71,12 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.text.secondary,
     },
     large: {
-        width: theme.spacing(7),
-        height: theme.spacing(7),
+        width: '100px',
+        height: '100px',
         textAlign: 'center'
     }, 
     formControl: {
-      margin: theme.spacing(3),
+      margin: '20px',
     },
     hide: {
       display: 'none'
@@ -99,7 +99,7 @@ export const {
   contractName, didRegistryContractName, factoryContractName
 } = config
 
-export default function EditPersonaForm(props) {
+export default function EditProfileForm(props) {
 
     const [open, setOpen] = useState(true)
     const [finished, setFinished] = useState(true)
@@ -154,7 +154,7 @@ export default function EditPersonaForm(props) {
     const personaSpecificSkills = watch('personaSpecificSkills', personaSpecificSkillsFields)
 
     const {
-        handleEditPersonaClickState,
+        handleEditProfileClickState,
         handleProfileEdit,
         curUserIdx,
         accountId,
@@ -303,7 +303,7 @@ export default function EditPersonaForm(props) {
     }
 
     const handleClose = () => {
-        handleEditPersonaClickState(false)
+        handleEditProfileClickState(false)
         setOpen(false)
     }
 

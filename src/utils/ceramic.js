@@ -2,6 +2,7 @@ import CeramicClient from '@ceramicnetwork/http-client'
 import * as nearApiJs from 'near-api-js'
 import { get, set, del } from './storage'
 import { Core } from '@self.id/core'
+import { IDX } from '@ceramicstudio/idx'
 import { TileDocument } from '@ceramicnetwork/stream-tile'
 import { createDefinition, publishSchema } from '@ceramicstudio/idx-tools'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
@@ -13,7 +14,6 @@ import { DID } from 'dids'
 // schemas
 import { profileSchema } from '../schemas/profile'
 import { accountKeysSchema } from '../schemas/accountKeys'
-import { daoKeysSchema } from '../schemas/daoKeys'
 import { definitionsSchema } from '../schemas/definitions'
 import { schemaSchema } from '../schemas/schemas'
 import { commentsSchema } from '../schemas/comments'
@@ -382,7 +382,7 @@ class Ceramic {
     // Retrieve cached aliases
     let rootAliases = get(ALIASES, [])
     if(rootAliases.length > 0){
-        const appIdx = new Core({ ceramic: appClient, aliases: rootAliases[0]})
+        const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases[0]})
         return appIdx
     } else {
 
@@ -420,7 +420,7 @@ class Ceramic {
       aliases.push(rootAliases)
       set(ALIASES, aliases)
 
-      const appIdx = new Core({ ceramic: appClient, aliases: rootAliases})
+      const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases})
 
       return appIdx
     }
@@ -431,19 +431,16 @@ class Ceramic {
 
     const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
   
-    const daoKeys = this.getAlias(APP_OWNER_ACCOUNT, 'daoKeys', legacyAppClient, daoKeysSchema, 'dao account info', contract)
     const accountsKeys = this.getAlias(APP_OWNER_ACCOUNT, 'accountsKeys', legacyAppClient, accountKeysSchema, 'user account info', contract)
     const done = await Promise.all([
-      daoKeys,
       accountsKeys
     ])
     
     let rootAliases = {
-      daoKeys: done[0],
-      accountsKeys: done[1]
+      accountsKeys: done[0]
     }
 
-    const appIdx = new Core({ ceramic: legacyAppClient, aliases: rootAliases})
+    const appIdx = new IDX({ ceramic: legacyAppClient, aliases: rootAliases})
     return appIdx
   }
 
@@ -482,7 +479,7 @@ class Ceramic {
           } else {
             oldAccountUserCeramicClient = await this.getCeramic(account, seed)
           }
-          let curUserIdx = new Core({ ceramic: oldAccountUserCeramicClient, aliases: appIdx._aliases})
+          let curUserIdx = new IDX({ ceramic: oldAccountUserCeramicClient, aliases: appIdx._aliases})
           return curUserIdx
         } catch (err) {
           console.log('no did from oldaccounts', err)
@@ -510,7 +507,7 @@ class Ceramic {
           } else {
             currentUserCeramicClient = await this.getCeramic(account, seed)
           }
-          let curUserIdx = new Core({ ceramic: currentUserCeramicClient, aliases: appIdx._aliases})
+          let curUserIdx = new IDX({ ceramic: currentUserCeramicClient, aliases: appIdx._aliases})
           return curUserIdx
         } catch (err) {
           console.log('no did from newaccounts', err)
@@ -538,7 +535,7 @@ class Ceramic {
           } else {
             localAccountUserCeramicClient = await this.getCeramic(account, seed)
           }
-          let curUserIdx = new Core({ ceramic: localAccountUserCeramicClient, aliases: appIdx._aliases})
+          let curUserIdx = new IDX({ ceramic: localAccountUserCeramicClient, aliases: appIdx._aliases})
           return curUserIdx
         } catch (err) {
           console.log('no did from localaccount', err)
@@ -551,6 +548,19 @@ class Ceramic {
       }
   }
 
+  
+  async getDid(accountId, contract) {
+    let did = false
+    
+     try {
+      user = await contract.getDaoByAccount({accountId: accountId})
+      did = user.did
+      } catch (err) {
+        console.log('error retrieving identity', err)
+      }
+    
+    return did
+  }
 }
 
 export const ceramic = new Ceramic()

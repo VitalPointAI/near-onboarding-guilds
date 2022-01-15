@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { appStore } from '../../state/app'
+import { appStore } from '../../../state/app'
 import { Link } from 'react-router-dom'
-import EditPersonaForm from '../EditPersona/editPersona'
+import EditProfileForm from '../../EditProfile/editProfile'
 
 // Material UI Components
 import Avatar from '@mui/material/Avatar'
@@ -10,7 +10,7 @@ import LinearProgress from '@mui/material/LinearProgress'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import Button from '@mui/material/Button'
 
-const imageName = require('../../img/default-profile.png') // default no-image avatar
+const imageName = require('../../../img/default-profile.png') // default no-image avatar
 
 export default function PersonaInfo(props) {
 
@@ -28,7 +28,7 @@ export default function PersonaInfo(props) {
         balance
     } = props
 
-    const [editPersonaClicked, setEditPersonaClicked] = useState(false)
+    const [editProfileClicked, setEditProfileClicked] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
     const [finished, setFinished] = useState(false)
     const [avatar, setAvatar] = useState(props.avatar)
@@ -58,13 +58,13 @@ export default function PersonaInfo(props) {
     }, [isUpdated, did]
     )
 
-    const handleEditPersonaClick = () => {
+    const handleEditProfileClick = () => {
         handleExpanded()
-        handleEditPersonaClickState(true)
+        handleEditProfileClickState(true)
     }
 
-    function handleEditPersonaClickState(property){
-        setEditPersonaClicked(property)
+    function handleEditProfileClickState(property){
+        setEditProfileClicked(property)
     }
 
     function handleExpanded() {
@@ -101,8 +101,8 @@ export default function PersonaInfo(props) {
             {!matches ? (
                 finished ? (
                     <>
-                    <Typography variant="overline" display="block" style={{display: 'inline-flex', float: 'right'}} onClick={handleEditPersonaClick}>
-                        <Avatar src={avatar} style={{marginRight: '5px'}} onClick={handleEditPersonaClick}/>
+                    <Typography variant="overline" display="block" style={{display: 'inline-flex', float: 'right'}} onClick={handleEditProfileClick}>
+                        <Avatar src={avatar} style={{marginRight: '5px'}} onClick={handleEditProfileClick}/>
                         {accountId}: {balance} Ⓝ
                     </Typography>                    
                     </>
@@ -110,17 +110,17 @@ export default function PersonaInfo(props) {
             ) : (
                 finished ? (
                     <>
-                    <Typography variant="overline" display="block" style={{display: 'inline-flex'}} onClick={handleEditPersonaClick}>
-                        <Avatar src={avatar} style={{marginRight: '5px'}} onClick={handleEditPersonaClick}/>
+                    <Typography variant="overline" display="block" style={{display: 'inline-flex'}} onClick={handleEditProfileClick}>
+                        <Avatar src={avatar} style={{marginRight: '5px'}} onClick={handleEditProfileClick}/>
                         {accountId}: {balance} Ⓝ
                     </Typography> 
                     </>
                 ) : <LinearProgress />
            )}
 
-            {editPersonaClicked ? <EditPersonaForm
+            {editProfileClicked ? <EditProfileForm
                 state={state}
-                handleEditPersonaClickState={handleEditPersonaClickState}
+                handleEditProfileClickState={handleEditProfileClickState}
                 curUserIdx={curUserIdx}
                 did={did}
                 accountId={accountId}

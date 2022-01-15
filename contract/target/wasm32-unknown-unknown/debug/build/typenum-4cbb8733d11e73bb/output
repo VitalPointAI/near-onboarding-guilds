@@ -1,0 +1,2 @@
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/home/vitalpointai/projects/space-gems/contract/target/wasm32-unknown-unknown/debug/build/typenum-4cbb8733d11e73bb/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/home/vitalpointai/projects/space-gems/contract/target/wasm32-unknown-unknown/debug/build/typenum-4cbb8733d11e73bb/out/op.rs

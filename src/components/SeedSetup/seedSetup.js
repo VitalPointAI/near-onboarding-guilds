@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { get, set, del } from '../../utils/storage'
 
 // Material UI components
-import { makeStyles, withStyles } from '@mui/material/styles'
+import { makeStyles, withStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Grid from '@mui/material/Grid'
@@ -15,9 +15,9 @@ import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Typography from '@mui/material/Typography'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Tooltip from '@mui/material/Tooltip'
-import InfoIcon from '@material-ui/icons/Info'
+import InfoIcon from '@mui/icons-material/Info'
 
 import { ACCOUNT_LINKS } from '../../state/near'
 
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: '10px'
   },
   paper: {
-    padding: theme.spacing(2),
+    padding: '20px',
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   },
   rootForm: {
     '& > *': {
-      margin: theme.spacing(1),
+      margin: '10px',
     },
   },
   heading: {
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   progress: {
     width: '100%',
     '& > * + *': {
-      marginTop: theme.spacing(2),
+      marginTop: '20px',
     },
   },
   }));
