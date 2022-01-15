@@ -376,7 +376,7 @@ class Ceramic {
 
     const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
 
-    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, legacyContract, appClient)
+    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient)
   
     // Retrieve cached aliases
     let rootAliases = get(ALIASES, [])
