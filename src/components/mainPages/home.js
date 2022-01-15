@@ -56,7 +56,8 @@ export const Home = ({ children }) => {
             )
     }, [finished]
     )
-
+    console.log('finished', finished)
+    console.log('wallet', wallet)
     return (
         <>
         {finished ? 

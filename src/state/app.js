@@ -51,7 +51,7 @@ export const onAlert = (message) => async ({update}) => {
 
 export const onAppMount = () => async ({ update, getState, dispatch }) => {
     update('app', { mounted: true })
-
+   
     const url = new URL(window.location.href)
     const key = url.searchParams.get('key')
     const from = url.searchParams.get('from')
@@ -61,6 +61,7 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
     const owner = url.searchParams.get('owner')
 
     if (key && accountId) {
+        console.log('here')
         const { seedPhrase, publicKey } = generateSeedPhrase()
         const keyExists = await hasKey(key, accountId)
         update('accountData', { key, from, message, link, accountId, seedPhrase, publicKey, keyExists, owner })

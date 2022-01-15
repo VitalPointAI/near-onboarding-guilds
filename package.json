@@ -60,6 +60,7 @@
     "key-did-provider-ed25519": "^1.1.0",
     "key-did-resolver": "^1.4.4",
     "near-api-js": "~0.44.2",
+    "near-seed-phrase": "^0.2.0",
     "react": "^16.8.0 || ^17.0.0",
     "react-dom": "^16.8.0 || ^17.0.0",
     "react-hook-form": "^7.24.0",
