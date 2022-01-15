@@ -48,9 +48,8 @@ const Footer = ({}) => {
             <div className="footertext">
                 <Typography variant="body2" style={{fontSize: '90%'}}>A Pistol Shrimp project.<br></br>
                 Space management<br></br>
-                of the future.</Typography><br></br>
-                <Typography>
-                    <span className="blue">Privacy<span className="black"> | </span>TOS</span>
+                of the future.<br></br>
+                <span className="blue">Privacy<span className="black"> | </span>TOS</span>
                 </Typography>
             
             </div>
