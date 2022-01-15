@@ -1,197 +1,133 @@
-import 'regenerator-runtime/runtime'
-import React from 'react'
-import { login, logout } from './utils'
-import './global.css'
+import React, { useState, useContext, useEffect } from 'react'
+import { appStore, onAppMount } from './state/app'
+import { get, set, del } from './utils/storage'
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useParams
+  } from "react-router-dom"
+import RandomPhrase from './components/common/RandomPhrase/randomPhrase'
+import { KEY_REDIRECT } from './utils/ceramic'
+import { Container } from './components/Container'
+import { Receiver } from './components/Receiver'
+import { PersonaPage } from './components/mainPages/personas'
+// import ExploreDaos from './components/mainPages/exploreDaos'
+// import AppFramework from './components/AppFramework/appFramework'
+// import NewKey from './components/mainPages/newKey'
+// import Profile from './components/mainPages/profile'
+// import Register from './components/mainPages/register'
+import { Home } from './components/mainPages/home'
+// import Daos from './components/mainPages/daos'
+// import Developers from './components/mainPages/developers'
+// import Supporters from './components/mainPages/supporters'
+// import FAQ from './components/LandingSite/FAQ'
+// import ArtStory from './components/LandingSite/artistStory.js'
+// import NearStory from './components/LandingSite/nearStory.js'
+// import ReceiveInvite from './components/Invite/Receiver'
+// import Opportunities from './components/mainPages/opportunities'
+// import MintFT from './components/mainPages/mintFT'
+// import FTs from './components/mainPages/fts'
+// import CommunityStreamIntro from './components/mainPages/communityStreamIntro'
 
-import getConfig from './config'
-const { networkId } = getConfig(process.env.NODE_ENV || 'development')
+// Material-UI Components
+import { CircularProgress } from '@mui/material/CircularProgress'
+import { makeStyles } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 
-export default function App() {
-  // use React Hooks to store greeting in component state
-  const [greeting, set_greeting] = React.useState()
+// helpers
+export const btnClass = 'btn btn-sm btn-outline-primary mb-3 '
+export const flexClass = 'd-flex justify-content-evenly align-items-center '
+export const qs = (s) => document.querySelector(s)
 
-  // when the user has not yet interacted with the form, disable the button
-  const [buttonDisabled, setButtonDisabled] = React.useState(true)
-
-  // after submitting the form, we want to show Notification
-  const [showNotification, setShowNotification] = React.useState(false)
-
-  // The useEffect hook can be used to fire side-effects during render
-  // Learn more: https://reactjs.org/docs/hooks-intro.html
-  React.useEffect(
-    () => {
-      // in this case, we only care to query the contract when signed in
-      if (window.walletConnection.isSignedIn()) {
-
-        // window.contract is set by initContract in index.js
-        window.contract.get_greeting({ account_id: window.accountId })
-          .then(greetingFromContract => {
-            set_greeting(greetingFromContract)
-          })
-      }
+const useStyles = makeStyles((theme) => ({
+    centered: {
+      width: '200px',
+      height: '100px',
+      textAlign: 'center',
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      marginTop: '-100px',
+      marginLeft: '-100px'
     },
+    centeredPhrase: {
+        maxWidth: '450px',
+        height: '100px',
+        textAlign: 'center',
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        marginTop: '-80px',
+        marginLeft: '-100px'
+      },
+    }));
 
-    // The second argument to useEffect tells React when to re-run the effect
-    // Use an empty array to specify "only run on first render"
-    // This works because signing into NEAR Wallet reloads the page
-    []
-  )
+const App = () => {
+    
+    const { state, dispatch, update } = useContext(appStore)
 
-  // if not signed in, return early with sign-in prompt
-  if (!window.walletConnection.isSignedIn()) {
-    return (
-      <main>
-        <h1>Welcome to NEAR!</h1>
-        <p>
-          To make use of the NEAR blockchain, you need to sign in. The button
-          below will sign you in using NEAR Wallet.
-        </p>
-        <p>
-          By default, when your app runs in "development" mode, it connects
-          to a test network ("testnet") wallet. This works just like the main
-          network ("mainnet") wallet, but the NEAR Tokens on testnet aren't
-          convertible to other currencies – they're just for testing!
-        </p>
-        <p>
-          Go ahead and click the button below to try it out:
-        </p>
-        <p style={{ textAlign: 'center', marginTop: '2.5em' }}>
-          <button onClick={login}>Sign in</button>
-        </p>
-      </main>
+    const classes = useStyles()
+
+    const onMount = () => {
+        dispatch(onAppMount());
+    };
+
+    useEffect(onMount, []);
+
+    window.onerror = function (message, url, lineNo) {
+        alert('Error: ' + message + 
+       '\nUrl: ' + url + 
+       '\nLine Number: ' + lineNo);
+    return true;   
+    }    
+    
+    const {
+        accountData, funding, wallet
+    } = state
+    
+    let children = null
+
+    if (!accountData || !wallet) {
+        children = (<>
+        <div className={classes.centered}><CircularProgress/><br></br>
+            <Typography variant="h6">Setting Things Up...</Typography>
+        </div>
+        <div className={classes.centeredPhrase}>
+            <RandomPhrase />
+        </div></>)
+    }
+
+    if (accountData) {
+        children = <Receiver {...{ state, dispatch }} />
+    }
+
+    if (funding) {
+        children = <div class="container container-custom">
+            <h2>DO NOT CLOSE OR REFRESH THIS PAGE</h2>
+            <h2>Creating Persona...</h2>
+        </div>
+    }
+
+    if (wallet) {
+        children = <PersonaPage {...{ state, dispatch, update }} />
+
+    }
+    
+    return(
+        <Router>
+            <Switch>
+                <Route exact path="/">
+                    <Home 
+                        state={state}
+                     >
+                        { children }
+                    </Home>
+                </Route>
+            </Switch>
+        </Router>
     )
-  }
-
-  return (
-    // use React Fragment, <>, to avoid wrapping elements in unnecessary divs
-    <>
-      <button className="link" style={{ float: 'right' }} onClick={logout}>
-        Sign out
-      </button>
-      <main>
-        <h1>
-          <label
-            htmlFor="greeting"
-            style={{
-              color: 'var(--secondary)',
-              borderBottom: '2px solid var(--secondary)'
-            }}
-          >
-            {greeting}
-          </label>
-          {' '/* React trims whitespace around tags; insert literal space character when needed */}
-          {window.accountId}!
-        </h1>
-        <form onSubmit={async event => {
-          event.preventDefault()
-
-          // get elements from the form using their id attribute
-          const { fieldset, greeting } = event.target.elements
-
-          // hold onto new user-entered value from React's SynthenticEvent for use after `await` call
-          const newGreeting = greeting.value
-
-          // disable the form while the value gets updated on-chain
-          fieldset.disabled = true
-
-          try {
-            // make an update call to the smart contract
-            await window.contract.set_greeting({
-              // pass the value that the user entered in the greeting field
-              message: newGreeting
-            })
-          } catch (e) {
-            alert(
-              'Something went wrong! ' +
-              'Maybe you need to sign out and back in? ' +
-              'Check your browser console for more info.'
-            )
-            throw e
-          } finally {
-            // re-enable the form, whether the call succeeded or failed
-            fieldset.disabled = false
-          }
-
-          // update local `greeting` variable to match persisted value
-          set_greeting(newGreeting)
-
-          // show Notification
-          setShowNotification(true)
-
-          // remove Notification again after css animation completes
-          // this allows it to be shown again next time the form is submitted
-          setTimeout(() => {
-            setShowNotification(false)
-          }, 11000)
-        }}>
-          <fieldset id="fieldset">
-            <label
-              htmlFor="greeting"
-              style={{
-                display: 'block',
-                color: 'var(--gray)',
-                marginBottom: '0.5em'
-              }}
-            >
-              Change greeting
-            </label>
-            <div style={{ display: 'flex' }}>
-              <input
-                autoComplete="off"
-                defaultValue={greeting}
-                id="greeting"
-                onChange={e => setButtonDisabled(e.target.value === greeting)}
-                style={{ flex: 1 }}
-              />
-              <button
-                disabled={buttonDisabled}
-                style={{ borderRadius: '0 5px 5px 0' }}
-              >
-                Save
-              </button>
-            </div>
-          </fieldset>
-        </form>
-        <p>
-          Look at that! A Hello World app! This greeting is stored on the NEAR blockchain. Check it out:
-        </p>
-        <ol>
-          <li>
-            Look in <code>src/App.js</code> and <code>src/utils.js</code> – you'll see <code>get_greeting</code> and <code>set_greeting</code> being called on <code>contract</code>. What's this?
-          </li>
-          <li>
-            Ultimately, this <code>contract</code> code is defined in <code>assembly/main.ts</code> – this is the source code for your <a target="_blank" rel="noreferrer" href="https://docs.near.org/docs/roles/developer/contracts/intro">smart contract</a>.</li>
-          <li>
-            When you run <code>yarn dev</code>, the code in <code>assembly/main.ts</code> gets deployed to the NEAR testnet. You can see how this happens by looking in <code>package.json</code> at the <code>scripts</code> section to find the <code>dev</code> command.</li>
-        </ol>
-        <hr />
-        <p>
-          To keep learning, check out <a target="_blank" rel="noreferrer" href="https://docs.near.org">the NEAR docs</a> or look through some <a target="_blank" rel="noreferrer" href="https://examples.near.org">example apps</a>.
-        </p>
-      </main>
-      {showNotification && <Notification />}
-    </>
-  )
 }
 
-// this component gets rendered by App after the form is submitted
-function Notification() {
-  const urlPrefix = `https://explorer.${networkId}.near.org/accounts`
-  return (
-    <aside>
-      <a target="_blank" rel="noreferrer" href={`${urlPrefix}/${window.accountId}`}>
-        {window.accountId}
-      </a>
-      {' '/* React trims whitespace around tags; insert literal space character when needed */}
-      called method: 'set_greeting' in contract:
-      {' '}
-      <a target="_blank" rel="noreferrer" href={`${urlPrefix}/${window.contract.contractId}`}>
-        {window.contract.contractId}
-      </a>
-      <footer>
-        <div>✔ Succeeded</div>
-        <div>Just now</div>
-      </footer>
-    </aside>
-  )
-}
+export default App
