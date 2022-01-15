@@ -10,13 +10,14 @@
 /neardev
 
 
+
 # testing
 /coverage
 
 # production
 /build
 .env
-
+/contract/target
 # misc
 .DS_Store
 .env.local
