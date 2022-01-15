@@ -49,7 +49,9 @@ const Footer = ({}) => {
                 <Typography variant="body2" style={{fontSize: '90%'}}>A Pistol Shrimp project.<br></br>
                 Space management<br></br>
                 of the future.</Typography><br></br>
-                <span className="blue">Privacy<span className="black"> | </span>TOS</span></Typography>
+                <Typography>
+                    <span className="blue">Privacy<span className="black"> | </span>TOS</span>
+                </Typography>
             
             </div>
         </div>
@@ -57,7 +59,7 @@ const Footer = ({}) => {
             <Typography variant="body2" style={{fontSize: '90%'}}>Space Gem is open source.<br></br>
             Provided "as is".<br></br>
             No warranty of any kind.<br></br>
-            Use at own risk.
+            Use at own risk.</Typography>
         </div>
         </div>
         </>
