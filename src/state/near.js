@@ -252,7 +252,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
     finished = true
 
-    update('', { finished })
+    update('', { near, wallet, finished })
 }
 
 

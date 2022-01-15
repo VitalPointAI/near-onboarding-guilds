@@ -90,6 +90,7 @@ const Header = ({ state, handleUpdate }) => {
         return; 
     }
 
+    console.log('wallet', wallet)
     
     return (
         <><div>
