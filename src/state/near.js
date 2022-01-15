@@ -76,7 +76,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     const near = await nearAPI.connect({
         networkId, nodeUrl, walletUrl, deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
     })
-
+    console.log('near', near)
     const isAccountTaken = async (accountId) => {
         const account = new nearAPI.Account(near.connection, accountId);
         try {
@@ -92,7 +92,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
     // resume wallet / contract flow
     const wallet = new nearAPI.WalletAccount(near)
-
+    console.log('wallet', wallet)
     wallet.signIn = () => {
         wallet.requestSignIn({
             contractId: contractName,
@@ -114,7 +114,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     const didRegistryContract = await registry.initiateDidRegistryContract(wallet.account())
 
     if(wallet.signedIn){
-   
+        console.log('here')
         // ********* Check and action redirects after DAO and proposal creation *************
         let urlVariables = window.location.search
         const urlParameters = new URLSearchParams(urlVariables)
@@ -249,6 +249,10 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
         update('', { near, wallet, finished })
     }
+
+    finished = true
+
+    update('', { finished })
 }
 
 

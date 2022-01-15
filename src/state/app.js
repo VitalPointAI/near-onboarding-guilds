@@ -61,7 +61,7 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
     const owner = url.searchParams.get('owner')
 
     if (key && accountId) {
-        console.log('here')
+     
         const { seedPhrase, publicKey } = generateSeedPhrase()
         const keyExists = await hasKey(key, accountId)
         update('accountData', { key, from, message, link, accountId, seedPhrase, publicKey, keyExists, owner })

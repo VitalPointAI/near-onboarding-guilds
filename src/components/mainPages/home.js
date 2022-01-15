@@ -40,7 +40,7 @@ export const Home = ({ children }) => {
 
     const {
         wallet, 
-        finished, 
+        finished,
         key
     } = state
     
@@ -49,6 +49,7 @@ export const Home = ({ children }) => {
     useEffect(
         () => {
             let needsKey = get(KEY_REDIRECT, [])
+            console.log('needskey', needsKey)
             if(needsKey.action == true){
                 update('', {key: true})
             } else (
