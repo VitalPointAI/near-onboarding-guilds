@@ -331,10 +331,10 @@ const list = (anchor) => (
 
 return (
     <React.Fragment key={'left'}>
-        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer('left', true)}>
-        <MenuIcon />
+        <IconButton edge="start" className={classes.menuButton} style={{marginTop: '5px', paddingLeft: 3, color: 'white', padding: 5}} aria-label="menu" onClick={toggleDrawer('left', true)}>
+        <MenuIcon style={{fontSize: 35}}/>
         </IconButton>
-        
+  
         <Drawer anchor={'left'} open={drawerState['left']} onClose={toggleDrawer('left', false)}>
         {list('left')}
         </Drawer>

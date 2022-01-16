@@ -12,9 +12,8 @@ import {ceramic} from '../../../utils/ceramic'
 import Grid from '@mui/material/Grid'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import Button from '@mui/material/Button'
-import Badge from '@mui/material/Badge'
-import NotificationsIcon from '@mui/icons-material/Notifications'
-import IconButton from '@mui/material/IconButton'
+import DiamondIcon from '@mui/icons-material/Diamond';
+
 import Popover from '@mui/material/Popover'
 import '../../../global.css'
 
@@ -86,110 +85,49 @@ const Header = ({ state, handleUpdate }) => {
         setPopoverOpen(false)
     }
 
-    function handleNotificationClick(property){
-        return; 
-    }
 
     console.log('wallet', wallet)
     
     return (
-        <><div>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={0} style={{paddingRight: '5px', paddingLeft: '5px', paddingTop: '5px', backgroundColor: 'white'}}>
+        <div>
+        <Grid container justifyContent="space-between" alignItems="center" spacing={13} style={{paddingRight: '5px', paddingBottom: '5px', paddingLeft: '5px', paddingTop: '5px', backgroundColor: 'black'}}>
             
             {wallet && wallet.signedIn ? 
-                !matches ? (
+                (
                     <>
-                    <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
-                       
+                    <Grid item style={{marginLeft: '25px'}}>
                         <LeftSideDrawer
                         state={state}                        
                         /> 
-                     
-                        <Logo />
+                        <DiamondIcon style={{color: 'bb61e3', marginTop: '5px', fontSize: 45}} />
                     </Grid>
-                    <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
-                        <AccountInfo balance={wallet.balance} /> 
-                        
-                    </Grid>
-                    <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
-                        
-                        <IconButton onClick={handleClick} color="primary" component="span">
-                            <Badge  badgeContent={newNotifications} color='primary'>
-                                <NotificationsIcon fontSize='small' style={{marginTop: '-8px'}} /> 
-                            </Badge>
-                        </IconButton>
-                   
-                        {wallet && !wallet.signedIn ? <LoginButton /> : <LogoutButton/>}
-                    
-                    <Popover
-                    anchorEl={anchorEl}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                         vertical: 'bottom',
-                         horizontal: 'center',
-                     }}
-                    style={{maxWidth: '20%', maxHeight: '80%'}} 
-                    open={popoverOpen}
-                    >
-                        <NotificationCard
-                            handleNotificationClick={handleNotificationClick}
-                            toolbar={false}
-                        />
-                    </Popover>
-
+                    <Grid item >
+                        {wallet && !wallet.signedIn ? <LoginButton /> :   <AccountInfo /> }
                     </Grid>
                     </>
-                ) : (
-                    <>
-                        <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{paddingLeft: '5px'}}>
-                            <LeftSideDrawer
-                            state={state}
-                            style={{float: 'left'}}
-                            /> 
-                        </Grid>
-                        <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
-                            <Logo />
-                        </Grid>
-                        <Grid item xs={3} sm={3} md={3} lg={3} xl={3} style={{marginTop: '3px'}}>
-                            {wallet && !wallet.signedIn ? <LoginButton /> : <LogoutButton/>}
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                            <AccountInfo balance={wallet.balance} /> 
-                            
-                        </Grid>
-
-                    </>
-                )
+                ) 
             :  
             wallet && !wallet.signedIn ? 
                 !matches ? (
                     <>
-                    <Grid item xs={7} sm={7} md={3} lg={3} xl={3}>
-                        <Logo />
+                    <Grid item style={{marginLeft: '25px'}}>
+                     <DiamondIcon style={{color: 'bb61e3', marginTop: '5px', fontSize: 45}}/>
                     </Grid>
-                    <Grid item xs={2} sm={2} md={7} lg={7} xl={7} style={{display: 'inline-flex'}} align="center">
-                        <Button style={{textAlign: 'center', marginRight: '30px'}}>About Catalyst</Button>
-                        <Button style={{textAlign: 'center', marginRight: '30px'}}>Developers</Button>
-                        <Button style={{textAlign: 'center', marginRight: '30px'}}>Learn</Button>
-                        <Button style={{textAlign: 'center'}}>Contact</Button>
-                    </Grid>
-                    <Grid item xs={4} sm={4} md={2} lg={2} xl={2}>
-                        {wallet && !wallet.signedIn ? <LoginButton /> : <LogoutButton  />}
+                    <Grid item>
+                        {wallet && !wallet.signedIn ? <LoginButton /> :  <AccountInfo /> }
                     </Grid>
                     </>
                 ) : (
                     <>
-                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
+                    <Grid item style={{marginLeft: '25px'}}>
                         <LeftSideDrawer
                             state={state}
-                           
+                        
                         /> 
+                        <DiamondIcon style={{color: 'bb61e3', marginTop: '5px', fontSize: 45}}/>
                     </Grid>
-                    <Grid item xs={7} sm={7} md={7} lg={7} xl={7}>
-                        <Logo />
-                    </Grid>
-                    <Grid item xs={4} sm={4} md={4} lg={4} xl={4} style={{marginTop: '3px'}} align="right">
-                        {wallet && !wallet.signedIn ? <LoginButton /> : <LogoutButton />}
+                    <Grid item>
+                        {wallet && !wallet.signedIn ? <LoginButton /> :   <AccountInfo /> }
                     </Grid>
                     </>
                 ) 
@@ -198,7 +136,6 @@ const Header = ({ state, handleUpdate }) => {
             
         </Grid>
         </div>
-    </>
     )
 }
 

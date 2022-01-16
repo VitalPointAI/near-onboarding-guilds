@@ -8,8 +8,10 @@ import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography'
 import LinearProgress from '@mui/material/LinearProgress'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import Button from '@mui/material/Button'
-
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Popover'
+import MenuItem  from '@mui/material/MenuItem'
+import LogoutButton from '../LogoutButton/logoutButton'
 const imageName = require('../../../img/default-profile.png') // default no-image avatar
 
 export default function PersonaInfo(props) {
@@ -32,7 +34,8 @@ export default function PersonaInfo(props) {
     const [anchorEl, setAnchorEl] = useState(null)
     const [finished, setFinished] = useState(false)
     const [avatar, setAvatar] = useState(props.avatar)
-
+    
+    const open = Boolean(anchorEl);
     const matches = useMediaQuery('(max-width:500px)')
    
     useEffect(
@@ -58,65 +61,36 @@ export default function PersonaInfo(props) {
     }, [isUpdated, did]
     )
 
-    const handleEditProfileClick = () => {
-        handleExpanded()
-        handleEditProfileClickState(true)
+    const handleEditProfileClick = (event) => {
+        setAnchorEl(event.currentTarget)  
     }
 
-    function handleEditProfileClickState(property){
-        setEditProfileClicked(property)
-    }
-
-    function handleExpanded() {
+    function handleClose() {
         setAnchorEl(null)
     }
 
     return (
             <>
-                {!matches ? (
-                    <>  
-                    <Button style={{textAlign: 'center', marginRight: '30px'}}>Purpose</Button>
-                    <Link to={`/`} variant="body1">
-                        <Button style={{textAlign: 'center', marginRight: '30px'}}>Opportunities</Button>
-                    </Link>
-                    <Link to={`/`} variant="body1">
-                        <Button style={{textAlign: 'center'}}>Supporters</Button>
-                    </Link>
-                            
-                    </>
-                    ) : (
-                    <>               
-                    <Button style={{textAlign: 'center', marginRight: '10px'}}>Purpose</Button>
-                    <Link to={`/`} variant="body1">
-                        <Button style={{textAlign: 'center', marginRight: '10px'}}>Opportunities</Button>
-                    </Link>
-                    <Link to={`/`} variant="body1">
-                        <Button style={{textAlign: 'center'}}>Supporters</Button>
-                    </Link>
-                       
-                    </>
-                    )
-                     }
-          
-            {!matches ? (
+            {(
                 finished ? (
                     <>
-                    <Typography variant="overline" display="block" style={{display: 'inline-flex', float: 'right'}} onClick={handleEditProfileClick}>
-                        <Avatar src={avatar} style={{marginRight: '5px'}} onClick={handleEditProfileClick}/>
-                        {accountId}: {balance} Ⓝ
-                    </Typography>                    
+                 
+                        <IconButton 
+                        onClick={handleEditProfileClick}> <Avatar src={avatar} /></IconButton>   
+
+                        <Menu open={open}
+                        id="profile-menu"
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                        transformOrigin={{ vertical: "top", horizontal: "center" }}
+                        >
+                            <MenuItem onClick={handleClose}><LogoutButton /></MenuItem>
+                        </Menu>
                     </>
                 ) : <LinearProgress />
-            ) : (
-                finished ? (
-                    <>
-                    <Typography variant="overline" display="block" style={{display: 'inline-flex'}} onClick={handleEditProfileClick}>
-                        <Avatar src={avatar} style={{marginRight: '5px'}} onClick={handleEditProfileClick}/>
-                        {accountId}: {balance} Ⓝ
-                    </Typography> 
-                    </>
-                ) : <LinearProgress />
-           )}
+            ) 
+           }
 
             {editProfileClicked ? <EditProfileForm
                 state={state}
