@@ -77,11 +77,13 @@ export const Home = ({ children }) => {
                         <Footer />
                         </>)
             :  (
+                <>
                 <div className={classes.root}>
                     <Header state={state}/>
                     <Landing />
-                    <Footer />
-                </div>)
+                </div>
+                <Footer />
+                </>)
             : state.accountData ? (<>
                 <div className={classes.root}>
                 <Header state={state}/>

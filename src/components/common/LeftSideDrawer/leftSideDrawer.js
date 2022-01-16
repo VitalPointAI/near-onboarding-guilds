@@ -207,10 +207,10 @@ const list = (anchor) => (
         <ListItemText primary='Edit Profile'/>
       </ListItem>
      
-      <Link to='/newkey'>
+      <Link to='/setup'>
         <ListItem className='recoverKey' button key={4}>
         <ListItemIcon><LocalHospitalIcon /></ListItemIcon>
-        <ListItemText primary='Recover Persona'/>
+        <ListItemText primary='Recover Profile'/>
       </ListItem>
     </Link>
     </List>
@@ -259,6 +259,12 @@ const list = (anchor) => (
             <ListItemIcon><EditIcon /></ListItemIcon>
             <ListItemText primary='Edit Profile'/>
         </ListItem>
+        <Link to='/setup'>
+          <ListItem className='recoverKey' button key={4}>
+          <ListItemIcon><LocalHospitalIcon /></ListItemIcon>
+          <ListItemText primary='Recover Profile'/>
+        </ListItem>
+        </Link>
         <Link to={`/trove/${accountId}`}>
         <ListItem button key={3} onClick={(e) => editProfileClick(e)}>
             <ListItemIcon><FavoriteIcon color="secondary" /></ListItemIcon>

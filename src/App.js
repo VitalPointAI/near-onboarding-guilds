@@ -9,6 +9,9 @@ import {
     useParams
   } from "react-router-dom"
 import RandomPhrase from './components/common/RandomPhrase/randomPhrase'
+import NewKey from './components/mainPages/newKey'
+import Profile from './components/mainPages/profile'
+import Register from './components/mainPages/register'
 import { KEY_REDIRECT } from './utils/ceramic'
 //import { Container } from './components/Container'
 //import { Receiver } from './components/Receiver'
@@ -125,6 +128,27 @@ const App = () => {
                         { children }
                     </Home>
                 </Route>
+                <Route exact path="/setup">
+                    <NewKey 
+                        state={state}
+                     >
+                        { children }
+                    </NewKey>
+                </Route>
+                <Route exact path="/profile">
+                    <Profile 
+                        state={state}
+                     >
+                        { children }
+                    </Profile>
+                </Route>
+                <Route exact path="/register">
+                <Profile 
+                    state={state}
+                 >
+                    { children }
+                </Profile>
+            </Route>
             </Switch>
         </Router>
     )

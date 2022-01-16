@@ -4,6 +4,7 @@ import { APP_OWNER_ACCOUNT, ceramic } from '../utils/ceramic'
 import { registry } from '../utils/registry'
 import { config } from './config'
 import { factory } from '../utils/factory'
+import { nft } from '../utils/nft'
 
 export const {
     FUNDING_DATA, 
@@ -45,6 +46,7 @@ export const {
     INACTIVATE_COMMUNITY, 
     NEW_INACTIVATION, 
     NEW_CHANGE_PROPOSAL,
+    SPACE_CREATED,
     networkId, 
     nodeUrl, 
     walletUrl, 
@@ -114,7 +116,8 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     // initiate global contracts
     const didRegistryContract = await registry.initiateDidRegistryContract(wallet.account())
     const factoryContract = await factory.initFactoryContract(wallet.account())
-
+    const nftContract = await nft.initNFTContract(wallet.account())
+    
     if(wallet.signedIn){
         console.log('here')
         // ********* Check and action redirects after DAO and proposal creation *************
@@ -159,14 +162,8 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         if (curUserIdx) {
             did = curUserIdx.id
         }
-        
-        // let registeredDid = await ceramic.getDid(account.accountId, factoryContract, didRegistryContract)
-        // if(registeredDid){
-        //     did = registeredDid
-        // }
-        // console.log('did', did)
 
-        update('', { admin, did, didRegistryContract, appIdx, account, accountId, curUserIdx })
+        update('', { admin, did, nftContract, didRegistryContract, appIdx, account, accountId, curUserIdx })
         
         if(curUserIdx){
             // check localLinks, see if they're still valid
@@ -745,4 +742,14 @@ export async function signal(proposalId, signalType, curDaoIdx, accountId, propo
 }
 
 
+}
+
+export async function spaceMint(metadata, owner) {
+    let tokenId = generateId()
+
+    await nft.nft_mint({
+        token_id: tokenId,
+        metadata: metadata,
+        receiver_id: owner
+        }, GAS)
 }

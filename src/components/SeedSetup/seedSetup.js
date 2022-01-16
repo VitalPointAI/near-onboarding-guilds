@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
     tooltip: {
       backgroundColor: '#f5f5f9',
       color: 'rgba(0, 0, 0, 0.87)',
-      maxWidth: 300,
+      maxWidth: '100px',
       fontSize: '12px',
       border: '1px solid #dadde9',
     },
@@ -173,7 +173,7 @@ export default function Import(props) {
                       </Typography>
                   </>
                 }
-                placement="right"
+                placement="left"
                 ><InfoIcon />
                 </HtmlTooltip>
                 </Typography>
@@ -295,7 +295,6 @@ export default function Import(props) {
           </Card>
           </AccordionDetails>
         </Accordion>
-          
           </Grid>
           <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
         </Grid>

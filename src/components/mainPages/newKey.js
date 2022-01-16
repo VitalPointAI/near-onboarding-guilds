@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
 import { appStore } from '../../state/app'
 import SeedSetup from '../SeedSetup/seedSetup'
-import Header from '../Header/header'
+import Header from '../common/Header/header'
+import Footer from '../common/Footer/footer'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'

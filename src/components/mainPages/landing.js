@@ -24,36 +24,6 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: 30, 
         paddingBottom: 60, 
     },
-    bottomtext:{
-        textAlign: 'center',
-        fontWeight: 700,
-        paddingTop: 30, 
-    },
-    button: {
-        marginTop: 50, 
-        backgroundColor: '#ffa366',
-        boxShadow: '3px 5px',
-        margin: 'auto',
-    },
-    button2:
-    {
-        marginTop: 20, 
-        backgroundColor: '#ffa366',
-        boxShadow: '3px 5px',
-        margin: 'auto',
-        textAlign: 'center',
-        color: "black",
-        width: 300, 
-        height: 40,
-    },
-      specialtext: { 
-        textAlign: 'center',
-        fontWeight: 700,
-        paddingBottom: 60, 
-        backgroundImage: '-webkit-linear-gradient(45deg, #ff9966, #ff5500)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-    },
 }));
 
 const Landing = () => {

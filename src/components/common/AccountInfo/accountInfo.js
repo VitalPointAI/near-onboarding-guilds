@@ -5,7 +5,6 @@ import EditProfileForm from '../../EditProfile/editProfile'
 
 // Material UI Components
 import Avatar from '@mui/material/Avatar'
-import Typography from '@mui/material/Typography'
 import LinearProgress from '@mui/material/LinearProgress'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import IconButton from '@mui/material/IconButton'

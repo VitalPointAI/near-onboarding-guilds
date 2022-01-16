@@ -40,6 +40,7 @@ let config = {
     STORAGE: '0.0025',
     FACTORY_DEPOSIT: '2',
     TOKEN_FACTORY_DEPOSIT: '1',
+    SPACE_CREATED: '__SPACE_CREATED',
     APP_OWNER_ACCOUNT: 'vitalpointai.testnet',
     CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
     IPFS_PROVIDER: 'https://ipfs.io/ipfs/',

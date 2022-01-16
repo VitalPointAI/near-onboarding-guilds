@@ -1,0 +1,144 @@
+import React, { useState, useEffect, useContext } from 'react'
+import { appStore, onAppMount } from '../../state/app'
+import Footer from '../common/Footer/footer'
+import Header from '../common/Header/header'
+import EditProfileForm from '../EditProfile/editProfile'
+
+// Material UI components
+import { makeStyles } from '@mui/styles'
+import Button from '@mui/material/Button'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
+import AccountBoxIcon from '@mui/icons-material/AccountBox'
+import Divider from '@mui/material/Divider'
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
+import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle'
+import LinearProgress from '@mui/material/LinearProgress'
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+      flexGrow: 1,
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    spacing: {
+      marginTop: '15px',
+      marginBottom: '15px'
+    },
+  }));
+  
+export default function Profile(props) {
+
+    const classes = useStyles()
+    const [editProfileClicked, setEditProfileClicked] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [profileEdit, setProfileEdit] = useState(false)
+    const [loaded, setLoaded] = useState(false)
+
+    const { state, dispatch, update } = useContext(appStore)
+
+    const {
+      accountId,
+      curUserIdx,
+      did
+    } = state
+
+     useEffect(
+        () => {
+          if(state){
+            setLoaded(true)
+          }
+    }, [state]
+    )
+
+    useEffect(
+        () => {
+          profileEdit ? window.location.assign('/register'): null
+    }, [profileEdit]
+    )
+
+    const handleEditProfileClick = () => {
+      handleExpanded()
+      handleEditProfileClickState(true)
+    }
+  
+    function handleEditProfileClickState(property){
+      setEditProfileClicked(property)
+    }
+
+    function handleProfileEdit(property){
+      setProfileEdit(property)
+    }
+
+    function handleExpanded() {
+      setAnchorEl(null)
+    }
+    
+    return (
+        <>
+        <div className={classes.root}>
+        {loaded ? <Header state={state}/> : <LinearProgress />}
+        
+        <Grid container spacing={1} style={{padding: '10px'}}>
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+          <Typography variant="h4" style={{marginTop:'40px', marginBottom: '30px'}}>The Space Gem universe is waiting.</Typography>
+        </Grid>
+        <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
+        <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+          <List>
+              <ListItem className={classes.spacing}>
+                <ListItemIcon>
+                  <AccountBoxIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Start building your profile."
+                />
+              </ListItem>
+              <Divider variant="middle" />
+              <ListItem className={classes.spacing}>
+                <ListItemIcon>
+                  <SupervisedUserCircleIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Browse and book workspaces and parking."
+                />
+              </ListItem>
+              <Divider variant="middle" />
+              <ListItem className={classes.spacing}>
+              <ListItemIcon>
+                <MonetizationOnIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Use the space, clean up after yourself, earn rewards."
+              />
+            </ListItem>
+            <Divider variant="middle" />
+          </List>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                <Button className={classes.spacing} style={{float: 'left', marginTop: '20px', marginRight: '15px'}} variant="contained" color="primary" onClick={handleEditProfileClick}>
+                Get Started
+                </Button> <Typography variant="body2" style={{marginTop: '15px'}}>It only takes a few minutes and you can edit it later.</Typography>
+            </Grid>
+        </Grid>
+        <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
+      </Grid>
+        
+        </div>
+        <Footer />
+
+        {editProfileClicked ? <EditProfileForm
+          handleEditProfileClickState={handleEditProfileClickState}
+          handleProfileEdit={handleProfileEdit}
+          curUserIdx={curUserIdx}
+          did={did}
+          accountId={accountId}
+          /> : null }
+        </>
+        
+    )
+}

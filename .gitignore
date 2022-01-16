@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 /out
+/contract/out
+/contract/.cargo
+/.parcel-cache
 
 #keys
 /neardev
@@ -20,6 +23,9 @@
 /contract/target
 /.cache
 /dist
+
+/contract/nft-contract/target
+/contract/market-contract/target
 
 # misc
 .DS_Store

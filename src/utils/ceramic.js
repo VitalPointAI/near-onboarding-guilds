@@ -17,6 +17,7 @@ import { definitionsSchema } from '../schemas/definitions'
 import { schemaSchema } from '../schemas/schemas'
 import { commentsSchema } from '../schemas/comments'
 import { notificationSchema } from '../schemas/notifications'
+import { metadataSchema } from '../schemas/metadata'
 
 import { config } from '../state/config'
 
@@ -177,6 +178,41 @@ class Ceramic {
     ceramic.setDID(did)
     ceramic.did.setProvider(provider)
   
+    await ceramic.did.authenticate()
+    
+    return ceramic
+  }
+
+  async getCeramicWithSeed(seed) {
+    if (seed == undefined || seed == false){
+      return false
+    }
+    
+    let authSecret = Buffer.from((seed).slice(0,32))
+
+    const authId = 'NearAuthProvider'
+
+    const getPermission = async (request) => {
+       return request.payload.paths
+    }
+
+    const threeId = await ThreeIdProvider.create({
+      ceramic,
+      getPermission,
+      authSecret,
+      authId
+    })
+    
+    const provider = threeId.getDidProvider()
+   
+    const resolver = {
+      ...KeyDidResolver.getResolver(),
+      ...ThreeIdResolver.getResolver(ceramic)
+    }
+    const did = new DID({ resolver })
+    
+    ceramic.setDID(did)
+    ceramic.did.setProvider(provider)
     await ceramic.did.authenticate()
     
     return ceramic
@@ -443,6 +479,19 @@ class Ceramic {
     return appIdx
   }
 
+  async getSpaceIDX(seed, nftContract){
+    let client = await this.getCeramicWithSeed(seed)
+    let spaceProfile = this.getAlias(APP_OWNER_ACCOUNT, 'metadata', client, metadataSchema, 'space metadata info', nftContract)
+    const done = await Promise.all([
+      spaceProfile,
+    ])
+    let alias = {
+      spaceProfile: done[0]
+    }
+    let spaceIdx = new IDX({ ceramic: client, aliases: alias})
+    return spaceIdx
+  }
+
 
   // retrieve user identity
   async getUserIdx(account, appIdx, near, factoryContract, registryContract){
@@ -542,7 +591,7 @@ class Ceramic {
       }
      
       if(seed == false){
-        set(KEY_REDIRECT, {action: true, link: '/newKey'})
+        set(KEY_REDIRECT, {action: true, link: '/setup'})
         return false
       }
   }
