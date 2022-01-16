@@ -8,7 +8,8 @@
 /contract/out
 /contract/.cargo
 /.parcel-cache
-
+.parcel-cache
+.cache
 #keys
 /neardev
 
