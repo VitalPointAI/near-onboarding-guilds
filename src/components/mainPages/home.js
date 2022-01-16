@@ -49,7 +49,6 @@ export const Home = ({ children }) => {
     useEffect(
         () => {
             let needsKey = get(KEY_REDIRECT, [])
-            console.log('needskey', needsKey)
             if(needsKey.action == true){
                 update('', {key: true})
             } else (
@@ -57,51 +56,21 @@ export const Home = ({ children }) => {
             )
     }, [finished]
     )
-    console.log('finished', finished)
-    console.log('wallet', wallet)
+   
     return (
         <>
         {finished ? 
             wallet && wallet.signedIn ?  
-                key ? (<><div className={classes.root}>
-                        <Header state={state}/>
-                            <SeedSetup />
-                        </div>
-                        <Footer />
-                        </>) 
-                    : (<>
-                        <div className={classes.root}>
-                        <Header state={state}/>
-                            <Landing />
-                        </div>
-                        <Footer />
-                        </>)
-            :  (
-                <>
-                <div className={classes.root}>
-                    <Header state={state}/>
-                    <Landing />
-                </div>
-                <Footer />
-                </>)
-            : state.accountData ? (<>
-                <div className={classes.root}>
-                <Header state={state}/>
-                    {children}
-                </div>
-                <Footer /></>
-            ) 
-            : (<><div className={classes.root}>
-                <Header state={state}/>
+                key ? (<SeedSetup />) : (<Landing />)
+            :  (<Landing />)
+            : state.accountData ? ({children}) 
+            : (<>
                 <div className={classes.centered}>
                     <CircularProgress/><br></br>
                     <Typography variant="h6">Finding Gems...</Typography><br></br>
                     <RandomPhrase />
                 </div>
-               
-                </div>
-                <Footer />
-                </>)
+            </>)
         }    
        
         { state.app.alert &&

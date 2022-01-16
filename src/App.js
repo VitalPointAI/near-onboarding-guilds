@@ -1,13 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { appStore, onAppMount } from './state/app'
 import { get, set, del } from './utils/storage'
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link,
-    useParams
-  } from "react-router-dom"
+import { Route } from "react-router-dom"
+import Header from './components/common/Header/header'
+import Footer from './components/common/Footer/footer'
 import RandomPhrase from './components/common/RandomPhrase/randomPhrase'
 import NewKey from './components/mainPages/newKey'
 import Profile from './components/mainPages/profile'
@@ -45,6 +41,12 @@ export const flexClass = 'd-flex justify-content-evenly align-items-center '
 export const qs = (s) => document.querySelector(s)
 
 const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column'
+      },
     centered: {
       width: '200px',
       height: '100px',
@@ -119,38 +121,40 @@ const App = () => {
     // }
     
     return(
-        <Router>
-            <Switch>
-                <Route exact path="/">
-                    <Home 
-                        state={state}
-                     >
-                        { children }
-                    </Home>
-                </Route>
-                <Route exact path="/setup">
-                    <NewKey 
-                        state={state}
-                     >
-                        { children }
-                    </NewKey>
-                </Route>
-                <Route exact path="/profile">
-                    <Profile 
-                        state={state}
-                     >
-                        { children }
-                    </Profile>
-                </Route>
-                <Route exact path="/register">
+        <>
+        <div className={classes.root}>
+        <Header state={state}/>
+            <Route exact path="/">
+                <Home 
+                    state={state}
+                    >
+                    { children }
+                </Home>
+            </Route>
+            <Route exact path="/setup"> 
+                <NewKey 
+                    state={state}
+                    >
+                    { children }
+                </NewKey>
+            </Route>
+            <Route exact path="/profile">
                 <Profile 
                     state={state}
-                 >
+                    >
                     { children }
                 </Profile>
             </Route>
-            </Switch>
-        </Router>
+            <Route exact path="/register">
+                <Profile 
+                    state={state}
+                >
+                    { children }
+                </Profile>
+            </Route>
+        </div>
+        <Footer />
+        </>
     )
 }
 

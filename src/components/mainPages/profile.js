@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import Footer from '../common/Footer/footer'
-import Header from '../common/Header/header'
 import EditProfileForm from '../EditProfile/editProfile'
 
 // Material UI components
@@ -81,8 +79,7 @@ export default function Profile(props) {
     
     return (
         <>
-        <div className={classes.root}>
-        {loaded ? <Header state={state}/> : <LinearProgress />}
+        {!loaded ? <LinearProgress /> : (
         
         <Grid container spacing={1} style={{padding: '10px'}}>
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
@@ -127,9 +124,7 @@ export default function Profile(props) {
         </Grid>
         <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
       </Grid>
-        
-        </div>
-        <Footer />
+        )}
 
         {editProfileClicked ? <EditProfileForm
           handleEditProfileClickState={handleEditProfileClickState}

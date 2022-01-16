@@ -74,9 +74,6 @@ export default function Register(props) {
     
     return (
         <>
-        <div className={classes.root}>
-        <Header state={state}/>
-
         <Grid container spacing={1} style={{padding: '10px'}}>
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
           <Typography variant="h4" style={{marginTop:'40px', marginBottom: '40px'}}>To be found or not to be found?</Typography>
@@ -131,8 +128,6 @@ export default function Register(props) {
         </Grid>
         <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
       </Grid>
-        </div>
-        <Footer />
         </>
         
     )
