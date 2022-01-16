@@ -1,4 +1,8 @@
 import React from 'react'
+import ImageLoader from '../common/ImageLoader/imageLoader'
+import spaceGemLogo from '../../img/space-gem-logo.png'
+import office from '../../img/office.png'
+import parking from '../../img/parking.png'
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'
@@ -14,21 +18,6 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column'
       },
-    top: {
-        backgroundImage: 'linear-gradient(180deg, #80d4ff, white)',
-        backgroundSize: '100%',
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column'
-    },
-    bottom: {
-        background: 'linear-gradient(360deg, #80d4ff, white)',
-        height: '45px',
-        margin: 0,
-        minWidth: '100%',
-        padding: 0,
-        bottom: 0, 
-    },
     center: {
         textAlign: 'center',
         fontWeight: 700,
@@ -74,41 +63,51 @@ const Landing = () => {
     return(
     <>
     
-   <div className={classes.top}>
+   <div>
    {!matches ?
         <Grid container justifyContent="center" alignItems="center" spacing={3} >
-            <Grid item xs={12} sm={12} md={10} lg={8} xl={8} style={{marginTop: '50px', marginBottom: '50px'}}>
-                
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginTop: '50px', marginBottom: '25px'}}>
+                <ImageLoader image={spaceGemLogo} style={{width:'70%'}}/>
             </Grid> 
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography variant="h3" align="center" style={{marginBottom: '20px'}}>
-                    Discover the communities growing with <span className={classes.specialtext}>Catalyst</span>...
+                <Typography variant="h5" align="center">
+                   Find Your Space.
                 </Typography>
-              
+                <Typography variant="h4" align="center" style={{marginBottom: '20px'}}>
+                   Claim your Gem.
+                </Typography><br></br>
             </Grid>
-            <Grid item xs={12}>
-                <h2 className={classes.bottomtext}>...or learn how Catalyst works</h2>
+            <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
+                <Typography variant="h6">Office</Typography>
+                <ImageLoader image={office} style={{width:'70%'}}/>
             </Grid>
-            <Button href='/FAQ' className={classes.button2}>Visit the FAQ</Button>
+                <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
+                <Typography variant="h6">Parking</Typography>
+                <ImageLoader image={parking} style={{width:'70%'}}/>
+            </Grid>
         </Grid>
     :
-        <Grid container justifyContent="center" alignItems="center" spacing={0} >
-            <Grid item xs={12} sm={12} md={10} lg={8} xl={8} style={{marginTop: '20px', marginBottom: '50px'}}>
-               
-            </Grid>
-          
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography variant="h4" align="center" style={{marginBottom: '20px'}}>
-                    Discover the communities growing with <span className={classes.specialtext}>Catalyst</span>...
-                </Typography>
-               
-            </Grid>
-            <Grid item xs={12}>
-                <h2 className={classes.bottomtext}>...or learn how Catalyst works</h2>
-            </Grid>
-            <Button href='/FAQ' className={classes.button2}>Visit the FAQ</Button>
+        <Grid container justifyContent="center" alignItems="center" spacing={3} >
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginTop: '50px', marginBottom: '25px'}}>
+        <ImageLoader image={spaceGemLogo} style={{width:'70%'}}/>
+        </Grid> 
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+            <Typography variant="h5" align="center">
+            Find Your Space.
+            </Typography>
+            <Typography variant="h4" align="center" style={{marginBottom: '20px'}}>
+            Claim your Gem.
+            </Typography><br></br>
         </Grid>
-
+        <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
+            <Typography variant="h6">Office</Typography>
+            <ImageLoader image={office} style={{width:'70%'}}/>
+        </Grid>
+            <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
+            <Typography variant="h6">Parking</Typography>
+            <ImageLoader image={parking} style={{width:'70%'}}/>
+        </Grid>
+        </Grid>
     }
     </div>
     

@@ -445,7 +445,7 @@ class Ceramic {
 
 
   // retrieve user identity
-  async getUserIdx(account, appIdx, near, registryContract){
+  async getUserIdx(account, appIdx, near, factoryContract, registryContract){
       let seed = false
       set(KEY_REDIRECT, {action: false, link: ''})
 

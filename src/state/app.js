@@ -5,6 +5,7 @@ import { State } from '../utils/state'
 import { initNear, hasKey } from './near'
 import * as nearAPI from 'near-api-js'
 import { registry } from '../utils/registry'
+import { factory } from '../utils/factory'
 import { ceramic } from '../utils/ceramic'
 import { config } from './config'
 
@@ -86,11 +87,11 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
             const account = wallet.account()
             const loggedInAccountId = account.accountId
             const didRegistryContract = await registry.initiateDidRegistryContract(account)
-            const daoFactoryContract = await factory.initFactoryContract(account)
+            const factoryContract = await factory.initFactoryContract(account)
             //Initiate App Ceramic Components
     
             const appIdx = await ceramic.getAppIdx(didRegistryContract, account, near)
-            let curUserIdx = await ceramic.getUserIdx(account, appIdx, near, didRegistryContract)
+            let curUserIdx = await ceramic.getUserIdx(account, appIdx, near, factoryContract, didRegistryContract)
             update('accountData', { curUserIdx })
            
         }

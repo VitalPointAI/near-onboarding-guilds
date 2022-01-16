@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
 export default function LogoutButton(props) {
 
     const classes = useStyles()
-    const { accountId } = props
 
     return (
         <>
@@ -35,9 +34,6 @@ export default function LogoutButton(props) {
             startIcon={<LockTwoToneIcon />}
             onClick={logout}
             >Sign Out</Button>
-            <Button variant="outlined" color="primary" className={classes.accountButton} onClick={logout}>
-                {accountId}
-            </Button>
       </>
     )
 }

@@ -6,6 +6,7 @@ import FileUpload from '../common/IPFSUpload/fileUpload'
 import { flexClass } from '../../App'
 import { ceramic, IPFS_PROVIDER } from '../../utils/ceramic' 
 import { config } from '../../state/config'
+import { formatDate } from '../../state/near'
 import * as nearAPI from 'near-api-js'
 
 // Material UI components
@@ -130,8 +131,8 @@ export default function EditProfileForm(props) {
     const countries = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua & Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia","Bosnia & Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Cayman Islands","Chad","Chile","China","Colombia","Congo","Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cruise Ship","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Estonia","Ethiopia","Falkland Islands","Faroe Islands","Fiji","Finland","France","French Polynesia","French West Indies","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece","Greenland","Grenada","Guam","Guatemala","Guernsey","Guinea","Guinea Bissau","Guyana","Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Jamaica","Japan","Jersey","Jordan","Kazakhstan","Kenya","Kuwait","Kyrgyz Republic","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Macau","Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Mauritania","Mauritius","Mexico","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Namibia","Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre & Miquelon","Samoa","San Marino","Satellite","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","South Africa","South Korea","Spain","Sri Lanka","St Kitts & Nevis","St Lucia","St Vincent","St. Lucia","Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor L'Este","Togo","Tonga","Trinidad & Tobago","Tunisia","Turkey","Turkmenistan","Turks & Caicos","Uganda","Ukraine","United Arab Emirates","United Kingdom","Uruguay","Uzbekistan","Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"];
     const languages = ['Abkhazian','Afar','Afrikaans','Akan','Albanian','Amharic','Arabic','Aragonese','Armenian','Assamese','Avaric','Avestan','Aymara','Azerbaijani','Bambara','Bashkir','Basque','Belarusian','Bengali','Bihari languages','Bislama','Bosnian','Breton','Bulgarian','Burmese','Catalan, Valencian','Central Khmer','Chamorro','Chechen','Chichewa, Chewa, Nyanja','Chinese','Church Slavonic, Old Bulgarian, Old Church Slavonic','Chuvash','Cornish','Corsican','Cree','Croatian','Czech','Danish','Divehi, Dhivehi, Maldivian','Dutch, Flemish','Dzongkha','English','Esperanto','Estonian','Ewe','Faroese','Fijian','Finnish','French','Fulah','Gaelic, Scottish Gaelic','Galician','Ganda', 'Georgian','German','Gikuyu, Kikuyu','Greek (Modern)','Greenlandic, Kalaallisut','Guarani','Gujarati','Haitian, Haitian Creole','Hausa','Hebrew','Herero','Hindi','Hiri Motu','Hungarian','Icelandic','Ido','Igbo','Indonesian','Interlingua (International Auxiliary Language Association)','Interlingue','Inuktitut','Inupiaq','Irish','Italian','Japanese','Javanese','Kannada','Kanuri','Kashmiri','Kazakh','Kinyarwanda','Komi','Kongo','Korean','Kwanyama, Kuanyama','Kurdish','Kyrgyz','Lao','Latin','Latvian','Letzeburgesch, Luxembourgish','Limburgish, Limburgan, Limburger','Lingala','Lithuanian','Luba-Katanga','Macedonian','Malagasy','Malay','Malayalam','Maltese','Manx','Maori','Marathi','Marshallese','Moldovan, Moldavian, Romanian','Mongolian','Nauru','Navajo, Navaho','Northern Ndebele','Ndonga','Nepali','Northern Sami','Norwegian','Norwegian Bokmål','Norwegian Nynorsk','Nuosu, Sichuan Yi','Occitan (post 1500)','Ojibwa','Oriya','Oromo','Ossetian, Ossetic','Pali','Panjabi, Punjabi','Pashto, Pushto','Persian','Polish','Portuguese','Quechua','Romansh','Rundi','Russian','Samoan','Sango','Sanskrit','Sardinian','Serbian','Shona','Sindhi','Sinhala, Sinhalese','Slovak','Slovenian','Somali','Sotho, Southern','South Ndebele','Spanish, Castilian','Sundanese','Swahili','Swati','Swedish','Tagalog','Tahitian','Tajik','Tamil','Tatar','Telugu','Thai','Tibetan','Tigrinya','Tonga (Tonga Islands)','Tsonga','Tswana','Turkish','Turkmen','Twi','Uighur, Uyghur','Ukrainian','Urdu','Uzbek','Venda','Vietnamese','Volap_k','Walloon','Welsh','Western Frisian','Wolof','Xhosa','Yiddish','Yoruba','Zhuang, Chuang','Zulu' ]
     
-    const [skillSet, setSkillSet] = useState([{}])
-    const [developerSkillSet, setDeveloperSkillSet] = useState([{}])
+    const [skillSet, setSkillSet] = useState({})
+    const [developerSkillSet, setDeveloperSkillSet] = useState({})
 
     const { register, handleSubmit, watch, errors, control, reset, setValue, getValues } = useForm()
     const {
@@ -155,7 +156,6 @@ export default function EditProfileForm(props) {
 
     const {
         handleEditProfileClickState,
-        handleProfileEdit,
         curUserIdx,
         accountId,
         did
@@ -164,11 +164,13 @@ export default function EditProfileForm(props) {
     const {
       near,
       appIdx,
-      currentDaosList,
       isUpdated,
       didRegistryContract
     } = state
 
+    console.log('curuseridx', curUserIdx)
+    console.log('did', did)
+    console.log('accountId', accountId)
     const {
       contractId
     } = useParams()
@@ -197,10 +199,10 @@ export default function EditProfileForm(props) {
           setLoaded(false)
 
            // Set Card Persona Idx       
-           if(accountId && currentDaosList){
+           if(accountId && did){
           
               let result = await appIdx.get('profile', did)   
-           
+            console.log('result', result)
               if(result) {
                 result.date ? setDate(result.date) : setDate('')
                 result.avatar ? setAvatar(result.avatar) : setAvatar(imageName)
@@ -214,26 +216,21 @@ export default function EditProfileForm(props) {
                 result.skill ? setSkill(result.skill): setSkill([])
                 result.familiarity? setFamiliarity(result.familiarity): setFamiliarity('0')
                 result.notifications? setNotifications(result.notifications): setNotifications([])
-               if(result.skillSet){
-                setSkillSet(result.skillSet)
-              }
-              if(result.developerSkillSet){
-                setDeveloperSkillSet(result.developerSkillSet)
-              } 
+                result.skillSet ? setSkillSet(result.skillSet) : setSkillSet({})
+                result.developerSkillSet ? setDeveloperSkillSet(result.developerSkillSet) : setDeveloperSkillSet({})
                 result.personaSkills? setValue('personaSkills', result.personaSkills): setValue('personaSkills', {name: ''})
                 result.personaSpecificSkills? setValue('personaSpecificSkills', result.personaSpecificSkills): setValue('personaSpecificSkills', {name: ''})
-              } else {
-                await refreshSkills(currentDaosList)
               }
-
+              return true
            }
         }
        
         fetchData()
           .then((res) => {
-            setLoaded(true)
+            res ? setLoaded(true) : setLoaded(false)
           })
-    },[currentDaosList])
+
+    },[accountId, did])
 
     function handleFileHash(hash) {  
       setAvatar(IPFS_PROVIDER + hash)
@@ -241,65 +238,6 @@ export default function EditProfileForm(props) {
 
     function handleAvatarLoaded(property){
       setAvatarLoaded(property)
-    }
-
-    async function refreshSkills(daos){
-      if(currentDaosList && currentDaosList.length > 0){
-        let i = 0
-       
-        while (i < currentDaosList.length){
-          if(currentDaosList[i].status == 'active'){
-            let daoAccount = new nearAPI.Account(near.connection, currentDaosList[i].contractId)
-            
-            let thisCurDaoIdx = await ceramic.getUserIdx(daoAccount, appIdx, near, didRegistryContract)
-            console.log('currentskills', currentSkills)
-            // Get Existing Community Skills
-            if(thisCurDaoIdx){
-              let daoProfileResult = await thisCurDaoIdx.get('daoProfile', thisCurDaoIdx.id)
-              console.log('daoProfile', daoProfileResult)
-             // let currentSkills = {...skillSet[0]}
-             // console.log('currentskills', currentSkills)
-             // let currentSpecificSkills = {...developerSkillSet[0]}
-              
-              if(daoProfileResult){
-                daoProfileResult.skills.map((name, value) => {
-                  let exists = false
-                  console.log('name', name.name)
-                  
-                    Object.entries(currentSkills).map(([key, value]) => {
-                      console.log('key', key)
-                      console.log('value', value)
-                      if((key).toLowerCase() == (name.name).toLowerCase()){
-                        console.log('here')
-                        exists = true
-                      }
-                    })
-                  console.log('exists', exists)
-                  if(!exists){
-                    currentSkills = ({...currentSkills, [name.name]: false})
-                  }
-                })
-              
-                daoProfileResult.specificSkills.map((name, value) => {
-                  let exists = false
-                  Object.entries(currentSpecificSkills).map(([key, value]) => {
-                    if((key).toLowerCase() == (name.name).toLowerCase()){
-                      exists = true
-                    }
-                  })
-                  if(!exists){
-                    currentSpecificSkills = ({...currentSpecificSkills, [name.name]: false})
-                  }
-                })
-                
-              }
-            }
-          }
-        i++
-        }
-        setSkillSet(currentSkills)
-        setDeveloperSkillSet(currentSpecificSkills)
-      }
     }
 
     const handleClose = () => {
@@ -311,6 +249,7 @@ export default function EditProfileForm(props) {
         let value = event.target.value;
         setName(value)
     }
+
     const handleEmailChange = (event) => {
        let value = event.target.value;
        setEmail(value)
@@ -345,26 +284,15 @@ export default function EditProfileForm(props) {
         setFamiliarity(newValue.toString())
       }
     }
-    
-    function formatDate(timestamp) {
-      let intDate = parseInt(timestamp)
-      let options = {year: 'numeric', month: 'long', day: 'numeric'}
-      return new Date(intDate).toLocaleString('en-US', options)
-    }
+
     const handleSkillSetChange = (event) => {
-    //  let tempSkillArray = []
       let newSkills = { ...skillSet, [event.target.name]: event.target.checked }
-    //  tempSkillArray.push(newSkills)
       setSkillSet(newSkills)
     }
   
     const handleDeveloperSkillSetChange = (event) => {
       let newSkills = { ...developerSkillSet, [event.target.name]: event.target.checked }
       setDeveloperSkillSet(newSkills)
-    }
-
-    const handleOtherSkillsChange = (event) => {
-      setOtherSkills(event.target.value.split(","))
     }
     
     const onSubmit = async (values) => {
@@ -399,7 +327,6 @@ export default function EditProfileForm(props) {
   
       setFinished(true)
       update('', { isUpdated: !isUpdated })
-      handleProfileEdit(true)
       setOpen(false)
       handleClose()
     }
@@ -808,12 +735,16 @@ export default function EditProfileForm(props) {
                 </Button>
               </DialogActions>)}
               <Divider style={{marginBottom: 10}}/>
-              
-              </>) : <><div className={classes.waiting}><div class={flexClass}><CircularProgress/></div><Grid container spacing={1} alignItems="center" justifyContent="center" >
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography variant="h5" align="center">Loading Persona Data</Typography>
+              </>) : (
+              <div className={classes.waiting}>
+              <Grid container spacing={1} alignItems="center" justifyContent="center" >
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                <CircularProgress/>  
+                <Typography variant="h5" align="center">Loading Profile</Typography>
               </Grid>
-              </Grid></div></> }
+              </Grid>
+              </div>
+              )}
             </Dialog>
            
           </div>

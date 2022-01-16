@@ -114,7 +114,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     // initiate global contracts
     const didRegistryContract = await registry.initiateDidRegistryContract(wallet.account())
     const factoryContract = await factory.initFactoryContract(wallet.account())
-    
+
     if(wallet.signedIn){
         console.log('here')
         // ********* Check and action redirects after DAO and proposal creation *************
@@ -151,20 +151,22 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         //Initiate App Ceramic Components
 
         const appIdx = await ceramic.getAppIdx(didRegistryContract, account, near)
-
-        let curUserIdx = await ceramic.getUserIdx(account, appIdx, near, didRegistryContract)
+        console.log('appidx', appIdx)
+        let curUserIdx = await ceramic.getUserIdx(account, appIdx, near, factoryContract, didRegistryContract)
+        console.log('curuseridx', curUserIdx)
         
         let did
         if (curUserIdx) {
             did = curUserIdx.id
         }
         
-        let registeredDid = await ceramic.getDid(account.accountId, factoryContract, didRegistryContract)
-        if(registeredDid){
-            did = registeredDid
-        }
+        // let registeredDid = await ceramic.getDid(account.accountId, factoryContract, didRegistryContract)
+        // if(registeredDid){
+        //     did = registeredDid
+        // }
+        // console.log('did', did)
 
-        update('', { admin, did, registeredDid, didRegistryContract, appIdx, account, accountId, curUserIdx })
+        update('', { admin, did, didRegistryContract, appIdx, account, accountId, curUserIdx })
         
         if(curUserIdx){
             // check localLinks, see if they're still valid

@@ -4,6 +4,7 @@ import ImageLoader from '../ImageLoader/imageLoader'
 import clsx from 'clsx'
 import { appStore, onAppMount } from '../../../state/app'
 import defaultProfileImage from '../../../img/default-profile.png'
+import EditProfileForm from '../../EditProfile/editProfile'
 
 // Material UI
 import { makeStyles, useTheme } from '@mui/styles'
@@ -76,9 +77,10 @@ const [drawerState, setDrawerState] = useState({
 
 const {
   wallet,
-  appIdx,
   accountId,
-  isUpdated
+  isUpdated,
+  curUserIdx,
+  did
 } = state
 
 // useEffect(
@@ -142,7 +144,7 @@ const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
 }
 
-function handleEditProfileClick(property){
+function handleEditProfileClickState(property){
     setEditProfileClicked(property)
 }
 
@@ -276,7 +278,7 @@ const list = (anchor) => (
         <List>      
         <Link to='/manage'>
         <ListItem button key={5}>
-            <ListItemIcon><ExploreIcon /></ListItemIcon>
+            <ListItemIcon><SettingsIcon /></ListItemIcon>
             <ListItemText primary='Manage Spaces'/>
         </ListItem>
         </Link>
@@ -339,7 +341,10 @@ return (
 
         {editProfileClicked ? <EditProfileForm
             state={state}
-            handleEditProfileClick={handleEditProfileClick}
+            handleEditProfileClickState={handleEditProfileClickState}
+            accountId={accountId}
+            did={did}
+            curUserIdx={curUserIdx}
         /> : null }
 
         {notificationsClicked ? 
