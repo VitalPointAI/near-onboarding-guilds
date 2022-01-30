@@ -12,12 +12,14 @@ import { DID } from 'dids'
 
 // schemas
 import { profileSchema } from '../schemas/profile'
+import { daoProfileSchema } from '../schemas/daoProfile'
 import { accountKeysSchema } from '../schemas/accountKeys'
 import { definitionsSchema } from '../schemas/definitions'
 import { schemaSchema } from '../schemas/schemas'
 import { commentsSchema } from '../schemas/comments'
 import { notificationSchema } from '../schemas/notifications'
 import { metadataSchema } from '../schemas/metadata'
+import { apiKeysSchema } from '../schemas/apiKeys'
 
 import { config } from '../state/config'
 
@@ -335,7 +337,8 @@ class Ceramic {
           try{
             did = await contract.putDID({
                 accountId: accountId,
-                did: ceramic.did.id
+                did: ceramic.did.id,
+                type: 'application'
             }, GAS)
           } catch (err) {
             console.log('problem storing DID', err)
@@ -422,8 +425,10 @@ class Ceramic {
     } else {
 
     // uncomment below to change a definition
-    // let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'opportunities', legacyAppClient, opportunitiesSchema, 'opportunities to complete', contract)
+    // let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'dao profiles', contract)
+    // let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
     // console.log('changed schema', changed)
+    // console.log('changed1 schema', changed1)
 
       const definitions = this.getAlias(APP_OWNER_ACCOUNT, 'Definitions', appClient, definitionsSchema, 'alias definitions', contract)
       const schemas = this.getAlias(APP_OWNER_ACCOUNT, 'Schemas', appClient, schemaSchema, 'user schemas', contract)
@@ -431,6 +436,9 @@ class Ceramic {
       const accountsKeys = this.getAlias(APP_OWNER_ACCOUNT, 'accountsKeys', appClient, accountKeysSchema, 'user account info', contract)
       const comments = this.getAlias(APP_OWNER_ACCOUNT, 'comments', appClient, commentsSchema, 'comments', contract)
       const notifications = this.getAlias(APP_OWNER_ACCOUNT, 'notifications', appClient, notificationSchema, 'notifications', contract)
+      const daoProfile = this.getAlias(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'guild profiles', contract)
+      const apiKeys = this.getAlias(APP_OWNER_ACCOUNT, 'apiKeys', appClient, apiKeysSchema, 'guild api keys', contract)
+     
       const done = await Promise.all([
         appDid, 
         definitions, 
@@ -438,7 +446,9 @@ class Ceramic {
         profile, 
         accountsKeys, 
         comments,
-        notifications
+        notifications,
+        daoProfile,
+        apiKeys
       ])
       
       let rootAliases = {
@@ -448,6 +458,8 @@ class Ceramic {
         accountsKeys: done[4],
         comments: done[5],
         notifications: done[6],
+        daoProfile: done[7],
+        apiKeys: done[8]
       }
 
       // cache aliases
@@ -458,7 +470,7 @@ class Ceramic {
       const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases})
 
       return appIdx
-    }
+     }
   }
 
 

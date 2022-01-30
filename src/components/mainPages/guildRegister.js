@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import Footer from '../common/Footer/footer'
 import { STORAGE, GAS, parseNearAmount } from '../../state/near'
-import Header from '../common/Header/header'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -31,17 +29,17 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
   
-export default function Register(props) {
+export default function GuildRegister(props) {
 
     const classes = useStyles()
-    const [registered, setRegistered] = useState(false)
 
     const { state, dispatch, update } = useContext(appStore)
 
     const {
       didRegistryContract,
       accountId,
-      did
+      did,
+      accountType
     } = state
 
     useEffect(
@@ -49,27 +47,26 @@ export default function Register(props) {
           let urlVariables = window.location.search
           const urlParameters = new URLSearchParams(urlVariables)
           let transactionHash = urlParameters.get('transactionHashes')
-          registered && transactionHash ? window.location.assign('/') : null
-    }, [registered]
+          accountType != undefined && transactionHash ? window.location.assign('/create-guild-profile') : null
+    }, [accountType]
     )
 
    async function onSubmit(){
       if(did){
-        setRegistered(true)
         try{
           await didRegistryContract.putDID({
             accountId: accountId,
-            did: did
+            did: did,
+            type: 'guild'
           }, GAS, parseNearAmount((parseFloat(STORAGE)).toString()))
         } catch (err) {
           console.log('error registering', err)
-          setRegistered(false)
         }
       }
     }
 
     function handleNo(){
-      window.location.assign('/')
+      window.location.assign('/create-guild-profile')
     }
     
     return (
@@ -77,7 +74,7 @@ export default function Register(props) {
         <Grid container spacing={1} style={{padding: '10px'}}>
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
           <Typography variant="h4" style={{marginTop:'40px', marginBottom: '40px'}}>To be found or not to be found?</Typography>
-          <Typography variant="h6" style={{marginTop:'40px', marginBottom: '40px'}}>Decide if you want to register your profile.</Typography>
+          <Typography variant="h6" style={{marginTop:'40px'}}>Decide if you want to register your guild.</Typography>
         </Grid>
         <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
         <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
@@ -87,7 +84,7 @@ export default function Register(props) {
                   <AccountBoxIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Showcases your profile and is the first step towards obtaining verified status."
+                  primary="Showcases your guild and is the first step towards obtaining verified status."
                 />
               </ListItem>
               <Divider variant="middle" />
@@ -96,7 +93,7 @@ export default function Register(props) {
                   <SupervisedUserCircleIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Enables community features."
+                  primary="Enables guild discoverability - making it easier for people to find, join, and participate in your guild."
                 />
               </ListItem>
               <Divider variant="middle" />
@@ -105,26 +102,29 @@ export default function Register(props) {
                 <StarsIcon />
               </ListItemIcon>
               <ListItemText
-                primary="Allows you to show up on leaderboards and be eligible for reputation based rewards."
+                primary="Allows your guild to show up on leaderboards and be eligible for reputation based rewards."
               />
             </ListItem>
             <Divider variant="middle" />
           </List>
-       
-        <Button className={classes.spacing} style={{float: 'left', marginTop: '20px', marginRight: '15px'}} variant="contained" color="primary" onClick={onSubmit}>
-          Register
-        </Button>
-        <Typography variant="body2" style={{marginTop: '30px'}}>
-          You can unregister at any time.
-        </Typography>
-        <div style={{clear:'both'}} />
-        <Button
-          color="secondary"
-          style={{marginTop: '20px'}}
-          onClick={handleNo}
-        >
-          No Thanks
-        </Button>
+          <Grid container spacing={1} style={{padding: '10px'}}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+              <Button className={classes.spacing} style={{float: 'left', marginTop: '20px', marginRight: '15px'}} variant="contained" color="primary" onClick={onSubmit}>
+                Register
+              </Button>
+              <Typography variant="body2" style={{marginTop: '30px'}}>
+                You can unregister at any time.
+              </Typography>
+              <div style={{clear:'both'}} />
+              <Button
+                color="secondary"
+                style={{marginTop: '20px'}}
+                onClick={handleNo}
+              >
+                No Thanks
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
       </Grid>

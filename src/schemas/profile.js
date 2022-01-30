@@ -59,5 +59,14 @@ export const profileSchema = {
       "personaSpecificSkills": {
         type: "array"
       },
+      "nftContract": {
+        type: 'string'
+      },
+      "profileNft": {
+        type: 'string'
+      },
+      "nftTokenId": {
+        type: 'string'
+      },
     },
   }

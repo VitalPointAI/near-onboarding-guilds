@@ -1,8 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import ImageLoader from '../ImageLoader/imageLoader'
-import spaceGemLogo from '../../../img/space-gem-logo.png'
-import projectLogo from '../../../img/pistolshrimp.png'
+import projectLogo from '../../../img/vitalpointai.png'
+import powered from '../../../img/powered-by.png'
 import './footer.css'
 
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -20,22 +20,21 @@ const Footer = ({}) => {
                 </a>
             
                 <div className="footertext">
-                <Typography variant="body2" style={{fontSize: '90%'}}>A Pistol Shrimp Project.<br></br>
-                    Space management<br></br>
-                    of the future.</Typography>
-                
+                <Typography variant="body2" style={{fontSize: '90%'}}>by Vital Point AI<br></br>
+                    A NEAR guild.<br></br>
+                    <a href="https://vitalpoint.ai" style={{color:'#FFFFFF'}}>Join us.</a>
+                </Typography>
                 </div>
             </div>
-            <div align="center">
-                <Link to="/">
-                <ImageLoader image={spaceGemLogo} style={{height: "6em", marginLeft: '-90px'}} />
-                </Link>
+            <div>
+                <ImageLoader image={powered} style={{height: "3em", marginTop: '8px'}} />
             </div>
+           
             <div className="footerright">
-            <Typography variant="body2" style={{fontSize: '90%'}}>Space Gem is open source.<br></br>
-            Provided "as is".<br></br>No warranty of any kind.<br></br>Use at own risk.<br></br>
-            <span className="blue">Privacy<span className="black"> | </span>TOS</span></Typography>
-        </div>
+            <Typography variant="body2" style={{fontSize: '90%'}}>My NEAR Journey<br></br>Open source/as is.<br></br>
+           No warranty of any kind.
+            </Typography>
+            </div>
         </div>
         :
         <>
@@ -46,19 +45,22 @@ const Footer = ({}) => {
             </a>
         
             <div className="footertext">
-                <Typography variant="body2" style={{fontSize: '90%'}}>A Pistol Shrimp project.<br></br>
-                Space management<br></br>
-                of the future.<br></br>
-                <span className="blue">Privacy<span className="black"> | </span>TOS</span>
-                </Typography>
+            <Typography variant="body2" style={{fontSize: '90%'}}>
+                by Vital Point AI<br></br>
+                A NEAR guild.<br></br>
+                <a href="https://vitalpoint.ai" style={{color:'#FFFFFF'}}>Join us.</a><br></br>
+            </Typography>
             
             </div>
         </div>
+        <div>
+            <ImageLoader image={powered} style={{height: "3em", marginTop: '8px'}} />
+        </div>
         <div className="footerright">
-            <Typography variant="body2" style={{fontSize: '90%'}}>Space Gem is open source.<br></br>
-            Provided "as is".<br></br>
-            No warranty of any kind.<br></br>
-            Use at own risk.</Typography>
+            <Typography variant="body2" style={{fontSize: '90%'}}>My NEAR Journey<br></br>
+            Open source/as is.<br></br>
+            No warranty.
+            </Typography>
         </div>
         </div>
         </>

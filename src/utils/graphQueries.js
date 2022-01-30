@@ -22,6 +22,48 @@ const FACTORY_QUERY=`
         }
     }
 `
+const GUILD_REGISTRATIONS = `
+query {
+    putDIDs(where: {type_in: ["guild"]})
+    {
+        event
+        blockTime
+        blockHeight
+        accountId
+        did
+        type
+        registered
+        owner
+    }
+}
+`
+const INDIVIDUAL_REGISTRATIONS = `
+query {
+    putDIDs(where: {type_in: ["individual"]})
+    {
+        event
+        blockTime
+        blockHeight
+        accountId
+        did
+        type
+        registered
+        owner
+    }
+}
+`
+
+const DATASTREAMS = `
+query{
+    storeAliases{
+        aliasOwner
+        time
+        definition
+        description
+    }
+}
+`
+
 const REGISTRY_QUERY = `
 query{
     accounts{
@@ -47,6 +89,21 @@ export default class Queries {
     async getCommunities(){
         const communities = await factoryClient.query({query: gql(FACTORY_QUERY)})
         return communities
+    }
+
+    async getGuilds(){
+        const guilds = await registryClient.query({query: gql(GUILD_REGISTRATIONS)})
+        return guilds
+    }
+
+    async getIndividuals(){
+        const individuals = await registryClient.query({query: gql(INDIVIDUAL_REGISTRATIONS)})
+        return individuals
+    }
+
+    async getDataStreams(){
+        const dataStreams = await registryClient.query({query: gql(DATASTREAMS)})
+        return dataStreams
     }
 
 }

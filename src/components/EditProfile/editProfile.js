@@ -71,6 +71,10 @@ const useStyles = makeStyles((theme) => ({
       fontSize: '15px',
       color: "#000000",
     },
+    square: {
+      width: '175px',
+      height: 'auto'
+    },
     large: {
         width: '100px',
         height: '100px',
@@ -162,18 +166,10 @@ export default function EditProfileForm(props) {
     } = props
 
     const {
-      near,
       appIdx,
-      isUpdated,
-      didRegistryContract
+      isUpdated
     } = state
 
-    console.log('curuseridx', curUserIdx)
-    console.log('did', did)
-    console.log('accountId', accountId)
-    const {
-      contractId
-    } = useParams()
     
     const classes = useStyles()
 
@@ -323,12 +319,22 @@ export default function EditProfileForm(props) {
             notifications: notifications
         }
      
+      try {
         let result = await curUserIdx.set('profile', record)
+        setFinished(true)
+        update('', { isUpdated: !isUpdated })
+        window.location.assign('/')
+        setOpen(false)
+        handleClose()
+      } catch (err) {
+        console.log('error updating profile', err)
+        setFinished(true)
+        update('', { isUpdated: !isUpdated })
+        setOpen(false)
+        handleClose()
+      }
   
-      setFinished(true)
-      update('', { isUpdated: !isUpdated })
-      setOpen(false)
-      handleClose()
+      
     }
 
         return (
@@ -348,7 +354,7 @@ export default function EditProfileForm(props) {
                         <Avatar
                           alt={accountId}
                           src={avatar} 
-                          className={avatarLoaded ? classes.large : classes.hide}
+                          className={avatarLoaded ? classes.square : classes.hide}
                           imgProps={{
                             onLoad:(e) => { handleAvatarLoaded(true) }
                           }}  
@@ -448,64 +454,23 @@ export default function EditProfileForm(props) {
                             </Grid>
                           </AccordionDetails>
                         </Accordion>
-                        <Accordion style={{marginBottom: '20px'}}>
+                  <Accordion>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1bh-content"
                     id="panel1bh-header"
                   >
-                  <Typography variant="h6">Skills and Competencies</Typography>
+                  <Typography variant="h6">Skills and Values</Typography>
                   </AccordionSummary>
                     <AccordionDetails>
                       <Grid container spacing={2}>
                       <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                       <FormControl component="fieldset" className={classes.formControl}>
-                        <FormLabel component="legend">General Skills, Competencies and Values</FormLabel>
-                        <FormGroup>
-                        {loaded ? 
-                              Object.entries(skillSet).map(([key, value]) => {
-                                console.log('key', key)
-                                console.log('value', value)
-                               return (
-                                    <FormControlLabel
-                                      control={<Checkbox checked={value} onChange={handleSkillSetChange} name={key} />}
-                                      label={key}
-                                    />
-                                )
-                              })
-                            
-                        : null }
-                        </FormGroup>
                         
-                        <FormHelperText>Check off as appropriate.</FormHelperText>
-                      </FormControl>
-                      </Grid>
-                      <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                        <FormControl component="fieldset" className={classes.formControl}>
-                          <FormLabel component="legend">Specific Skills</FormLabel>
-                          <FormGroup>
-                          {loaded ?
-                            Object.entries(developerSkillSet).map(([key, value]) => {
-                              console.log('key', key)
-                              console.log('value', value)
-                               return (
-                                    <FormControlLabel
-                                      control={<Checkbox checked={value} onChange={handleDeveloperSkillSetChange} name={key} />}
-                                      label={key}
-                                    />
-                                 
-                                )
-                              })
-                        : null }
-                         
-                          
-                          </FormGroup>
-                          <FormHelperText>Check off the specific skills you have.</FormHelperText>
-                        </FormControl>
-                      </Grid>
+                        
                       <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
-                        <Typography variant="body1" style={{marginTop: '10px', marginBottom:'10px'}}>Additional General Skills</Typography>
+                        <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Values</Typography>
                         {
                           personaSkillsFields.map((field, index) => {
                           return(
@@ -518,10 +483,10 @@ export default function EditProfileForm(props) {
                               variant="outlined"
                               name={`personaSkills[${index}].name`}
                               defaultValue={field.name}
-                              label="Skill Name:"
+                              label="Value:"
                               InputProps={{
                                 endAdornment: <div>
-                                <Tooltip TransitionComponent={Zoom} title="Short name of skill.">
+                                <Tooltip TransitionComponent={Zoom} title="Short name of value.">
                                     <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
                                 </Tooltip>
                                 </div>
@@ -530,7 +495,7 @@ export default function EditProfileForm(props) {
                                   required: true                              
                               })}
                             />
-                            {errors[`personaSkills${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide a skill name.</p>}
+                            {errors[`personaSkills${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide a value name.</p>}
                             
                             <Button type="button" onClick={() => personaSkillsRemove(index)} style={{float: 'right', marginLeft:'10px'}}>
                               <DeleteForeverIcon />
@@ -541,20 +506,21 @@ export default function EditProfileForm(props) {
                         }) 
                         }
                         {!personaSkillsFields || personaSkillsFields.length == 0 ?
-                          <Typography variant="body1" style={{marginLeft: '5px'}}>No additional general skills defined yet. Add them for better chance of being matched to opportunities.</Typography>
+                          <Typography variant="body1" style={{marginLeft: '5px'}}>No values defined yet.</Typography>
                         : null }
                           <Button
                             type="button"
                             onClick={() => personaSkillsAppend({name: ''})}
                             startIcon={<AddBoxIcon />}
                           >
-                            Add Skill
+                            Add Value
                           </Button>
                         </Grid>
                       </Grid>
+                      <Divider variant="middle" style={{marginTop: '15px', marginBottom: '15px'}}/>
                       <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
-                        <Typography variant="body1" style={{marginTop: '10px', marginBottom:'10px'}}>Additional Specific Skills</Typography>
+                        <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Skills & Competencies</Typography>
                         {
                           personaSpecificSkillsFields.map((field, index) => {
                           return(
@@ -601,11 +567,14 @@ export default function EditProfileForm(props) {
                           </Button>
                         </Grid>
                       </Grid>
+                      <Divider variant="middle" style={{marginTop: '15px', marginBottom: '15px'}}/>
                       <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <Typography>Familiarity with Crypto/Blockchain</Typography>
+                            <Typography>Level of NEAR familiarity</Typography>
                             <Rating name="Familiarity" onChange={handleRatingChange} value={parseInt(familiarity)} />
                       </Grid>
-                    </Grid>
+                  </FormControl>
+                  </Grid>
+                  </Grid>
                   </AccordionDetails>
               </Accordion>
                       <Accordion>
@@ -615,7 +584,7 @@ export default function EditProfileForm(props) {
                         id="panel1bh-header"
                       >
                       <Typography variant="h6">Accounts and Notifications</Typography>
-                      <Tooltip TransitionComponent={Zoom} title="Here you can add some of your social media handles if you would like fellow Catalyst users to be able to find or contact you elsewhere.">
+                      <Tooltip TransitionComponent={Zoom} title="Here you can add some of your social media handles if you would like others to be able to find or contact you elsewhere.">
                         <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
                       </Tooltip>
                       </AccordionSummary>

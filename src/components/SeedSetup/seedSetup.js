@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app';
 import { useForm } from 'react-hook-form'
 import { get, set, del } from '../../utils/storage'
+import confidential from '../../img/confidential.png'
 
 // Material UI components
 import { makeStyles, withStyles } from '@mui/styles'
@@ -120,7 +121,7 @@ export default function Import(props) {
     currentAccounts.push(newAccount)
     set(ACCOUNT_LINKS, currentAccounts)
     update('', {key: false})
-    window.location.assign('/profile')
+    window.location.assign('/choice')
     }
 
     // recovers an existing key
@@ -147,29 +148,29 @@ export default function Import(props) {
        
         <Grid container spacing={1}>
           <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-            <Typography variant="h4" style={{marginTop:'40px'}}>Welcome to Space Gem!</Typography><br></br>
-            <Typography variant="h5" style={{marginTop:'20px', marginBottom: '20px'}}>Step 1:  Let's get this account setup with a Seed!</Typography>
+            <Typography variant="h4" style={{marginTop:'40px'}}>Your Journey Continues!</Typography><br></br>
+            <Typography variant="h5" style={{marginTop:'20px', marginBottom: '20px'}}>Find The Secret Phrase!</Typography>
               
-                <Typography variant="body1">What's a seed and why do you need one?
+                <Typography variant="body1">What's the secret phrase and why do you want it?
                 <HtmlTooltip
                 title={
                   <>
-                      <Typography variant="h6">What's a Seed Phrase?</Typography>
+                      <Typography variant="h6">What's a Secret Phrase?</Typography>
 
-                      <Typography variant="body2">Space Gem is an open web application that gives
+                      <Typography variant="body2">NEAR Journey is an open web application that gives
                       you complete control of your data.</Typography>
                       <br></br>
-                      <Typography variant="body2">This seed phrase is like a long password. It
+                      <Typography variant="body2">This secret phrase is like a long password. It
                       allows you to access your data to add, update, or delete at will.
                       </Typography>
                       <br></br>
-                      <Typography variant="body2">You need to keep it safe. Nobody else, including Space Gem,
-                      can change your data without your seed phrase.
+                      <Typography variant="body2">You need to keep it safe. Nobody else, including NEAR Journey,
+                      can change your data without your secret phrase.
                       </Typography>
                       <br></br>
                       <Typography variant="body2">
-                      Your Space Gem seed phrase is the seed phrase to your unique identity, not your wallet. 
-                      You <b>SHOULD NOT USE</b> your wallet seed phrase as your Space Gem seed phrase.
+                      Your NEAR Journey secret phrase is the secret phrase to your unique identity, not your wallet. 
+                      You <b>SHOULD NOT USE</b> your wallet seed phrase as your NEAR Journey secret phrase.
                       </Typography>
                   </>
                 }
@@ -177,7 +178,7 @@ export default function Import(props) {
                 ><InfoIcon />
                 </HtmlTooltip>
                 </Typography>
-            <Typography variant="h6" style={{marginTop: '20px', marginBottom:'20px'}}>Choose an option:</Typography>
+            <Typography variant="h6" style={{marginTop: '20px', marginBottom:'20px'}}>Choose your adventure:</Typography>
           </Grid>
           <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
           <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
@@ -188,22 +189,22 @@ export default function Import(props) {
             id="panel1bh-header"
           >
             <Typography className={classes.heading}>Option 1</Typography>
-            <Typography className={classes.secondaryHeading}>This is the first time this account has 
-            signed into Space Gem.</Typography>
+            <Typography className={classes.secondaryHeading}>This is the first journey this account has 
+            undertaken.</Typography>
           </AccordionSummary>
           <AccordionDetails>
           <Card>
           <CardHeader 
-            title="New to Space Gem?"
+            title="First Journey?"
             align="center"
           />
           <CardContent>
-            <Typography variant="body1" gutterBottom>This sets a new 12 word seed phrase for this account's data stream.</Typography>
+            <Typography variant="body1" gutterBottom>This sets a new 12 word secret phrase for this account's data stream.</Typography>
             <Typography variant="body1" gutterBottom>It does not allow access to your wallet. Protect it like any other secret key.</Typography>
-            <Typography variant="body1" gutterBottom>Space Gem cannot recover this seed for you. It is your responsibility.</Typography>
+            <Typography variant="body1" gutterBottom>We cannot recover this phrase for you. It is your responsibility.</Typography>
             <div class="form-floating mb-3" align="center">
             {seedHidden && <Button color="primary" style={{marginBottom: '10px'}} onClick={() => { setSeedHidden(!seedHidden) }}>
-                REVEAL MY SECRET SEED PHRASE
+                REVEAL MY SECRET PHRASE
             </Button>}
            
                 <textarea readonly class="form-control" id="seedPhrase" value={seedHidden ? `************` : seedPhrase} style={{marginTop: '10px', marginBottom: '10px'}}/>
@@ -225,21 +226,21 @@ export default function Import(props) {
           >
             <Typography className={classes.heading}>Option 2</Typography>
             <Typography className={classes.secondaryHeading}>You've been here before but 
-            have lost your Space Gem seed phrase for this account.</Typography>
+            have lost your NEAR journey secret phrase for this account.</Typography>
           </AccordionSummary>
           <AccordionDetails>
           <Card>
           <CardHeader 
-            title="Lost Your Seed Phrase?"
+            title="Lost Your Secret Phrase?"
             align="center"
           />
           <CardContent>
-            <Typography variant="body1" gutterBottom>This sets a new 12 word seed phrase for this account's data stream.</Typography>
+            <Typography variant="body1" gutterBottom>This sets a new 12 word secret phrase for this account's data stream.</Typography>
             <Typography variant="body1" gutterBottom>It does not allow access to your wallet. Protect it like any other secret key.</Typography>
-            <Typography variant="body1" gutterBottom>Space Gem cannot recover this seed for you. It is your responsibility.</Typography>
+            <Typography variant="body1" gutterBottom>We cannot recover this phrase for you. It is your responsibility.</Typography>
             <div class="form-floating mb-3" align="center">
             {seedHidden && <Button color="primary" style={{marginBottom: '10px'}} onClick={() => { setSeedHidden(!seedHidden) }}>
-                REVEAL MY SECRET SEED PHRASE
+                REVEAL MY SECRET PHRASE
             </Button>}
            
                 <textarea readonly class="form-control" id="seedPhrase" value={seedHidden ? `************` : seedPhrase} style={{marginTop: '10px', marginBottom: '10px'}}/>
@@ -260,17 +261,17 @@ export default function Import(props) {
             id="panel1bh-header"
           >
             <Typography className={classes.heading}>Option 3</Typography>
-            <Typography className={classes.secondaryHeading}>You have the Space Gem
+            <Typography className={classes.secondaryHeading}>You have your NEAR Journey
             seed phrase for this account and need to restore it.</Typography>
           </AccordionSummary>
           <AccordionDetails>
           <Card>
           <CardHeader 
-            title="Have Your Seed Phrase?"
+            title="Have Your Secret Phrase?"
             align="center"
           />
           <CardContent>
-            <Typography variant="body1" gutterBottom>If you have your Space Gem 12 word seed phrase, enter it below.</Typography>
+            <Typography variant="body1" gutterBottom>If you have your NEAR Journey 12 word secret phrase, enter it below.</Typography>
             <Typography variant="body1" gutterBottom><b>Please DO NOT USE use your account's wallet seed phrase.</b></Typography>
             <div class="form-floating mb-3" align="center">
                 <div>
@@ -281,7 +282,7 @@ export default function Import(props) {
                       margin="dense"
                       variant="outlined"
                       name="id"
-                      label="12 Word Recovery Seed Phrase"
+                      label="12 Word Recovery Secret Phrase"
                       helperText="12 words, 1 space between each word"
                       value={recoverSeed}
                       onChange={handleRecoverSeed}
@@ -297,6 +298,9 @@ export default function Import(props) {
         </Accordion>
           </Grid>
           <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
+          <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" >
+            <img src={confidential} style={{width:'80%', marginTop:'20px'}}/>
+          </Grid>
         </Grid>
         </>
     )

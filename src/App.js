@@ -6,34 +6,24 @@ import Header from './components/common/Header/header'
 import Footer from './components/common/Footer/footer'
 import RandomPhrase from './components/common/RandomPhrase/randomPhrase'
 import NewKey from './components/mainPages/newKey'
-import Profile from './components/mainPages/profile'
-import Register from './components/mainPages/register'
-import { KEY_REDIRECT } from './utils/ceramic'
-//import { Container } from './components/Container'
-//import { Receiver } from './components/Receiver'
-//import { PersonaPage } from './components/mainPages/personas'
-// import ExploreDaos from './components/mainPages/exploreDaos'
-// import AppFramework from './components/AppFramework/appFramework'
-// import NewKey from './components/mainPages/newKey'
-// import Profile from './components/mainPages/profile'
-// import Register from './components/mainPages/register'
+import Choice from './components/mainPages/choice'
+import IndivRegister from './components/mainPages/indivRegister'
+import GuildRegister from './components/mainPages/guildRegister'
+import IndivProfile from './components/Profiles/indivProfile'
+import GuildProfile from './components/Profiles/guildProfile'
+import Registration from './components/mainPages/registration'
+import CreateIndivProfile from './components/mainPages/createIndividualProfile'
+import CreateGuildProfile from './components/mainPages/createGuildProfile'
+import ExploreGuilds from './components/mainPages/guilds'
+import DisplayGuildProfile from './components/mainPages/displayGuildProfile'
 import { Home } from './components/mainPages/home'
-// import Daos from './components/mainPages/daos'
-// import Developers from './components/mainPages/developers'
-// import Supporters from './components/mainPages/supporters'
-// import FAQ from './components/LandingSite/FAQ'
-// import ArtStory from './components/LandingSite/artistStory.js'
-// import NearStory from './components/LandingSite/nearStory.js'
-// import ReceiveInvite from './components/Invite/Receiver'
-// import Opportunities from './components/mainPages/opportunities'
-// import MintFT from './components/mainPages/mintFT'
-// import FTs from './components/mainPages/fts'
-// import CommunityStreamIntro from './components/mainPages/communityStreamIntro'
 
 // Material-UI Components
 import { makeStyles } from '@mui/styles'
 import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
+
+
 
 // helpers
 export const btnClass = 'btn btn-sm btn-outline-primary mb-3 '
@@ -138,19 +128,71 @@ const App = () => {
                     { children }
                 </NewKey>
             </Route>
-            <Route exact path="/profile">
-                <Profile 
+            <Route exact path="/choice">
+                <Choice
                     state={state}
                     >
                     { children }
-                </Profile>
+                </Choice>
             </Route>
-            <Route exact path="/register">
-                <Profile 
+            <Route exact path="/guilds">
+                <ExploreGuilds
                     state={state}
-                >
+                    >
                     { children }
-                </Profile>
+                </ExploreGuilds>
+            </Route>
+            <Route exact path="/registration">
+                <Registration
+                    state={state}
+                    >
+                    { children }
+                </Registration>
+            </Route>
+            <Route exact path="/register-individual">
+                <IndivRegister
+                    state={state}
+                    >
+                    { children }
+                </IndivRegister>
+            </Route>
+            <Route exact path="/register-guild">
+                <GuildRegister 
+                    state={state}
+                    >
+                    { children }
+                </GuildRegister>
+            </Route>
+            <Route exact path="/create-guild-profile">
+                <CreateGuildProfile
+                    state={state}
+                    >
+                    { children }
+                </CreateGuildProfile>
+            </Route>
+            <Route exact path="/create-indiv-profile">
+                <CreateIndivProfile
+                    state={state}
+                    >
+                    { children }
+                </CreateIndivProfile>
+            </Route>
+            <Route exact path="/indiv-profile">
+                <IndivProfile 
+                    state={state}
+                    >
+                    { children }
+                </IndivProfile>
+            </Route>
+            <Route exact path="/guild-profile">
+                <GuildProfile 
+                    state={state}
+                    >
+                    { children }
+                </GuildProfile>
+            </Route>
+            <Route path="/profiles/:contractId">
+                <DisplayGuildProfile />
             </Route>
         </div>
         <Footer />

@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { appStore, onAppMount } from '../../../state/app'
 import defaultProfileImage from '../../../img/default-profile.png'
 import EditProfileForm from '../../EditProfile/editProfile'
+import EditGuildProfileForm from '../../EditProfile/editGuild'
 
 // Material UI
 import { makeStyles, useTheme } from '@mui/styles'
@@ -35,6 +36,8 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import SettingsIcon from '@mui/icons-material/Settings'
 import Badge from '@mui/material/Badge'
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
+import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
+import LeaderboardIcon from '@mui/icons-material/Leaderboard'
 
 const useStyles = makeStyles((theme) => ({
     list: {
@@ -63,6 +66,7 @@ const matches = useMediaQuery('(max-width:500px)')
 
 const [anchorEl, setAnchorEl] = useState(null);
 const [editProfileClicked, setEditProfileClicked] = useState(false)
+const [editGuildProfileClicked, setEditGuildProfileClicked] = useState(false)
 const [notificationsClicked, setNotificationsClicked] = useState(false)
 const [newNotifications, setNewNotifications] = useState(0)
 
@@ -80,7 +84,8 @@ const {
   accountId,
   isUpdated,
   curUserIdx,
-  did
+  did,
+  accountType
 } = state
 
 // useEffect(
@@ -153,6 +158,15 @@ const editProfileClick = (event) => {
     handleClick(event)
 }
 
+function handleEditGuildProfileClickState(property){
+  setEditGuildProfileClicked(property)
+}
+
+const editGuildProfileClick = (event) => {
+  setEditGuildProfileClicked(true)
+  handleClick(event)
+}
+
 function handleNotificationClick(property){
   setNotificationsClicked(property)
 }
@@ -213,31 +227,30 @@ const list = (anchor) => (
         <ListItemText primary='Recover Profile'/>
       </ListItem>
     </Link>
-    </List>
-    <Divider />
-    <Typography variant='h6'>Spaces</Typography>
-    <List>      
-    <Link to='/add-space'>
-        <ListItem className='manageSpaces' button key={3} onClick={(e) => addPersonaClick(e)}>
-            <ListItemIcon><SettingsIcon /></ListItemIcon>
-            <ListItemText primary='Manage Spaces'/>
-        </ListItem>
+    <Link to='/registration'>
+      <ListItem className='registration' button key={5}>
+      <ListItemIcon><AppRegistrationIcon /></ListItemIcon>
+      <ListItemText primary='Registration'/>
+    </ListItem>
     </Link>
     </List>
     <Divider />
-    <Typography variant='h6'>Trove</Typography>
+    <Typography variant='h6'>Rewards</Typography>
     <List>
-      <Link to='/fts'>
-        <ListItem className='exploreTokens' button key={8}>
-          <ListItemIcon><ExploreIcon /></ListItemIcon>
-          <ListItemText primary='Explore Tokens'/>
-        </ListItem>
-      </Link>
-      <ListItem className='createFT' button key={9} onClick={(e) => addFTClick(e)}>
-        <ListItemIcon><AddBoxIcon /></ListItemIcon>
-        <ListItemText primary='Create Token'/>
+    <Link to='/leaderboards'>
+      <ListItem className='exploreleaderboards' button key={6}>
+      <ListItemIcon><LeaderboardIcon /></ListItemIcon>
+      <ListItemText primary='Leaderboards'/>
       </ListItem>
+    </Link>
+    <Link to='/rewards'>
+        <ListItem className='exploreRewards' button key={7}>
+        <ListItemIcon><EmojiEventsIcon /></ListItemIcon>
+        <ListItemText primary='Explore Rewards'/>
+        </ListItem>
+    </Link>
     </List>
+    
     <Divider />
   </div>
   ) :
@@ -255,51 +268,50 @@ const list = (anchor) => (
 
         <Typography variant='h6'>Account</Typography>
         <List>
-        <ListItem button key={2} onClick={(e) => editProfileClick(e)}>
-            <ListItemIcon><EditIcon /></ListItemIcon>
-            <ListItemText primary='Edit Profile'/>
-        </ListItem>
-        <Link to='/setup'>
-          <ListItem className='recoverKey' button key={4}>
-          <ListItemIcon><LocalHospitalIcon /></ListItemIcon>
-          <ListItemText primary='Recover Profile'/>
-        </ListItem>
-        </Link>
-        <Link to={`/trove/${accountId}`}>
-        <ListItem button key={3} onClick={(e) => editProfileClick(e)}>
-            <ListItemIcon><FavoriteIcon color="secondary" /></ListItemIcon>
-            <ListItemText primary='My Trove'/>
-        </ListItem>
-        </Link>
-        <Link to={`/gems/${accountId}`}>
-            <ListItem className='exploreTokens' button key={7}>
-            <ListItemIcon><DiamondIcon /></ListItemIcon>
-            <ListItemText primary='My $GEMS'/>
-            </ListItem>
+          <ListItem button key={2} onClick={(e) => accountType == 'guild' ? editGuildProfileClick(e) : editProfileClick(e)}>
+              <ListItemIcon><EditIcon /></ListItemIcon>
+              <ListItemText primary='Edit Profile'/>
+          </ListItem>
+          <Link to='/setup'>
+            <ListItem className='recoverKey' button key={4}>
+            <ListItemIcon><LocalHospitalIcon /></ListItemIcon>
+            <ListItemText primary='Recover Profile'/>
+          </ListItem>
+          </Link>
+          <Link to='/registration'>
+          <ListItem className='registration' button key={5}>
+            <ListItemIcon><AppRegistrationIcon /></ListItemIcon>
+            <ListItemText primary='Manage Registration'/>
+          </ListItem>
         </Link>
         </List>
         <Divider />
-
-        <Typography variant='h6'>Spaces</Typography>
+        <Typography variant='h6'>Discover</Typography>
         <List>      
-        <Link to='/manage'>
-        <ListItem button key={5}>
-            <ListItemIcon><SettingsIcon /></ListItemIcon>
-            <ListItemText primary='Manage Spaces'/>
-        </ListItem>
-        </Link>
-        <Link to='/explore'>
-        <ListItem button key={6}>
+        <Link to='/guilds'>
+          <ListItem className='exploreGuilds' button key={6}>
             <ListItemIcon><ExploreIcon /></ListItemIcon>
-            <ListItemText primary='Explore Spaces'/>
-        </ListItem>
+            <ListItemText primary='Explore Guilds'/>
+          </ListItem>
+        </Link>
+        <Link to='/people'>
+        <ListItem className='exploreIndividuals' button key={7}>
+            <ListItemIcon><GroupIcon /></ListItemIcon>
+            <ListItemText primary='Explore People'/>
+          </ListItem>
         </Link>
         </List>
         <Divider />
         <Typography variant='h6'>Rewards</Typography>
         <List>
-        <Link to='/gems'>
-            <ListItem className='exploreRewards' button key={7}>
+        <Link to='/leaderboards'>
+          <ListItem className='exploreleaderboards' button key={8}>
+          <ListItemIcon><LeaderboardIcon /></ListItemIcon>
+          <ListItemText primary='Leaderboards'/>
+          </ListItem>
+        </Link>
+        <Link to='/rewards'>
+            <ListItem className='exploreRewards' button key={9}>
             <ListItemIcon><EmojiEventsIcon /></ListItemIcon>
             <ListItemText primary='Explore Rewards'/>
             </ListItem>
@@ -313,19 +325,19 @@ const list = (anchor) => (
     <Typography variant='h6' style={{marginTop:'50px'}}></Typography>
     <List>
     <a href='/'>
-      <ListItem button key={7}>
+      <ListItem button key={10}>
         <ListItemIcon><InfoIcon /></ListItemIcon>
-        <ListItemText primary='About Space Gem'/>
+        <ListItemText primary='About My NEAR Journey'/>
       </ListItem>
     </a>
     <a href='/'>
-      <ListItem button key={9}>
+      <ListItem button key={11}>
         <ListItemIcon><SchoolIcon /></ListItemIcon>
         <ListItemText primary='Learn'/>
       </ListItem>
     </a>
     <a href='/'>
-      <ListItem button key={10}>
+      <ListItem button key={12}>
         <ListItemIcon><ContactSupportIcon /></ListItemIcon>
         <ListItemText primary='Contact'/>
       </ListItem>
@@ -351,6 +363,14 @@ return (
             accountId={accountId}
             did={did}
             curUserIdx={curUserIdx}
+        /> : null }
+
+        {editGuildProfileClicked ? <EditGuildProfileForm
+          state={state}
+          handleEditGuildProfileClickState={handleEditGuildProfileClickState}
+          accountId={accountId}
+          did={did}
+          curUserIdx={curUserIdx}
         /> : null }
 
         {notificationsClicked ? 

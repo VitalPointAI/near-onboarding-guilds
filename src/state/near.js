@@ -5,6 +5,7 @@ import { registry } from '../utils/registry'
 import { config } from './config'
 import { factory } from '../utils/factory'
 import { nft } from '../utils/nft'
+import { queries } from '../utils/graphQueries'
 
 export const {
     FUNDING_DATA, 
@@ -146,9 +147,12 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         const account = wallet.account()
         const accountId = account.accountId
 
+        // ********* Initialize Registry Contract****************
+        //await didRegistryContract.init({adminId: 'vitalpointai.testnet'})
+
         // ********* Get Registry Admin ****************
         let admin = await didRegistryContract.getAdmin()
-
+        console.log('admin', admin)
         // ******** Identity Initialization *********
 
         //Initiate App Ceramic Components
@@ -163,7 +167,42 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             did = curUserIdx.id
         }
 
-        update('', { admin, did, nftContract, didRegistryContract, appIdx, account, accountId, curUserIdx })
+        let accountType
+        try{
+            accountType = await didRegistryContract.getType({accountId: accountId})
+        } catch (err) {
+            accountType = 'not registered'
+            console.log('account not registered, not type avail', err)
+        }
+
+        let verificationStatus
+        try{
+            verificationStatus = await didRegistryContract.getVerificationStatus({accountId: accountId})
+        } catch (err) {
+            verificationStatus = false
+            console.log('problem getting verification status', err)
+        }
+
+        // graphQL queries
+        let currentGuildsList = await queries.getGuilds()
+        console.log('currentguildslist', currentGuildsList)
+        let currentIndividualsList = await queries.getIndividuals()
+        console.log('currentIndividualsList', currentIndividualsList)
+
+        update('', { 
+            admin, 
+            did,
+            currentGuildsList,
+            currentIndividualsList,
+            verificationStatus, 
+            nftContract, 
+            factoryContract, 
+            didRegistryContract, 
+            accountType, 
+            appIdx, 
+            account, 
+            accountId, 
+            curUserIdx })
         
         if(curUserIdx){
             // check localLinks, see if they're still valid

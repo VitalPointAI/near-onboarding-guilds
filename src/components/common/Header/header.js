@@ -1,21 +1,23 @@
 import React, {useState, useEffect, useContext} from 'react'
 import { appStore, onAppMount } from '../../../state/app'
 import LeftSideDrawer from '../LeftSideDrawer/leftSideDrawer'
-import LogoutButton from '../LogoutButton/logoutButton'
 import LoginButton from '../LogInButton/loginButton'
 import AccountInfo from '../AccountInfo/accountInfo'
-import Logo from '../Logo/logo'
+import ImageLoader from '../ImageLoader/imageLoader'
 //import NotificationCard from '../Notifications/notifications'
 import {ceramic} from '../../../utils/ceramic'
 
 // Material UI
 import Grid from '@mui/material/Grid'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import Button from '@mui/material/Button'
-import DiamondIcon from '@mui/icons-material/Diamond';
 
-import Popover from '@mui/material/Popover'
 import '../../../global.css'
+
+const nearLogo = require('../../../img/my-near-journey.png')
+
+const logoStyle = {
+    maxWidth: '150px'
+}
 
 const Header = ({ state, handleUpdate }) => {
     const [newNotifications, setNewNotifications] = useState(0)
@@ -90,7 +92,7 @@ const Header = ({ state, handleUpdate }) => {
     
     return (
         <div>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={13} style={{paddingRight: '5px', paddingBottom: '5px', paddingLeft: '5px', paddingTop: '5px', backgroundColor: 'black'}}>
+        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '5px', paddingBottom: '5px', paddingLeft: '5px', paddingTop: '5px', backgroundColor: 'black'}}>
             
             {wallet && wallet.signedIn ? 
                 (
@@ -99,9 +101,9 @@ const Header = ({ state, handleUpdate }) => {
                         <LeftSideDrawer
                         state={state}                        
                         /> 
-                        <DiamondIcon style={{color: 'bb61e3', marginTop: '5px', fontSize: 45}} />
+                        <ImageLoader image={nearLogo} style={logoStyle}/>
                     </Grid>
-                    <Grid item >
+                    <Grid item style={{minWidth: '100px'}} >
                         {wallet && !wallet.signedIn ? <LoginButton /> :   <AccountInfo /> }
                     </Grid>
                     </>
@@ -111,9 +113,9 @@ const Header = ({ state, handleUpdate }) => {
                 !matches ? (
                     <>
                     <Grid item style={{marginLeft: '25px'}}>
-                     <DiamondIcon style={{color: 'bb61e3', marginTop: '5px', fontSize: 45}}/>
+                    <ImageLoader image={nearLogo} style={logoStyle}/>
                     </Grid>
-                    <Grid item>
+                    <Grid item style={{minWidth: '100px'}}>
                         {wallet && !wallet.signedIn ? <LoginButton /> :  <AccountInfo /> }
                     </Grid>
                     </>
@@ -124,9 +126,9 @@ const Header = ({ state, handleUpdate }) => {
                             state={state}
                         
                         /> 
-                        <DiamondIcon style={{color: 'bb61e3', marginTop: '5px', fontSize: 45}}/>
+                        <ImageLoader image={nearLogo} style={logoStyle}/>
                     </Grid>
-                    <Grid item>
+                    <Grid item style={{minWidth: '100px'}}>
                         {wallet && !wallet.signedIn ? <LoginButton /> :   <AccountInfo /> }
                     </Grid>
                     </>

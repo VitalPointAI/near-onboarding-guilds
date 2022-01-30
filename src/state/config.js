@@ -43,7 +43,7 @@ let config = {
     SPACE_CREATED: '__SPACE_CREATED',
     APP_OWNER_ACCOUNT: 'vitalpointai.testnet',
     CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
-    IPFS_PROVIDER: 'https://ipfs.io/ipfs/',
+    IPFS_PROVIDER: 'https://cloudflare-ipfs.com/ipfs/',
     TOKEN_CALL: 'https://cdao.app/token',
     APPSEED_CALL: 'https://cdao.app/appseed',
     networkId: 'testnet',
@@ -54,11 +54,11 @@ let config = {
     nftFactorySuffix: '.nft.vitalpointai.testnet',
     contractName: 'testnet',
     PLATFORM_SUPPORT_ACCOUNT: 'vitalpointai.testnet',
-    didRegistryContractName: 'dids1.vitalpointai.testnet',
+    didRegistryContractName: 'dids2.vitalpointai.testnet',
     nftFactoryContractName: 'nft.vitalpointai.testnet',
     ACCOUNT_HELPER_URL: 'https://near-contract-helper.onrender.com',
     GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/catalyst-factory-tnet',
-    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/did-registry'
+    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/registry-tnet'
 }
 
 if(process.env.ENV === 'localhost') {

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 // Material UI
 import useMediaQuery from '@mui/material/useMediaQuery'
 
-const spaceGemLogo = require('../../../img/space-gem-logo.png')
+const nearLogo = require('../../../img/my-near-journey.png')
 
 export default function Logo(props) {
 
@@ -17,7 +17,7 @@ export default function Logo(props) {
                 <div style={{
                     height: '60px', 
                     marginLeft: '30px',
-                    backgroundImage: `url(${spaceGemLogo})`, 
+                    backgroundImage: `url(${nearLogo})`, 
                     backgroundSize: 'contain', 
                     backgroundPosition: 'left', 
                     backgroundRepeat: 'no-repeat',
@@ -27,7 +27,7 @@ export default function Logo(props) {
                 <div style={{ 
                     height: '60px', 
                     marginLeft: '10px',
-                    backgroundImage: `url(${spaceGemLogo})`, 
+                    backgroundImage: `url(${nearLogo})`, 
                     backgroundSize: 'contain', 
                     backgroundPosition: 'left', 
                     backgroundRepeat: 'no-repeat',

@@ -17,6 +17,7 @@ class Registry {
               'hasDID',
               'getAdmin',
               'retrieveAlias',
+              'getType',
               'hasAlias',
               'getVerificationStatus'
           ],
@@ -27,6 +28,8 @@ class Registry {
               'changeVerificationStatus',
               'addVerifier',
               'removeVerifier',
+              'addRole',
+              'removeRole',
               'putDID',
               'deleteDID',
               'storeAlias',

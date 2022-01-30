@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { get, set, del } from '../../utils/storage'
-import { appStore, onAppMount } from '../../state/app';
+import { appStore, onAppMount } from '../../state/app'
 import { flexClass } from '../../App'
-import Footer from '../../components/common/Footer/footer'
 import SeedSetup from '../SeedSetup/seedSetup'
-import Header from '../../components/common/Header/header'
+import IndivProfile from '../Profiles/indivProfile'
+import GuildProfile from '../Profiles/guildProfile'
+import UnregisteredProfile from '../Profiles/unregisteredProfile'
 import RandomPhrase from '../../components/common/RandomPhrase/randomPhrase'
 import Landing from '../../components/mainPages/landing'
 import { KEY_REDIRECT } from '../../utils/ceramic'
@@ -37,11 +38,12 @@ const useStyles = makeStyles((theme) => ({
 export const Home = ({ children }) => {
 
     const { state, update } = useContext(appStore)
-
+   
     const {
         wallet, 
         finished,
-        key
+        key,
+        accountType
     } = state
     
     const classes = useStyles();
@@ -61,13 +63,15 @@ export const Home = ({ children }) => {
         <>
         {finished ? 
             wallet && wallet.signedIn ?  
-                key ? (<SeedSetup />) : (<Landing />)
-            :  (<Landing />)
+                key ? (<SeedSetup />) : 
+                    accountType == 'individual' ? (<IndivProfile />) :
+                        accountType == 'guild' ? (<GuildProfile/>) : (<UnregisteredProfile />)
+            :  (<Landing state={state} />)
             : state.accountData ? ({children}) 
             : (<>
                 <div className={classes.centered}>
                     <CircularProgress/><br></br>
-                    <Typography variant="h6">Finding Gems...</Typography><br></br>
+                    <Typography variant="h6">Preparing your journey...</Typography><br></br>
                     <RandomPhrase />
                 </div>
             </>)
