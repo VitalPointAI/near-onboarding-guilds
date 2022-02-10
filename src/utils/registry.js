@@ -15,7 +15,8 @@ class Registry {
           viewMethods: [
               'getDID',
               'hasDID',
-              'getAdmin',
+              'getAdmins',
+              'getSuperAdmin',
               'retrieveAlias',
               'getType',
               'hasAlias',
@@ -24,16 +25,18 @@ class Registry {
           // Change methods can modify the state. But you don't receive the returned value when called.
           changeMethods: [
               'init',
-              'transferAdmin',
+              'addAdmin',
+              'removeAdmin',
               'changeVerificationStatus',
+              'adjustKeyAllowance',
               'addVerifier',
               'removeVerifier',
               'addRole',
               'removeRole',
-              'putDID',
-              'deleteDID',
               'storeAlias',
-              'deleteAlias'
+              'deleteAlias',
+              'putDID',
+              'deleteDID'
           ],
       })
         return didRegistryContract

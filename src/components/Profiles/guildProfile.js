@@ -120,97 +120,79 @@ export default function GuildProfile(props) {
     } = state
 
     const {
-      member
+        guildDid
     }= props
 
     useEffect(
-      () => {
-          async function fetchMemberData() {
-            
-             
-          }
-          
-          fetchMemberData()
-          .then((res) => {
-
-          })
-
-      }, []
-  )
-   
-    useEffect(
         () => {
  
-          async function fetchData() {
+        async function fetchData() {
             if(isUpdated){}
-            if(member){
-                let memberDid = await ceramic.getDid(member, factoryContact, didRegistryContract)
-                if(memberDid){
-                    let result = await appIdx.get('daoProfile', did)
-                    console.log('result', result)
-                    if(result) {
-                        setGuild(true)
-                        result.purpose ? setPurpose(result.purpose) : setPurpose('')
-                        result.name ? setName(result.name) : setName('')
-                        result.date ? setDate(result.date) : setDate('')
-                        result.logo ? setLogo(result.logo) : setLogo(imageName)
-                        result.country ? setCountry(result.country) : setCountry('')
-                        result.language ? setLanguage(result.language) : setLanguage([])
-                        result.skills ? setSkills(result.skills) : setSkills([])
-                        result.specificSkills ? setSpecificSkills(result.specificSkills) : setValue([])
-                        result.category ? setCategory(result.category) : setCategory('')
-                        result.discordActivation ? setDiscordActivated(true) : setDiscordActivated(false)
-                        result.proposalActivation ? setProposalsActivated(true) : setProposalsActivated(false)
-                        result.passedProposalActivation ? setPassedProposalsActivated(true) : setPassedProposalsActivated(false)
-                        result.sponsorActivation ? setSponsorActivated(true) : setSponsorActivated(false)
-                        result.reddit? setReddit(result.reddit) : setReddit('')
-                        result.discord? setDiscord(result.discord): setDiscord('')
-                        result.twitter? setTwitter(result.twitter): setTwitter('')
-                        result.email? setEmail(result.email): setEmail('')
-                        result.telegram? setTelegram(result.telegram): setTelegram('')
-                        result.website? setWebsite(result.website): setWebsite('')
-                        result.platform ? setPlatform(result.platform) : setPlatform('')
-                    }
+            if(guildDid && appIdx){
+                let result = await appIdx.get('daoProfile', guildDid)
+                console.log('result', result)
+                if(result) {
+                    setGuild(true)
+                    result.purpose ? setPurpose(result.purpose) : setPurpose('')
+                    result.name ? setName(result.name) : setName('')
+                    result.date ? setDate(result.date) : setDate('')
+                    result.logo ? setLogo(result.logo) : setLogo(imageName)
+                    result.country ? setCountry(result.country) : setCountry('')
+                    result.language ? setLanguage(result.language) : setLanguage([])
+                    result.skills ? setSkills(result.skills) : setSkills([])
+                    result.specificSkills ? setSpecificSkills(result.specificSkills) : setValue([])
+                    result.category ? setCategory(result.category) : setCategory('')
+                    result.discordActivation ? setDiscordActivated(true) : setDiscordActivated(false)
+                    result.proposalActivation ? setProposalsActivated(true) : setProposalsActivated(false)
+                    result.passedProposalActivation ? setPassedProposalsActivated(true) : setPassedProposalsActivated(false)
+                    result.sponsorActivation ? setSponsorActivated(true) : setSponsorActivated(false)
+                    result.reddit? setReddit(result.reddit) : setReddit('')
+                    result.discord? setDiscord(result.discord): setDiscord('')
+                    result.twitter? setTwitter(result.twitter): setTwitter('')
+                    result.email? setEmail(result.email): setEmail('')
+                    result.telegram? setTelegram(result.telegram): setTelegram('')
+                    result.website? setWebsite(result.website): setWebsite('')
+                    result.platform ? setPlatform(result.platform) : setPlatform('')
                 }
             } else {
-                if(did){
+                if(did && appIdx){
                     let result = await appIdx.get('daoProfile', did)
                     console.log('result', result)
-                    if(result) {
-                        setGuild(true)
-                        result.purpose ? setPurpose(result.purpose) : setPurpose('')
-                        result.name ? setName(result.name) : setName('')
-                        result.date ? setDate(result.date) : setDate('')
-                        result.logo ? setLogo(result.logo) : setLogo(imageName)
-                        result.country ? setCountry(result.country) : setCountry('')
-                        result.language ? setLanguage(result.language) : setLanguage([])
-                        result.skills ? setSkills(result.skills) : setSkills([])
-                        result.specificSkills ? setSpecificSkills(result.specificSkills) : setValue([])
-                        result.category ? setCategory(result.category) : setCategory('')
-                        result.discordActivation ? setDiscordActivated(true) : setDiscordActivated(false)
-                        result.proposalActivation ? setProposalsActivated(true) : setProposalsActivated(false)
-                        result.passedProposalActivation ? setPassedProposalsActivated(true) : setPassedProposalsActivated(false)
-                        result.sponsorActivation ? setSponsorActivated(true) : setSponsorActivated(false)
-                        result.reddit? setReddit(result.reddit) : setReddit('')
-                        result.discord? setDiscord(result.discord): setDiscord('')
-                        result.twitter? setTwitter(result.twitter): setTwitter('')
-                        result.email? setEmail(result.email): setEmail('')
-                        result.telegram? setTelegram(result.telegram): setTelegram('')
-                        result.website? setWebsite(result.website): setWebsite('')
-                        result.platform ? setPlatform(result.platform) : setPlatform('')
-                    }
+                        if(result) {
+                            setGuild(true)
+                            result.purpose ? setPurpose(result.purpose) : setPurpose('')
+                            result.name ? setName(result.name) : setName('')
+                            result.date ? setDate(result.date) : setDate('')
+                            result.logo ? setLogo(result.logo) : setLogo(imageName)
+                            result.country ? setCountry(result.country) : setCountry('')
+                            result.language ? setLanguage(result.language) : setLanguage([])
+                            result.skills ? setSkills(result.skills) : setSkills([])
+                            result.specificSkills ? setSpecificSkills(result.specificSkills) : setValue([])
+                            result.category ? setCategory(result.category) : setCategory('')
+                            result.discordActivation ? setDiscordActivated(true) : setDiscordActivated(false)
+                            result.proposalActivation ? setProposalsActivated(true) : setProposalsActivated(false)
+                            result.passedProposalActivation ? setPassedProposalsActivated(true) : setPassedProposalsActivated(false)
+                            result.sponsorActivation ? setSponsorActivated(true) : setSponsorActivated(false)
+                            result.reddit? setReddit(result.reddit) : setReddit('')
+                            result.discord? setDiscord(result.discord): setDiscord('')
+                            result.twitter? setTwitter(result.twitter): setTwitter('')
+                            result.email? setEmail(result.email): setEmail('')
+                            result.telegram? setTelegram(result.telegram): setTelegram('')
+                            result.website? setWebsite(result.website): setWebsite('')
+                            result.platform ? setPlatform(result.platform) : setPlatform('')
+                        }
                 }
             }
-          }
+        }
 
           fetchData()
             .then((res) => {
               setFinished(true)
             })
           
-    }, [did, isUpdated]
+    }, [did, appIdx, isUpdated]
     )
-
+console.log('finished', finished)
     const languages = language.map((item, i) => {
       if (i == language.length -1){
         item = item
@@ -231,7 +213,7 @@ export default function GuildProfile(props) {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                         <Avatar src={logo} style={{width:'75%', height:'auto', marginBottom:'10px'}}  />
                         <Typography variant="h5">
-                            {name ? name : member}
+                            {name ? name : accountId}
                         </Typography>
                         <Stack direction="row" spacing={1} justifyContent="center">
                             {accountType == 'guild' ? <Chip icon={<AppRegistrationIcon />} label="Registered" /> : <Chip icon={<AppRegistrationIcon />} label=" Not Registered" /> }
@@ -246,7 +228,7 @@ export default function GuildProfile(props) {
                             
                             </TableHead>
                             <TableBody>
-                            {member ? <TableRow key={member}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{member}</TableCell></TableRow> : null }
+                            {accountId ? <TableRow key={accountId}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{accountId}</TableCell></TableRow> : null }
                             {date ? <TableRow key={date}><TableCell>Updated</TableCell><TableCell component="th" scope="row">{date}</TableCell></TableRow> : null }
                             {category ? <TableRow key={category}><TableCell>Category</TableCell><TableCell component="th" scope="row">{category}</TableCell></TableRow> : null }
                             {country ? <TableRow key={country}><TableCell>Country</TableCell><TableCell component="th" scope="row">{country}</TableCell></TableRow> : null }

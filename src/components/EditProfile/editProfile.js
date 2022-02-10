@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useParams } from 'react-router-dom'
 import { appStore, onAppMount } from '../../state/app'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import FileUpload from '../common/IPFSUpload/fileUpload'
-import { flexClass } from '../../App'
-import { ceramic, IPFS_PROVIDER } from '../../utils/ceramic' 
+import { IPFS_PROVIDER } from '../../utils/ceramic' 
 import { config } from '../../state/config'
 import { formatDate } from '../../state/near'
-import * as nearAPI from 'near-api-js'
+import draftToHtml from 'draftjs-to-html'
+import htmlToDraft from 'html-to-draftjs'
+import { EditorState, convertFromRaw, convertToRaw, ContentState } from 'draft-js'
+import { Editor } from "react-draft-wysiwyg"
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -33,21 +34,19 @@ import Input from '@mui/material/Input'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Rating from '@mui/material/Rating'
-import FormLabel from '@mui/material/FormLabel'
-import FormGroup from '@mui/material/FormGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import FormHelperText from '@mui/material/FormHelperText'
-import Checkbox from '@mui/material/Checkbox'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import EmailIcon from '@mui/icons-material/Email'
 import RedditIcon from '@mui/icons-material/Reddit'
 import TwitterIcon from '@mui/icons-material/Twitter'
+import TelegramIcon from '@mui/icons-material/Telegram'
 import InputAdornment from '@mui/material/InputAdornment'
 import CircularProgress from '@mui/material/CircularProgress'
 import Zoom from '@mui/material/Zoom'
 import Tooltip from '@mui/material/Tooltip'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import AddBoxIcon from '@mui/icons-material/AddBox'
+import { Paper } from '@mui/material'
 
 const axios = require('axios').default
 
@@ -117,23 +116,30 @@ export default function EditProfileForm(props) {
     const [discord, setDiscord] = useState('')
     const [reddit, setReddit] = useState('')
     const [twitter, setTwitter] = useState('')
+    const [telegram, setTelegram] = useState('')
     const [birthdate, setBirthdate] = useState('')
     const [country, setCountry] = useState('')
     const [language, setLanguage] = useState([])
     const [skill, setSkill] = useState([])
     const [familiarity, setFamiliarity] = useState('0')
+    const [intro, setIntro] = useState(EditorState.createEmpty())
    
     
     const [otherSkills, setOtherSkills] = useState([])
     const [notifications, setNotifications] = useState([])
 
+    const [currentLikes, setCurrentLikes] = useState([])
+    const [currentDisLikes, setCurrentDisLikes] = useState([])
+    const [currentNeutrals, setCurrentNeutrals] = useState([])
+
     const [avatarLoaded, setAvatarLoaded] = useState(true)
     const [progress, setProgress] = useState(false)
+    const [introLength, setIntroLength] = useState(0)
 
     const { state, dispatch, update } = useContext(appStore)
 
-    const countries = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua & Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia","Bosnia & Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Cayman Islands","Chad","Chile","China","Colombia","Congo","Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cruise Ship","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Estonia","Ethiopia","Falkland Islands","Faroe Islands","Fiji","Finland","France","French Polynesia","French West Indies","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece","Greenland","Grenada","Guam","Guatemala","Guernsey","Guinea","Guinea Bissau","Guyana","Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Jamaica","Japan","Jersey","Jordan","Kazakhstan","Kenya","Kuwait","Kyrgyz Republic","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Macau","Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Mauritania","Mauritius","Mexico","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Namibia","Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre & Miquelon","Samoa","San Marino","Satellite","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","South Africa","South Korea","Spain","Sri Lanka","St Kitts & Nevis","St Lucia","St Vincent","St. Lucia","Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor L'Este","Togo","Tonga","Trinidad & Tobago","Tunisia","Turkey","Turkmenistan","Turks & Caicos","Uganda","Ukraine","United Arab Emirates","United Kingdom","Uruguay","Uzbekistan","Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"];
-    const languages = ['Abkhazian','Afar','Afrikaans','Akan','Albanian','Amharic','Arabic','Aragonese','Armenian','Assamese','Avaric','Avestan','Aymara','Azerbaijani','Bambara','Bashkir','Basque','Belarusian','Bengali','Bihari languages','Bislama','Bosnian','Breton','Bulgarian','Burmese','Catalan, Valencian','Central Khmer','Chamorro','Chechen','Chichewa, Chewa, Nyanja','Chinese','Church Slavonic, Old Bulgarian, Old Church Slavonic','Chuvash','Cornish','Corsican','Cree','Croatian','Czech','Danish','Divehi, Dhivehi, Maldivian','Dutch, Flemish','Dzongkha','English','Esperanto','Estonian','Ewe','Faroese','Fijian','Finnish','French','Fulah','Gaelic, Scottish Gaelic','Galician','Ganda', 'Georgian','German','Gikuyu, Kikuyu','Greek (Modern)','Greenlandic, Kalaallisut','Guarani','Gujarati','Haitian, Haitian Creole','Hausa','Hebrew','Herero','Hindi','Hiri Motu','Hungarian','Icelandic','Ido','Igbo','Indonesian','Interlingua (International Auxiliary Language Association)','Interlingue','Inuktitut','Inupiaq','Irish','Italian','Japanese','Javanese','Kannada','Kanuri','Kashmiri','Kazakh','Kinyarwanda','Komi','Kongo','Korean','Kwanyama, Kuanyama','Kurdish','Kyrgyz','Lao','Latin','Latvian','Letzeburgesch, Luxembourgish','Limburgish, Limburgan, Limburger','Lingala','Lithuanian','Luba-Katanga','Macedonian','Malagasy','Malay','Malayalam','Maltese','Manx','Maori','Marathi','Marshallese','Moldovan, Moldavian, Romanian','Mongolian','Nauru','Navajo, Navaho','Northern Ndebele','Ndonga','Nepali','Northern Sami','Norwegian','Norwegian Bokmål','Norwegian Nynorsk','Nuosu, Sichuan Yi','Occitan (post 1500)','Ojibwa','Oriya','Oromo','Ossetian, Ossetic','Pali','Panjabi, Punjabi','Pashto, Pushto','Persian','Polish','Portuguese','Quechua','Romansh','Rundi','Russian','Samoan','Sango','Sanskrit','Sardinian','Serbian','Shona','Sindhi','Sinhala, Sinhalese','Slovak','Slovenian','Somali','Sotho, Southern','South Ndebele','Spanish, Castilian','Sundanese','Swahili','Swati','Swedish','Tagalog','Tahitian','Tajik','Tamil','Tatar','Telugu','Thai','Tibetan','Tigrinya','Tonga (Tonga Islands)','Tsonga','Tswana','Turkish','Turkmen','Twi','Uighur, Uyghur','Ukrainian','Urdu','Uzbek','Venda','Vietnamese','Volap_k','Walloon','Welsh','Western Frisian','Wolof','Xhosa','Yiddish','Yoruba','Zhuang, Chuang','Zulu' ]
+    const countries = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua & Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia","Bosnia & Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Cayman Islands","Chad","Chile","China","Colombia","Congo","Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cruise Ship","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Estonia","Ethiopia","Falkland Islands","Faroe Islands","Fiji","Finland","France","French Polynesia","French West Indies","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece","Greenland","Grenada","Guam","Guatemala","Guernsey","Guinea","Guinea Bissau","Guyana","Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Jamaica","Japan","Jersey","Jordan","Kazakhstan","Kenya","Kuwait","Kyrgyz Republic","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Macau","Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Mauritania","Mauritius","Mexico","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Namibia","Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre & Miquelon","Samoa","San Marino","Satellite","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","South Africa","South Korea","Spain","Sri Lanka","St Kitts & Nevis","St Lucia","St Vincent","St. Lucia","Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor L'Este","Togo","Tonga","Trinidad & Tobago","Tunisia","Turkey","Turkmenistan","Turks & Caicos","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"];
+    const languages = ['Abkhazian','Afar','Afrikaans','Akan','Albanian','Amharic','Arabic','Aragonese','Armenian','Assamese','Avaric','Avestan','Aymara','Azerbaijani','Bambara','Bashkir','Basque','Belarusian','Bengali','Bihari languages','Bislama','Bosnian','Breton','Bulgarian','Burmese','Catalan, Valencian','Central Khmer','Chamorro','Chechen','Chichewa, Chewa, Nyanja','Chinese','Church Slavonic, Old Bulgarian, Old Church Slavonic','Chuvash','Cornish','Corsican','Cree','Croatian','Czech','Danish','Divehi, Dhivehi, Maldivian','Dutch, Flemish','Dzongkha','English','Esperanto','Estonian','Ewe','Faroese','Fijian','Finnish','French','Fulah','Gaelic, Scottish Gaelic','Galician','Ganda', 'Georgian','German','Gikuyu, Kikuyu','Greek (Modern)','Greenlandic, Kalaallisut','Guarani','Gujarati','Haitian, Haitian Creole','Hausa','Hebrew','Herero','Hindi','Hiri Motu','Hungarian','Icelandic','Ido','Igbo','Indonesian','Interlingua (International Auxiliary Language Association)','Interlingue','Inuktitut','Inupiaq','Irish','Italian','Japanese','Javanese','Kannada','Kanuri','Kashmiri','Kazakh','Kinyarwanda','Komi','Kongo','Korean','Kwanyama, Kuanyama','Kurdish','Kyrgyz','Lao','Latin','Latvian','Letzeburgesch, Luxembourgish','Limburgish, Limburgan, Limburger','Lingala','Lithuanian','Luba-Katanga','Macedonian','Malagasy','Malay','Malayalam','Maltese','Manx','Maori','Marathi','Marshallese','Moldovan, Moldavian, Romanian','Mongolian','Nauru','Navajo, Navaho','Northern Ndebele','Ndonga','Nepali','Northern Sami','Norwegian','Norwegian Bokmål','Norwegian Nynorsk','Nuosu, Sichuan Yi','Occitan (post 1500)','Ojibwa','Oriya','Oromo','Ossetian, Ossetic','Pali','Panjabi, Punjabi','Pashto, Pushto','Persian','Polish','Portuguese','Quechua','Romansh','Rundi','Russian','Samoan','Sango','Sanskrit','Sardinian','Serbian','Shona','Sindhi','Sinhala, Sinhalese','Slovak','Slovenian','Somali','Sotho, Southern','South Ndebele','Spanish, Castilian','Sundanese','Swahili','Swati','Swedish','Tagalog','Tahitian','Tajik','Tamil','Tatar','Telugu','Thai','Tibetan','Tigrinya','Tonga (Tonga Islands)','Tsonga','Tswana','Turkish','Turkmen','Twi','Uighur,Uyghur','Ukrainian','Urdu','Uzbek','Venda','Vietnamese','Volap_k','Walloon','Welsh','Western Frisian','Wolof','Xhosa','Yiddish','Yoruba','Zhuang, Chuang','Zulu' ]
     
     const [skillSet, setSkillSet] = useState({})
     const [developerSkillSet, setDeveloperSkillSet] = useState({})
@@ -200,12 +206,24 @@ export default function EditProfileForm(props) {
               let result = await appIdx.get('profile', did)   
             console.log('result', result)
               if(result) {
+                if(result.intro){
+                  let contentBlock = htmlToDraft(result.intro)
+                  if(contentBlock){
+                      const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks)
+                      const editorState = EditorState.createWithContent(contentState)
+                      setIntro(editorState)
+                  }
+                } else {
+                    setIntro(EditorState.createEmpty())
+                }
                 result.date ? setDate(result.date) : setDate('')
                 result.avatar ? setAvatar(result.avatar) : setAvatar(imageName)
                 result.shortBio ? setShortBio(result.shortBio) : setShortBio('')
                 result.name ? setName(result.name) : setName('')
                 result.email ? setEmail(result.email): setEmail('')
                 result.discord ? setDiscord(result.discord): setDiscord('')
+                result.twitter ? setTwitter(result.twitter): setTwitter('')
+                result.telegram ? setTelegram(result.telegram): setTelegram('')
                 result.birthdate ? setBirthdate(result.birthdate): setBirthdate('')
                 result.country ? setCountry(result.country): setCountry('')
                 result.language ? setLanguage(result.language): setLanguage([])
@@ -216,6 +234,9 @@ export default function EditProfileForm(props) {
                 result.developerSkillSet ? setDeveloperSkillSet(result.developerSkillSet) : setDeveloperSkillSet({})
                 result.personaSkills? setValue('personaSkills', result.personaSkills): setValue('personaSkills', {name: ''})
                 result.personaSpecificSkills? setValue('personaSpecificSkills', result.personaSpecificSkills): setValue('personaSpecificSkills', {name: ''})
+                result.likes ? setCurrentLikes(result.likes) : setCurrentLikes([])
+                result.dislikes ? setCurrentDisLikes(result.dislikes) : setCurrentDisLikes([])
+                result.neutrals ? setCurrentNeutrals(result.neutrals) : setCurrentNeutrals([])  
               }
               return true
            }
@@ -250,14 +271,28 @@ export default function EditProfileForm(props) {
        let value = event.target.value;
        setEmail(value)
     }
+
     const handleDiscordChange = (event) => {
       let value = event.target.value;
       setDiscord(value) 
     }
+
+    const handleTelegramChange = (event) => {
+      let value = event.target.value;
+      setTelegram(value) 
+    }
+
     const handleRedditChange = (event) => {
       let value = event.target.value;
       setReddit(value);
     }
+
+    const handleIntroChange = (editorState) => {
+      let size = editorState.getCurrentContent().getPlainText('').length
+      setIntro(editorState)
+      setIntroLength(size)
+    }
+
     const handleCountryChange = (event) => {
       let value = event.target.value;
       setCountry(value);
@@ -307,16 +342,21 @@ export default function EditProfileForm(props) {
             email: email,
             discord: discord,
             twitter: twitter,
+            telegram: telegram,
             reddit: reddit,
             birthdate: birthdate,
             country: country,
             language: language,
+            intro: draftToHtml(convertToRaw(intro.getCurrentContent())),
             familiarity: familiarity,
             skillSet: skillSet,
             developerSkillSet: developerSkillSet,
             personaSkills: personaSkills,
             personaSpecificSkills: personaSpecificSkills,
-            notifications: notifications
+            notifications: notifications,
+            likes: currentLikes,
+            dislikes: currentDisLikes,
+            neutrals: currentNeutrals
         }
      
       try {
@@ -451,6 +491,30 @@ export default function EditProfileForm(props) {
                                   <FormHelperText>Select the languages you are comfortable with.</FormHelperText>
                                 </FormControl>
                               </Grid>
+                              <Typography variant="h6" style={{marginTop: '15px', marginLeft:'5px', width:'100%'}}>Short Introduction</Typography><br></br>
+                              <Typography variant="overline" style={{marginLeft:'5px'}}>{`${introLength}/2000`}</Typography>
+                              <Paper style={{padding: '5px'}}>
+                                  <Editor
+                                  editorState={intro}
+                                  toolbarClassName="toolbar-class"
+                                  wrapperClassName="wrapper-class"
+                                  editorClassName="editor-class"
+                                  toolbar={{
+                                      inline: { inDropdown: true },
+                                      list: { inDropdown: true },
+                                      textAlign: { inDropdown: true },
+                                      link: { inDropdown: true },
+                                      image: { inDropdown: true },
+                                      history: { inDropdown: true },
+                                    }}
+                                  onEditorStateChange={handleIntroChange}
+                                  editorStyle={{minHeight:'200px'}}
+                                  inputRef={register({
+                                    required: false,
+                                    maxLength: 2000                             
+                                  })}
+                                  />
+                              </Paper>
                             </Grid>
                           </AccordionDetails>
                         </Accordion>
@@ -598,6 +662,7 @@ export default function EditProfileForm(props) {
                                 id="profile-email"
                                 variant="outlined"
                                 name="email"
+                                type="email"
                                 label="Email"
                                 placeholder="someone@someplace"
                                 value={email}
@@ -633,7 +698,8 @@ export default function EditProfileForm(props) {
                                   ),
                                 }}
                                 inputRef={register({
-                                    required: false                              
+                                    required: false,
+                                    pattern: /@?[^#@:]{2,32}#[0-9]{4}/              
                                 })}
                               />
                             </Grid>
@@ -644,8 +710,8 @@ export default function EditProfileForm(props) {
                                 id="profile-twitter"
                                 variant="outlined"
                                 name="twitter"
-                                label="Twitter"
-                                placeholder="some user"
+                                label="Twitter (no @)"
+                                placeholder="some_one"
                                 value={twitter}
                                 onChange={handleTwitterChange}
                                 InputProps={{
@@ -656,8 +722,33 @@ export default function EditProfileForm(props) {
                                   ),
                                 }}
                                 inputRef={register({
-                                    required: false                              
+                                    required: false,
+                                    pattern: /^[a-z0-9_]{1,15}$/i                          
                                 })}
+                              />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                              <TextField
+                              
+                              margin="dense"
+                              id="profile-telegram"
+                              variant="outlined"
+                              name="telegram"
+                              label="Telegram (no @)"
+                              placeholder="some_one"
+                              value={telegram}
+                              onChange={handleTelegramChange}
+                              InputProps={{
+                                  startAdornment: (
+                                  <InputAdornment position="start">
+                                      <TelegramIcon />
+                                  </InputAdornment>
+                                  ),
+                              }}
+                              inputRef={register({
+                                  required: false,
+                                  pattern: /^[a-z0-9_]{1,15}$/i                         
+                              })}
                               />
                             </Grid>
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>

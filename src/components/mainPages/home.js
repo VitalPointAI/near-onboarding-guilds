@@ -43,7 +43,8 @@ export const Home = ({ children }) => {
         wallet, 
         finished,
         key,
-        accountType
+        accountType,
+        isUpdated
     } = state
     
     const classes = useStyles();
@@ -56,7 +57,7 @@ export const Home = ({ children }) => {
             } else (
                 update('', {key: false})
             )
-    }, [finished]
+    }, [finished, isUpdated]
     )
    
     return (

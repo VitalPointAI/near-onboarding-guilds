@@ -85,7 +85,8 @@ const {
   isUpdated,
   curUserIdx,
   did,
-  accountType
+  accountType,
+  admins
 } = state
 
 // useEffect(
@@ -249,9 +250,18 @@ const list = (anchor) => (
         <ListItemText primary='Explore Rewards'/>
         </ListItem>
     </Link>
-    </List>
-    
     <Divider />
+    {admins && admins.includes(accountId) ? <>
+      <Link to='/admin'>
+      <ListItem className='admin' button key={99}>
+      <ListItemIcon><SettingsIcon /></ListItemIcon>
+      <ListItemText primary='Admin'/>
+      </ListItem>
+      </Link>
+      <Divider />
+      </>
+    : null }
+    </List>
   </div>
   ) :
     wallet.signedIn ? (
@@ -316,9 +326,19 @@ const list = (anchor) => (
             <ListItemText primary='Explore Rewards'/>
             </ListItem>
         </Link>
-        </List>
-        
         <Divider />
+        {admins && admins.includes(accountId) ? <>
+          <Link to='/admin'>
+          <ListItem className='admin' button key={99}>
+          <ListItemIcon><SettingsIcon /></ListItemIcon>
+          <ListItemText primary='Admin'/>
+          </ListItem>
+          </Link>
+          <Divider />
+          </>
+        : null }
+      
+      </List>
     </>
     ) : null }
     

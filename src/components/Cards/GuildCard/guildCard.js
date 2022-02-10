@@ -3,38 +3,26 @@ import * as nearAPI from 'near-api-js'
 import { Link } from 'react-router-dom'
 import { appStore, onAppMount } from '../../../state/app'
 import { ceramic } from '../../../utils/ceramic'
-import EditGuildProfileForm from '../../EditProfile/editGuild'
-import GuildProfile from '../../Profiles/guildProfile'
 import { catalystDao } from '../../../utils/catalystDao'
 import Purpose from '../Purpose/purpose'
 import Social from '../../common/Social/social'
-import { config } from '../../../state/config'
+import { signal } from '../../../state/near'
+
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import CardActions from '@mui/material/CardActions'
-import Typography from '@mui/material/Typography'
-import { red } from '@mui/material/colors'
 import Button from '@mui/material/Button'
-import { CardHeader, LinearProgress } from '@mui/material'
+import { LinearProgress } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import NotInterestedIcon from '@mui/icons-material/NotInterested'
-import Chip from '@mui/material/Chip'
-import EditIcon from '@mui/icons-material/Edit'
-import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled'
-import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled'
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
-import { SentimentVerySatisfied, SettingsSystemDaydreamOutlined } from '@mui/icons-material'
 import { Grid } from '@mui/material'
-
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
+import { Typography } from '@mui/material'
+import ListItem from '@mui/material/ListItem'
+import Divider from '@mui/material/Divider'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
+import { Stack } from '@mui/material'
+import { Badge } from '@mui/material'
 
 const useStyles = makeStyles((theme) => ({
     pos: {
@@ -61,7 +49,8 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 const imageName = require('../../../img/default_logo.png') // default no-image avatar
-
+const sortDown = require('../../../img/sortdown.png')
+const sortUp = require('../../../img/sortup.png')
 export default function GuildCard(props) {
 
   const { state, dispatch, update } = useContext(appStore);
@@ -89,6 +78,10 @@ export default function GuildCard(props) {
     const [daoPlatformLink, setDaoPlatformLink] = useState('')
     const [daoDid, setDaoDid] = useState('')
 
+    const [currentLikes, setCurrentLikes] = useState([])
+    const [currentDisLikes, setCurrentDisLikes] = useState([])
+    const [currentNeutrals, setCurrentNeutrals] = useState([])
+
     const classes = useStyles();
 
     const { 
@@ -106,7 +99,7 @@ export default function GuildCard(props) {
      near,
      didRegistryContract,
      factoryContract,
-     admin
+     admin,
    } = state
 
     useEffect(
@@ -118,13 +111,13 @@ export default function GuildCard(props) {
         let guildInfo = await appIdx.get('daoProfile', did)
         console.log('guildInfo', guildInfo)
         let thisDaoPlatform
-        if(guildInfo.contractId){
+        if(guildInfo && guildInfo.contractId){
           if(guildInfo.contractId.split('.')[1].substr(0,4)=='cdao'){
             thisDaoPlatform = 'Catalyst'
             setDaoPlatform(thisDaoPlatform)
             setDaoPlatformLink(`https://cdao.app/dao/${guildInfo.contractId}`)
           }
-          if(guildInfo.contractId.split('.')[1].substr(0,7)=='sputnik'){
+          if(guildInfo && guildInfo.contractId.split('.')[1].substr(0,7)=='sputnik'){
             thisDaoPlatform = 'Astro'
             setDaoPlatform(thisDaoPlatform)
             setDaoPlatformLink(`https://app.astrodao.com/dao/${guildInfo.contractId}`)
@@ -175,6 +168,9 @@ export default function GuildCard(props) {
                   result.category != '' ? setCategory(result.category) : setCategory('')
                   result.owner != '' ? setOwner(result.owner) : setOwner('')
                   result.status = memberStatus
+                  result.likes ? setCurrentLikes(result.likes) : setCurrentLikes([])
+                  result.dislikes ? setCurrentDisLikes(result.dislikes) : setCurrentDisLikes([])
+                  result.neutrals ? setCurrentNeutrals(result.neutrals) : setCurrentNeutrals([])
            } else {
              setName('')
              setDate('')
@@ -238,6 +234,11 @@ export default function GuildCard(props) {
   function handleExpandedDetails(){
     setAnchorE2(null)
   }
+
+  async function handleSignal(sig){
+    await signal(sig, curDaoIdx, accountId, 'guild')
+    update('', {isUpdated: !isUpdated})
+  }
   
   function formatDate(timestamp) {
     let stringDate = timestamp.toString()
@@ -251,36 +252,58 @@ export default function GuildCard(props) {
                     
           finished ? 
           (
+            <>
             <ListItem alignItems="flex-start">
             <ListItemAvatar>
-            <Link to={`/profiles/${contractId}`}>
-            <div onClick={handleDetailsClick}
-            style={{width: '100%', 
-                height: '50px',
-                backgroundImage: `url(${logo})`, 
-                backgroundSize: 'contain',
-                backgroundPosition: 'center', 
-                backgroundRepeat: 'no-repeat',
-                backgroundOrigin: 'content-box'
-            }}>
-            </div>
-            </Link>
+              <Stack direction="column" spacing={1}>
+                <Badge badgeContent={currentLikes.length} anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }} color="primary" max={9999999}>  
+                  <img src={sortUp} style={{width: '50px'}} onClick={(e) => handleSignal('like')}/>
+                </Badge>
+                <Badge badgeContent={currentDisLikes.length} anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }} color="primary" max={9999999}>  
+                  <img src={sortDown} style={{width: '50px'}} onClick={(e) => handleSignal('dislike')}/>
+                </Badge>
+              </Stack>
             </ListItemAvatar>
             <ListItemText
-              primary={name != '' ? name : contractId.split('.')[0]}
+              primary={<Link to={`/guild-profiles/${daoDid}`}>  
+                <div style={{width: 'auto', 
+                    height: '75px',
+                    backgroundImage: `url(${logo})`, 
+                    backgroundSize: 'contain',
+                    backgroundPosition: 'center', 
+                    backgroundRepeat: 'no-repeat',
+                    backgroundOrigin: 'content-box'
+                }}>
+                </div>
+                </Link>}
               secondary={
                 <Grid container spacing={1} justifyContent="space-between" alignItems="center">
-                  <Grid item xs={3} sm={3} md={3} lg={3} xl={3} >
-                    {purpose ? (<Button variant="outlined" style={{textAlign: 'center', fontSize: '80%', marginTop:'5px'}} onClick={handlePurposeClick}>Purpose</Button>) : null}
-                  </Grid>
-                  <Grid item xs={9} sm={9} md={9} lg={9} xl={9} >
-                    <Social did={daoDid} type={'guild'} appIdx={appIdx} platform={daoPlatform}/>
-                  </Grid>
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                  <Typography variant="h5">{name != '' ? name : contractId.split('.')[0]}</Typography>
+                  </Grid>  
                 </Grid>
               }
             />
             </ListItem>
-          ) 
+            <Grid container spacing={1} justifyContent="space-between" alignItems="center" style={{paddingLeft: '10px', paddingRight:'10px'}}>
+              <Grid item xs={3} sm={3} md={3} lg={3} xl={3} >
+                {purpose ? (<Button variant="outlined" style={{textAlign: 'center', fontSize: '80%', marginTop:'5px'}} onClick={handlePurposeClick}>Purpose</Button>) : null}
+              </Grid>
+              <Grid item xs={9} sm={9} md={9} lg={9} xl={9} >
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
+                <Social did={daoDid} type={'guild'} appIdx={appIdx} platform={daoPlatform} platformLink={daoPlatformLink}/>
+              </Grid>
+            </Grid>
+            <Divider variant="middle" style={{marginTop: '15px', marginBottom: '15px'}}/>
+          </>
+            ) 
           : null
         }
        

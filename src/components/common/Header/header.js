@@ -1,7 +1,9 @@
 import React, {useState, useEffect, useContext} from 'react'
+import { Link } from 'react-router-dom'
 import { appStore, onAppMount } from '../../../state/app'
 import LeftSideDrawer from '../LeftSideDrawer/leftSideDrawer'
 import LoginButton from '../LogInButton/loginButton'
+import LogoutButton from '../LogoutButton/logoutButton'
 import AccountInfo from '../AccountInfo/accountInfo'
 import ImageLoader from '../ImageLoader/imageLoader'
 //import NotificationCard from '../Notifications/notifications'
@@ -100,11 +102,13 @@ const Header = ({ state, handleUpdate }) => {
                     <Grid item style={{marginLeft: '25px'}}>
                         <LeftSideDrawer
                         state={state}                        
-                        /> 
-                        <ImageLoader image={nearLogo} style={logoStyle}/>
+                        />
+                        <Link to="/"> 
+                            <ImageLoader image={nearLogo} style={logoStyle}/>
+                        </Link>
                     </Grid>
                     <Grid item style={{minWidth: '100px'}} >
-                        {wallet && !wallet.signedIn ? <LoginButton /> :   <AccountInfo /> }
+                        {wallet && !wallet.signedIn ? <LoginButton /> :   <LogoutButton /> }
                     </Grid>
                     </>
                 ) 
@@ -113,10 +117,12 @@ const Header = ({ state, handleUpdate }) => {
                 !matches ? (
                     <>
                     <Grid item style={{marginLeft: '25px'}}>
-                    <ImageLoader image={nearLogo} style={logoStyle}/>
+                    <Link to="/"> 
+                        <ImageLoader image={nearLogo} style={logoStyle}/>
+                    </Link>
                     </Grid>
                     <Grid item style={{minWidth: '100px'}}>
-                        {wallet && !wallet.signedIn ? <LoginButton /> :  <AccountInfo /> }
+                        {wallet && !wallet.signedIn ? <LoginButton /> :  <LogoutButton /> }
                     </Grid>
                     </>
                 ) : (
@@ -125,11 +131,13 @@ const Header = ({ state, handleUpdate }) => {
                         <LeftSideDrawer
                             state={state}
                         
-                        /> 
-                        <ImageLoader image={nearLogo} style={logoStyle}/>
+                        />
+                        <Link to="/"> 
+                            <ImageLoader image={nearLogo} style={logoStyle}/>
+                        </Link>
                     </Grid>
                     <Grid item style={{minWidth: '100px'}}>
-                        {wallet && !wallet.signedIn ? <LoginButton /> :   <AccountInfo /> }
+                        {wallet && !wallet.signedIn ? <LoginButton /> :   <LogoutButton /> }
                     </Grid>
                     </>
                 ) 

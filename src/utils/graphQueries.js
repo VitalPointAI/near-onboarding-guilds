@@ -37,6 +37,24 @@ query {
     }
 }
 `
+
+const GUILD_DELETIONS = `
+query {
+    deleteDIDs(where: {type_in: ["guild"]})
+    {
+        event
+        blockTime
+        blockHeight
+        accountId
+        did
+        type
+        time
+        deletedBy
+    }
+}
+`
+
+
 const INDIVIDUAL_REGISTRATIONS = `
 query {
     putDIDs(where: {type_in: ["individual"]})
@@ -49,6 +67,22 @@ query {
         type
         registered
         owner
+    }
+}
+`
+
+const INDIVIDUAL_DELETIONS = `
+query {
+    deleteDIDs(where: {type_in: ["individual"]})
+    {
+        event
+        blockTime
+        blockHeight
+        accountId
+        did
+        type
+        time
+        deletedBy
     }
 }
 `
@@ -69,6 +103,38 @@ query{
     accounts{
         id
         log
+    }
+}
+`
+
+const ADD_VERIFIER_QUERY = `
+query{
+    addVerifiers{
+        accountId
+        time
+        whitelistedBy
+    }
+}
+`
+
+const REMOVE_VERIFIER_QUERY = `
+query{
+    removeVerifiers{
+        accountId
+        time
+        removedBy
+    }
+}
+`
+
+const VERIFIED_GUILDS = `
+query{
+    changeVerificationStatuses(where: {verified_in: [true]})
+    {
+        accountId
+        time
+        verified
+        changedBy
     }
 }
 `
@@ -96,14 +162,39 @@ export default class Queries {
         return guilds
     }
 
+    async getDeletedGuilds(){
+        const deletedGuilds = await registryClient.query({query: gql(GUILD_DELETIONS)})
+        return deletedGuilds
+    }
+
     async getIndividuals(){
         const individuals = await registryClient.query({query: gql(INDIVIDUAL_REGISTRATIONS)})
         return individuals
     }
 
+    async getDeletedIndividuals(){
+        const deletedIndividuals = await registryClient.query({query: gql(INDIVIDUAL_DELETIONS)})
+        return deletedIndividuals
+    }
+
     async getDataStreams(){
         const dataStreams = await registryClient.query({query: gql(DATASTREAMS)})
         return dataStreams
+    }
+
+    async getAddedVerifiers(){
+        const verifiers = await registryClient.query({query: gql(ADD_VERIFIER_QUERY)})
+        return verifiers
+    }
+
+    async getRemovedVerifiers(){
+        const verifiers = await registryClient.query({query: gql(REMOVE_VERIFIER_QUERY)})
+        return verifiers
+    }
+
+    async getVerifiedGuilds(){
+        const verifiedGuilds = await registryClient.query({query: gql(VERIFIED_GUILDS)})
+        return verifiedGuilds
     }
 
 }

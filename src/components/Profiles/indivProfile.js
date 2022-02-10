@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
+import Social from '../common/Social/social'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -23,6 +24,7 @@ import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import VerifiedIcon from '@mui/icons-material/Verified'
+import { Divider } from '@mui/material'
 
 // CSS Styles
 
@@ -76,11 +78,7 @@ export default function IndivProfile(props) {
     const [open, setOpen] = useState(true)
     const [avatar, setAvatar] = useState(imageName)
     const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
     const [finished, setFinished] = useState(false)
-    const [twitter, setTwitter] = useState('')
-    const [reddit, setReddit] = useState('')
-    const [discord, setDiscord] = useState('')
     const [birthdate, setBirthdate] = useState('')
     const [country, setCountry] = useState('')
     const [language, setLanguage] = useState([])
@@ -90,21 +88,15 @@ export default function IndivProfile(props) {
     const [developerSkillSet, setDeveloperSkillSet] = useState({})
     const [personaSkillSet, setPersonaSkillSet] = useState([])
     const [personaSpecificSkillSet, setPersonaSpecificSkillSet] = useState([])
-
-    const [purpose, setPurpose] = useState('')
+    const [personId, setPersonId] = useState()
+    const [intro, setIntro] = useState('')
     const [date, setDate] = useState('')
-    const [logo, setLogo] = useState(logoName)
-    const [category, setCategory] = useState('')
-    const [skills, setSkills] = useState([])
-    const [specificSkills, setSpecificSkills] = useState([])
-    const [platform, setPlatform] = useState('')
-    const [discordActivated, setDiscordActivated] = useState(false)
-    const [proposalsActivated, setProposalsActivated] = useState(false)
-    const [passedProposalsActivated, setPassedProposalsActivated] = useState(false)
-    const [votingActivated, setVotingActivated] = useState(false) 
-    const [sponsorActivated, setSponsorActivated] = useState(false) 
+    const [email, setEmail] = useState('')
     const [website, setWebsite] = useState('')
     const [telegram, setTelegram] = useState('')
+    const [twitter, setTwitter] = useState('')
+    const [reddit, setReddit] = useState('')
+    const [discord, setDiscord] = useState('')
 
     const classes = useStyles()
 
@@ -122,50 +114,65 @@ export default function IndivProfile(props) {
     } = state
 
     const {
-      member
+      indivDid
     }= props
 
-    useEffect(
-      () => {
-          async function fetchMemberData() {
-            
-             
-          }
-          
-          fetchMemberData()
-          .then((res) => {
-
-          })
-
-      }, []
-  )
-   
+    
     useEffect(
         () => {
  
           async function fetchData() {
             if(isUpdated){}
-            if(did){
-              let result = await appIdx.get('profile', did)
-              console.log('did', did)
+            if(indivDid && appIdx){
+              let result = await appIdx.get('profile', indivDid)
               console.log('result', result)
-              if(result){
-                setIndividual(true)
-                result.avatar ? setAvatar(result.avatar) : setAvatar(imageName)
-                result.name ? setName(result.name) : setName('')
-                result.email ? setEmail(result.email) : setEmail('')
-                result.discord? setDiscord(result.discord) : setDiscord('')
-                result.reddit ? setReddit(result.reddit) : setReddit('')
-                result.twitter ? setTwitter(result.twitter) : setTwitter('')
-                result.country ? setCountry(result.country) : setCountry('')
-                result.birthdate ? setBirthdate(result.birthdate) : setBirthdate('')
-                result.language ? setLanguage(result.language) : setLanguage([])
-                result.skill ? setSkill(result.skill) : setSkill([])
-                result.familiarity ? setFamiliarity(result.familiarity): setFamiliarity('')
-                result.skillSet ? setSkillSet(result.skillSet) : setSkillSet({})
-                result.developerSkillSet ? setDeveloperSkillSet(result.developerSkillSet) : setDeveloperSkillSet({})
-                result.personaSkills ? setPersonaSkillSet(result.personaSkills) : setPersonaSkillSet([])
-                result.personaSpecificSkills ? setPersonaSpecificSkillSet(result.personaSpecificSkills) : setPersonaSpecificSkillSet([])
+              if(result) {
+                  setIndividual(true)
+                  result.avatar ? setAvatar(result.avatar) : setAvatar(imageName)
+                  result.name ? setName(result.name) : setName('')
+                  result.email ? setEmail(result.email) : setEmail('')
+                  result.discord? setDiscord(result.discord) : setDiscord('')
+                  result.reddit ? setReddit(result.reddit) : setReddit('')
+                  result.twitter ? setTwitter(result.twitter) : setTwitter('')
+                  result.telegram ? setTelegram(result.telegram) : setTelegram('')
+                  result.website ? setWebsite(result.website) : setWebsite('')
+                  result.country ? setCountry(result.country) : setCountry('')
+                  result.birthdate ? setBirthdate(result.birthdate) : setBirthdate('')
+                  result.language ? setLanguage(result.language) : setLanguage([])
+                  result.skill ? setSkill(result.skill) : setSkill([])
+                  result.familiarity ? setFamiliarity(result.familiarity): setFamiliarity('')
+                  result.skillSet ? setSkillSet(result.skillSet) : setSkillSet({})
+                  result.developerSkillSet ? setDeveloperSkillSet(result.developerSkillSet) : setDeveloperSkillSet({})
+                  result.personaSkills ? setPersonaSkillSet(result.personaSkills) : setPersonaSkillSet([])
+                  result.personaSpecificSkills ? setPersonaSpecificSkillSet(result.personaSpecificSkills) : setPersonaSpecificSkillSet([])
+                  result.owner ? setPersonId(result.owner) : null
+                  result.intro ? setIntro(result.intro) : null
+                }
+            } else {
+              if(did && appIdx){
+                  let result = await appIdx.get('profile', did)
+                  console.log('result', result)
+                      if(result) {
+                        result.avatar ? setAvatar(result.avatar) : setAvatar(imageName)
+                        result.name ? setName(result.name) : setName('')
+                        result.email ? setEmail(result.email) : setEmail('')
+                        result.discord? setDiscord(result.discord) : setDiscord('')
+                        result.reddit ? setReddit(result.reddit) : setReddit('')
+                        result.twitter ? setTwitter(result.twitter) : setTwitter('')
+                        result.telegram ? setTelegram(result.telegram) : setTelegram('')
+                        result.website ? setWebsite(result.website) : setWebsite('')
+                        result.country ? setCountry(result.country) : setCountry('')
+                        result.birthdate ? setBirthdate(result.birthdate) : setBirthdate('')
+                        result.language ? setLanguage(result.language) : setLanguage([])
+                        result.skill ? setSkill(result.skill) : setSkill([])
+                        result.familiarity ? setFamiliarity(result.familiarity): setFamiliarity('')
+                        result.skillSet ? setSkillSet(result.skillSet) : setSkillSet({})
+                        result.developerSkillSet ? setDeveloperSkillSet(result.developerSkillSet) : setDeveloperSkillSet({})
+                        result.personaSkills ? setPersonaSkillSet(result.personaSkills) : setPersonaSkillSet([])
+                        result.personaSpecificSkills ? setPersonaSpecificSkillSet(result.personaSpecificSkills) : setPersonaSpecificSkillSet([])
+                        result.owner ? setPersonId(result.owner) : null
+                        result.intro ? setIntro(result.intro) : null
+                      }
               }
             }
           }
@@ -175,7 +182,7 @@ export default function IndivProfile(props) {
               setFinished(true)
             })
           
-    }, [did, isUpdated]
+    }, [did, indivDid, appIdx, isUpdated]
     )
 
     const languages = language.map((item, i) => {
@@ -198,12 +205,19 @@ export default function IndivProfile(props) {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                         <Avatar src={avatar} style={{width:'150px', height:'auto', marginBottom:'10px'}}  />
                         <Typography variant="h5">
-                            {name ? name : member}
+                            {name ? name : accountId}
                         </Typography>
+                        
                         <Stack direction="row" spacing={1} justifyContent="center">
                             {accountType == 'individual' ? <Chip icon={<AppRegistrationIcon />} label="Registered" /> : <Chip icon={<AppRegistrationIcon />} label=" Not Registered" /> }
                             {verificationStatus ? <Chip icon={<VerifiedIcon />} label="Verified" variant="outlined" /> : null }
                         </Stack>
+                        <Divider variant="middle" style={{marginTop: '15px', marginBottom:'15px'}}/>
+                        <Social did={indivDid ? indivDid : did} type={accountType} appIdx={appIdx} style={{paddingLeft: '15px', paddingRight:'15px'}}/>
+                        <Divider variant="middle" style={{marginTop: '15px', marginBottom:'15px'}}/>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                      <div dangerouslySetInnerHTML={{ __html: intro}}></div>
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                         <Typography variant="h6">General Information</Typography>
@@ -213,7 +227,7 @@ export default function IndivProfile(props) {
                             
                             </TableHead>
                             <TableBody>
-                            {member ? <TableRow key={member}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{member}</TableCell></TableRow> : null }       
+                            {personId || accountId ? <TableRow key={personId ? personId : accountId}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{personId ? personId : accountId}</TableCell></TableRow> : null }       
                             {birthdate ? <TableRow key={birthdate}><TableCell>Birthday</TableCell><TableCell component="th" scope="row">{birthdate}</TableCell></TableRow> : null }
                             {country ? <TableRow key={country}><TableCell>Country</TableCell><TableCell component="th" scope="row">{country}</TableCell></TableRow> : null }
                             {language && language.length > 0 ? <TableRow key='language'><TableCell>Language</TableCell><TableCell component="th" scope="row">{language.map((item, i) => { return (<><Typography key={i} variant="overline">{item},</Typography> </>) })}</TableCell></TableRow>: null } 
@@ -313,24 +327,6 @@ export default function IndivProfile(props) {
                             </Grid>
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Typography variant="overline">Level of NEAR familiarity: <Rating readOnly value={parseInt(familiarity)} /> </Typography>
-                            </Grid>
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <Typography variant="h6">Contacts and Connections</Typography>
-                            </Grid>
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <TableContainer component={Paper}>
-                                <Table className={classes.table} size="small" aria-label="a dense table">
-                                <TableHead>
-                                
-                                </TableHead>
-                                <TableBody>
-                                {email ? <TableRow key={email}><TableCell>Email</TableCell><TableCell component="a" href={`mailto:${email}`} scope="row">{email}</TableCell></TableRow> : null }
-                                {discord ? <TableRow key={discord}><TableCell>Discord</TableCell><TableCell component="th" scope="row">{discord}</TableCell></TableRow> : null }
-                                {twitter ? <TableRow key={twitter}><TableCell>Twitter</TableCell><TableCell component="a" href={`https://twitter.com/${twitter}`} scope="row">{twitter}</TableCell></TableRow> : null }
-                                {reddit ? <TableRow key={reddit}><TableCell>Reddit</TableCell><TableCell component="a" href={`https://reddit.com/user/${reddit}`} scope="row">{reddit}</TableCell></TableRow> : null }
-                                </TableBody>
-                                </Table>
-                            </TableContainer>
                             </Grid>
                             </Grid>
                             </AccordionDetails>

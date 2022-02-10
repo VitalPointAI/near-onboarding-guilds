@@ -39,7 +39,8 @@ export default function IndivRegister(props) {
       didRegistryContract,
       accountId,
       did,
-      accountType
+      accountType,
+      pKey
     } = state
 
     useEffect(
@@ -54,11 +55,12 @@ export default function IndivRegister(props) {
    async function onSubmit(){
       if(did){
         try{
-          await didRegistryContract.putDID({
+          await didRegistryContract.register({
+            publicKey: pKey,
             accountId: accountId,
             did: did,
             type: 'individual'
-          }, GAS, parseNearAmount((parseFloat(STORAGE)).toString()))
+          })
         } catch (err) {
           console.log('error registering', err)
         }

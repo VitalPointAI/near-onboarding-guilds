@@ -5,10 +5,10 @@ import GuildProfile from '../Profiles/guildProfile'
 export default function DisplayGuildProfile(props) {
 
   const {
-    contractId
+    guildDid
   } = useParams()
-    
+  
     return (
-      <GuildProfile member={contractId} />
+      <GuildProfile guildDid={guildDid} />
       )
 }

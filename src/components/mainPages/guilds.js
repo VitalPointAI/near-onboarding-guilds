@@ -1,33 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import { utils } from 'near-api-js'
 import Fuse from 'fuse.js'
-//import { dao } from '../../utils/dao'
 import GuildCard from '../Cards/GuildCard/guildCard'
 import SearchBar from '../common/SearchBar/search'
-import { GAS, STORAGE, parseNearAmount } from '../../state/near'
-import { queries } from '../../utils/graphQueries'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import Paper from '@mui/material/Paper'
-import FormLabel from '@mui/material/FormLabel'
-import FormControl from '@mui/material/FormControl'
-import FormGroup from '@mui/material/FormGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormHelperText from '@mui/material/FormHelperText'
-import Switch from '@mui/material/Switch'
-import Button from '@mui/material/Button'
-
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
+import List from '@mui/material/List'
 
 const axios = require('axios').default
 
@@ -79,7 +61,7 @@ export default function ExploreGuilds(props) {
     const { state, dispatch, update } = useContext(appStore)
 
     const {
-      currentGuildsList,
+      currentGuilds,
       accountId,
       near,
       isUpdated,
@@ -96,11 +78,11 @@ export default function ExploreGuilds(props) {
     useEffect(
         () => {
             if(isUpdated){}
-            console.log('currentGuildsList', currentGuildsList)
+            console.log('currentGuilds', currentGuilds)
             async function fetchData() {
-                if(currentGuildsList && near){
-                    setGuildCount(currentGuildsList.data.putDIDs.length)
-                    sortedGuilds = _.sortBy(currentGuildsList.data.putDIDs, 'registered').reverse()
+                if(currentGuilds && near){
+                    setGuildCount(currentGuilds.length)
+                    sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
                     setGuilds(sortedGuilds)                
                 }
 
@@ -142,7 +124,7 @@ export default function ExploreGuilds(props) {
         return () => mounted = false
         }
 
-    }, [currentGuildsList, near, isUpdated]
+    }, [currentGuilds, near, isUpdated]
     )
 
     function handleExpanded() {
@@ -239,7 +221,7 @@ export default function ExploreGuilds(props) {
 
     const searchData = (pattern) => {
         if (!pattern) {
-            let sortedGuilds = _.sortBy(currentGuildsList.data.putDIDs, 'registered').reverse()
+            let sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
             setGuilds(sortedGuilds)
             return
         }
@@ -305,8 +287,8 @@ export default function ExploreGuilds(props) {
             <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
             </Grid>
         </Grid>
-        <Grid container spacing={1} justifyContent="center" alignItems="center" style={{paddingLeft:'40px', paddingRight:'40px'}}>
-        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+        <Grid container spacing={0} justifyContent="center" alignItems="center" style={{paddingLeft:'10px', paddingRight:'10px'}}>
+        <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
           {guilds && guildCount > 0 ? 
             (<>
               
@@ -331,6 +313,7 @@ export default function ExploreGuilds(props) {
             </>)
         : null
         }
+
         </List>
         </Grid>
        

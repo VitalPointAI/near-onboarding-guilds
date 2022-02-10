@@ -15,7 +15,10 @@ import Registration from './components/mainPages/registration'
 import CreateIndivProfile from './components/mainPages/createIndividualProfile'
 import CreateGuildProfile from './components/mainPages/createGuildProfile'
 import ExploreGuilds from './components/mainPages/guilds'
+import ExploreIndividuals from './components/mainPages/individuals'
 import DisplayGuildProfile from './components/mainPages/displayGuildProfile'
+import DisplayIndivProfile from './components/mainPages/displayIndivProfile'
+import Admin from './components/mainPages/admin'
 import { Home } from './components/mainPages/home'
 
 // Material-UI Components
@@ -135,12 +138,26 @@ const App = () => {
                     { children }
                 </Choice>
             </Route>
+            <Route exact path="/admin">
+            <Admin
+                state={state}
+                >
+                { children }
+            </Admin>
+            </Route>
             <Route exact path="/guilds">
                 <ExploreGuilds
                     state={state}
                     >
                     { children }
                 </ExploreGuilds>
+            </Route>
+            <Route exact path="/people">
+                <ExploreIndividuals
+                    state={state}
+                    >
+                    { children }
+                </ExploreIndividuals>
             </Route>
             <Route exact path="/registration">
                 <Registration
@@ -191,8 +208,11 @@ const App = () => {
                     { children }
                 </GuildProfile>
             </Route>
-            <Route path="/profiles/:contractId">
+            <Route path="/guild-profiles/:guildDid">
                 <DisplayGuildProfile />
+            </Route>
+            <Route path="/indiv-profiles/:indivDid">
+                <DisplayIndivProfile />
             </Route>
         </div>
         <Footer />

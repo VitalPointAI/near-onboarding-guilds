@@ -71,5 +71,14 @@ export const daoProfileSchema = {
       "nftTokenId": {
         type: 'string'
       },
+      "likes": {
+        type: 'array'
+      },
+      "dislikes": {
+        type: 'array'
+      },
+      "neutrals": {
+        type: 'array'
+      },
    },
   }

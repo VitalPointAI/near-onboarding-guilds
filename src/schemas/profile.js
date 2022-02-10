@@ -15,16 +15,21 @@ export const profileSchema = {
       avatar: {
         type: 'string',
       },
+      intro: {
+        type: 'string',
+        maxLength: 2000,
+      },
       shortBio: {
         type: 'string',
-        title: 'text',
         maxLength: 4000,
       },
       birthdate: {
         type: 'string'
       },
       email: {
-        type: 'string'
+        description: 'Email of profile owner',
+        type: 'string',
+        format: 'email'
       },
       reddit: {
         type: 'string'
@@ -33,6 +38,12 @@ export const profileSchema = {
         type: 'string'
       },
       discord: {
+        type: 'string'
+      },
+      telegram: {
+        type: 'string'
+      },
+      website: {
         type: 'string'
       },
       country: {
@@ -67,6 +78,15 @@ export const profileSchema = {
       },
       "nftTokenId": {
         type: 'string'
+      },
+      "likes": {
+        type: 'array'
+      },
+      "dislikes": {
+        type: 'array'
+      },
+      "neutrals": {
+        type: 'array'
       },
     },
   }

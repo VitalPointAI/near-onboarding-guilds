@@ -21,13 +21,12 @@ export default function Social(props){
     const [telegramLink, setTelegramLink] = useState('')
     const [discordLink, setDiscordLink] = useState('')
     const [websiteLink, setWebsiteLink] = useState('')
-    const [catalystLink, setCatalystLink] = useState('')
-    const [astroLink, setAstroLink] = useState('')
 
     const {
         did,
         type,
         platform,
+        platformLink,
         appIdx
     } = props
 
@@ -43,8 +42,6 @@ export default function Social(props){
                         result.telegram ? setTelegramLink(`https://t.me/${result.telegram}`) : null
                         result.discord ? setDiscordLink(result.discord) : null
                         result.website ? setWebsiteLink(`https://${result.website}`) : null
-                        platform == 'Catalyst' ? setCatalystLink(`https://cdao.app/dao/${contractId}`) : null
-                        platform == 'Astro' ? setAstroLink(`https://app.astrodao.com/dao/${contractId}`) : null
                     }
                 }
             }
@@ -57,49 +54,57 @@ export default function Social(props){
     )
 
     return (
-     <Grid container spacing={1} alignItems="center" justifyContent="space-between">
+     <Grid container spacing={1} alignItems="center" justifyContent="space-between" style={{paddingLeft: '15px', paddingRight: '15px'}}>
+        {emailLink != '' ?
         <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
-            <Link to={emailLink}>
+            <a href={emailLink}>
                 <EmailIcon alt="email" />
-            </Link>
+            </a>
         </Grid>
+        : null }
+        {redditLink != '' ?
         <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
-            <Link to={redditLink}>
-                <RedditIcon alt="Reddit" />
-            </Link>
+            <a href={redditLink} alt="Reddit" >
+                <RedditIcon />
+            </a>
         </Grid>
+        : null }
+        {twitterLink != '' ?
         <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
-            <Link to={twitterLink}>
-                <TwitterIcon alt="Twitter" />
-            </Link>
+            <a href={twitterLink} alt="Twitter" >
+                <TwitterIcon />
+            </a>
         </Grid>
+        : null }
+        {telegramLink != '' ?
         <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
-            <Link to={telegramLink}>
-                <TelegramIcon alt="Telegram" />
-            </Link>
+            <a href={telegramLink} alt="Telegram">
+                <TelegramIcon  />
+            </a>
         </Grid>
+        : null }
+        {discordLink != '' ?
         <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
-            <Link to={discordLink}>
+            <a href={discordLink}>
                 <img src={discordIcon} alt="Discord" style={{width: '24px', height: 'auto'}}/>
-            </Link>
+            </a>
         </Grid>
+        : null }
+        {websiteLink != '' ?
         <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
-            <Link to={websiteLink}>
-                <LanguageIcon alt="website" />
-            </Link>
+            <a href={websiteLink} alt="website">
+                <LanguageIcon  />
+            </a>
         </Grid>
+        : null }
+        {platform && platformLink != '' ?
         <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
-            {platform == 'Catalyst' ?
-            <Link to={catalystLink}>
-                <img src={catalystIcon} alt="Catalyst" style={{width: '24px', height: 'auto'}}/>
-            </Link>
-            : null }
-            {platform == 'Astro' ?
-            <Link to={astroLink}>
-                <img src={astroIcon} alt="Astro" style={{width: '24px', height: 'auto'}}/>
-            </Link>
-            : null }
+            <a href={platformLink}>
+                <img src={platform == 'Catalyst' ? catalystIcon :
+            platform== 'Astro' ? astroIcon : null} alt="Catalyst" style={{width: '24px', height: 'auto'}}/>
+            </a>
         </Grid>
+        : null }
      </Grid>
     )
 }

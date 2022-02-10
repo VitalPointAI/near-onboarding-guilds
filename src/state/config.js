@@ -37,6 +37,7 @@ let config = {
     NEW_INACTIVATION: '__NEW_INACTIVATION',
     AUTH_TOKEN: '__AUTH_TOKEN',
     GAS: '200000000000000',
+    NO_GAS: '0',
     STORAGE: '0.0025',
     FACTORY_DEPOSIT: '2',
     TOKEN_FACTORY_DEPOSIT: '1',
@@ -56,6 +57,7 @@ let config = {
     PLATFORM_SUPPORT_ACCOUNT: 'vitalpointai.testnet',
     didRegistryContractName: 'dids2.vitalpointai.testnet',
     nftFactoryContractName: 'nft.vitalpointai.testnet',
+    fundingContractName: 'funding.vitalpointai.testnet',
     ACCOUNT_HELPER_URL: 'https://near-contract-helper.onrender.com',
     GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/catalyst-factory-tnet',
     GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/registry-tnet'
@@ -64,10 +66,22 @@ let config = {
 if(process.env.ENV === 'localhost') {
   config = {
     ...config,
+    factoryContractName: 'cdao.near',
     TOKEN_CALL: 'http://localhost:3000/token',
     APPSEED_CALL: 'http://localhost:3000/appseed',
   }
 }
+
+if(process.env.ENV === 'test'){
+  config = {
+    ...config,
+    factoryContractName: 'cdao.near',
+    TOKEN_CALL: 'https://mynear.xyz/token',
+    APPSEED_CALL: 'https://mynear.xyz/appseed',
+  }
+}
+
+
 
 if (process.env.ENV === 'prod') {
     config = {

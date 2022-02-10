@@ -5,6 +5,7 @@ import { registry } from '../utils/registry'
 import { config } from './config'
 import { factory } from '../utils/factory'
 import { nft } from '../utils/nft'
+import { funding } from '../utils/funding'
 import { queries } from '../utils/graphQueries'
 
 export const {
@@ -55,13 +56,17 @@ export const {
     nftFactorySuffix, 
     explorerUrl,
     contractName, 
-    didRegistryContractName, 
-    REGISTRY_API_URL, FIRST_TIME
+    didRegistryContractName,
+    fundingContractName,
+    REGISTRY_API_URL, 
+    FIRST_TIME,
+    NO_GAS
 } = config
 
 export const {
     KeyPair,
     InMemorySigner,
+    keyStores,
     transactions: {
         addKey, deleteKey, fullAccessKey
     },
@@ -80,7 +85,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     const near = await nearAPI.connect({
         networkId, nodeUrl, walletUrl, deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
     })
-    console.log('near', near)
+ 
     const isAccountTaken = async (accountId) => {
         const account = new nearAPI.Account(near.connection, accountId);
         try {
@@ -100,7 +105,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     wallet.signIn = () => {
         wallet.requestSignIn({
             contractId: contractName,
-            title: 'Space Gem',
+            title: 'My NEAR Journey',
         })
         window.location.assign('/')
     }
@@ -108,6 +113,11 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     wallet.signedIn = wallet.isSignedIn()
     if (wallet.signedIn) {
         wallet.balance = formatNearAmount((await wallet.account().getAccountBalance()).available, 2)
+    }
+
+    wallet.isAccountTaken = async (accountId) => {
+        const accountTaken = await isAccountTaken(accountId + nameSuffix)
+        update('app', { accountTaken, wasValidated: true })
     }
 
     const contract = new nearAPI.Contract(wallet.account(), contractName, {
@@ -118,6 +128,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     const didRegistryContract = await registry.initiateDidRegistryContract(wallet.account())
     const factoryContract = await factory.initFactoryContract(wallet.account())
     const nftContract = await nft.initNFTContract(wallet.account())
+    const fundingContract = await funding.initFundingContract(wallet.account())
     
     if(wallet.signedIn){
         console.log('here')
@@ -147,17 +158,29 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         const account = wallet.account()
         const accountId = account.accountId
 
-        // ********* Initialize Registry Contract****************
-        //await didRegistryContract.init({adminId: 'vitalpointai.testnet'})
+        let keyPair = await near.connection.signer.keyStore.getKey(networkId, accountId)
+        let pKey = keyPair.getPublicKey().toString().split(':')[1]
+        update('', {pKey: pKey})
+
+        // ********* Initialize Registry/Funding Contract****************
+        // let thisAllowance = parseNearAmount('2')
+        // await didRegistryContract.init({
+        //     adminId: 'vitalpointai.testnet',
+        //     fundingPublicKey: '',
+        //     allowance: thisAllowance})
+        //await fundingContract.init({adminId: 'vitalpointai.testnet'})
 
         // ********* Get Registry Admin ****************
-        let admin = await didRegistryContract.getAdmin()
-        console.log('admin', admin)
+        let superAdmin = await didRegistryContract.getSuperAdmin()
+        console.log('super admin', superAdmin)
+
+        let admins = await didRegistryContract.getAdmins()
+        console.log('admins', admins)
         // ******** Identity Initialization *********
 
         //Initiate App Ceramic Components
 
-        const appIdx = await ceramic.getAppIdx(didRegistryContract, account, near)
+        const appIdx = await ceramic.getAppIdx(didRegistryContract, account, pKey)
         console.log('appidx', appIdx)
         let curUserIdx = await ceramic.getUserIdx(account, appIdx, near, factoryContract, didRegistryContract)
         console.log('curuseridx', curUserIdx)
@@ -184,24 +207,122 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         }
 
         // graphQL queries
+
+
+        // determine list of current guilds (take into account those that have been deleted)
         let currentGuildsList = await queries.getGuilds()
         console.log('currentguildslist', currentGuildsList)
+        let deletedGuildsList = await queries.getDeletedGuilds()
+        console.log('deletedguildslist', deletedGuildsList)
+
+        let currentGuilds = []
+        let guildExists = false
+        let mostRecent = false
+        for(let ii = 0; ii < currentGuildsList.data.putDIDs.length; ii++){
+            for(let jj = 0; jj < deletedGuildsList.data.deleteDIDs.length; jj++){
+                if(currentGuildsList.data.putDIDs[ii].accountId == deletedGuildsList.data.deleteDIDs[jj].accountId){
+                    guildExists = true
+                }
+                if(guildExists){
+                    if(currentGuildsList.data.putDIDs[ii].registered > deletedGuildsList.data.deleteDIDs[jj].time){
+                        mostRecent = true
+                    }
+                }
+            }
+            if(!exists || mostRecent){
+                currentGuilds.push(currentGuildsList.data.putDIDs[ii])
+            }
+        }
+
+        // determine list of current individuals (take into account those that have been deleted)
         let currentIndividualsList = await queries.getIndividuals()
         console.log('currentIndividualsList', currentIndividualsList)
+        let deletedIndividualsList = await queries.getDeletedIndividuals()
+        console.log('deletedIndiviudalslist', deletedIndividualsList)
 
-        update('', { 
-            admin, 
+        let currentIndividuals = []
+        let individualExists = false
+        let mostRecentIndiv = false
+        for(let kk = 0; kk < currentIndividualsList.data.putDIDs.length; kk++){
+            for(let ll = 0; ll < deletedIndividualsList.data.deleteDIDs.length; ll++){
+                if(currentIndividualsList.data.putDIDs[kk].accountId == deletedIndividualsList.data.deleteDIDs[ll].accountId){
+                    individualExists = true
+                }
+                if(individualExists){
+                    if(currentIndividualsList.data.putDIDs[kk].registered > deletedIndividualsList.data.deleteDIDs[ll].time){
+                        mostRecentIndiv = true
+                    }
+                }
+            }
+            if(!individualExists || mostRecentIndiv){
+                currentIndividuals.push(currentIndividualsList.data.putDIDs[kk])
+            }
+        }
+
+        // determine list of current verifiers (take into account those that have been removed)
+        let addedVerifiers = await queries.getAddedVerifiers()
+        console.log('addedVerifiers', addedVerifiers)
+        let removedVerifiers = await queries.getRemovedVerifiers()
+        console.log('removedVerifiers', removedVerifiers)
+        let currentVerifiers = []
+        let verifierExists = false
+        let mostRecentVerifier = false
+        for(let mm = 0; mm < addedVerifiers.data.addVerifiers.length; mm++){
+            for(let nn = 0; nn < removedVerifiers.data.removeVerifiers.length; nn++){
+                if(addedVerifiers.data.addVerifiers[mm].accountId == removedVerifiers.data.removeVerifiers[nn].accountId){
+                    verifierExists = true
+                }
+                if(verifierExists){
+                    if(addedVerifiers.data.addVerifiers[mm].time > removedVerifiers.data.removeVerifiers[nn].time){
+                        mostRecentVerifier = true
+                    }
+                }
+            }
+            if(!verifierExists || mostRecentVerifier){
+                currentVerifiers.push(addedVerifiers.data.addVerifiers[mm])
+            }
+        }
+
+        // determine list of guilds awaiting verification
+        let verifiedGuilds = await queries.getVerifiedGuilds()
+        console.log('verifiedguilds', verifiedGuilds)
+        let guildsAwaitingVerification = []
+        let guildInList = false
+        let verified = false
+        for(let oo = 0; oo < currentGuildsList.data.putDIDs.length; oo++){
+            for(let pp = 0; pp < verifiedGuilds.data.changeVerificationStatuses.length; pp++){
+                if(currentGuildsList.data.putDIDs[oo].accountId == verifiedGuilds.data.changeVerificationStatuses[pp].accountId){
+                    guildInList = true
+                }
+                if(guildInList){
+                    if(verifiedGuilds.data.changeVerificationStatuses[pp].verified == true){
+                        verified = true
+                    }
+                }
+            }
+            if(!verified){
+                guildsAwaitingVerification.push(currentGuildsList.data.putDIDs[oo])
+            }
+        }
+
+        update('', {
+            superAdmin,
+            admins, 
             did,
-            currentGuildsList,
-            currentIndividualsList,
-            verificationStatus, 
+            currentGuilds,
+            currentIndividuals,
+            currentVerifiers,
+            verificationStatus,
+            guildsAwaitingVerification,
+            contract,
             nftContract, 
             factoryContract, 
-            didRegistryContract, 
+            didRegistryContract,
+            fundingContract,
             accountType, 
             appIdx, 
             account, 
-            accountId, 
+            accountId,
             curUserIdx })
         
         if(curUserIdx){
@@ -498,92 +619,27 @@ export function formatDateString(timestamp){
     } 
 }
 
-export async function signal(proposalId, signalType, curDaoIdx, accountId, proposalType){
-  
+export async function signal(signalType, curDaoIdx, accountId, proposalType){
+  console.log('proposalType', proposalType)
     let currentProperties
     let stream
     switch(proposalType){
-        case 'Tribute':
+        case 'guild':
             try{
-                currentProperties = await curDaoIdx.get('tributeProposalDetails', curDaoIdx.id)
-                stream = 'tributeProposalDetails'
+                currentProperties = await curDaoIdx.get('daoProfile', curDaoIdx.id)
+                console.log('currentproperties', currentProperties)
+                stream = 'daoProfile'
                 break
             } catch (err) {
-                console.log('problem retrieving tribute proposal details', err)
+                console.log('problem retrieving guild signal details', err)
             }
-           
-        case 'Commitment':
+        case 'individual':
             try{
-                currentProperties = await curDaoIdx.get('fundingProposalDetails', curDaoIdx.id)
-                stream = 'fundingProposalDetails'
+                currentProperties = await curDaoIdx.get('profile', curDaoIdx.id)
+                stream = 'profile'
                 break
             } catch (err) {
-                console.log('problem retrieving funding commitment proposal details', err)
-            }
-            
-        case 'Member':
-            try{
-                currentProperties = await curDaoIdx.get('memberProposalDetails', curDaoIdx.id)
-                stream = 'memberProposalDetails'
-                break
-            } catch (err) {
-                console.log('problem retrieving member proposal details', err)
-            }
-        case 'GuildKick':
-            try{
-                currentProperties = await curDaoIdx.get('guildKickProposalDetails', curDaoIdx.id)
-                stream = 'guildKickProposalDetails'
-                break
-            } catch (err) {
-                console.log('problem retrieving guild kick proposal details', err)
-            }
-        case 'Payout':
-            try{
-                currentProperties = await curDaoIdx.get('payoutProposalDetails', curDaoIdx.id)
-                stream = 'payoutProposalDetails'
-                break
-            } catch (err) {
-                console.log('problem retrieving payout proposal details', err)
-            }
-        case 'Configuration':
-            try{
-                currentProperties = await curDaoIdx.get('configurationProposalDetails', curDaoIdx.id)
-                stream = 'configurationProposalDetails'
-                break
-            } catch (err) {
-                console.log('problem retrieving configuration proposal details', err)
-            }
-        case 'CommunityRole':
-            try{
-                currentProperties = await curDaoIdx.get('communityRoles', curDaoIdx.id)
-                stream = 'communityRoles'
-                break
-            } catch (err) {
-                console.log('problem retrieving configuration proposal details', err)
-            }
-        case 'ReputationFactor':
-            try{
-                currentProperties = await curDaoIdx.get('reputationFactors', curDaoIdx.id)
-                stream = 'reputationFactors'
-                break
-            } catch (err) {
-                console.log('problem retrieving reputation factor proposal details', err)
-            }
-        case 'Opportunity':
-            try{
-                currentProperties = await curDaoIdx.get('opportunities', curDaoIdx.id)
-                stream = 'opportunities'
-                break
-            } catch (err) {
-                console.log('problem retrieving opportunity proposal details', err)
-            }
-        case 'CancelCommit':
-            try{
-                currentProperties = await curDaoIdx.get('cancelCommitmentProposalDetails', curDaoIdx.id)
-                stream = 'cancelCommitmentProposalDetails'
-                break
-            } catch (err) {
-                console.log('problem retrieving cancel commitment proposal details', err)
+                console.log('problem retrieving individual signal details', err)
             }
         default:
             break
@@ -592,187 +648,84 @@ export async function signal(proposalId, signalType, curDaoIdx, accountId, propo
     let hasLiked = false
     let hasDisLiked = false
     let hasNeutral = false
-    if(stream == 'opportunities'){
-        let i = 0
-    while (i < currentProperties.opportunities.length){
         
-        if(currentProperties.opportunities[i].opportunityId == proposalId.toString()){
-            let proposalToUpdate = currentProperties.opportunities[i]
-            hasLiked = proposalToUpdate.likes.includes(accountId)
-            hasDisLiked = proposalToUpdate.dislikes.includes(accountId)
-            hasNeutral = proposalToUpdate.neutrals.includes(accountId)
+    hasLiked = currentProperties.likes.includes(accountId)
+    hasDisLiked = currentProperties.dislikes.includes(accountId)
+    hasNeutral = currentProperties.neutrals.includes(accountId)
 
-            if(signalType == 'like' && !hasLiked){
-                proposalToUpdate.likes.push(accountId)
-             
-                if(hasDisLiked){
-                    let k = 0
-                    while (k < proposalToUpdate.dislikes.length){
-                        if(proposalToUpdate.dislikes[k] == accountId){
-                            proposalToUpdate.dislikes.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
+    if(signalType == 'like' && !hasLiked){
+        currentProperties.likes.push(accountId)
+        
+        if(hasDisLiked){
+            let k = 0
+            while (k < currentProperties.dislikes.length){
+                if(currentProperties.dislikes[k] == accountId){
+                    currentProperties.dislikes.splice(k,1)
+                    break
                 }
-                if(hasNeutral){
-                    let k = 0
-                    while (k < proposalToUpdate.neutrals.length){
-                        if(proposalToUpdate.neutrals[k] == accountId){
-                            proposalToUpdate.neutrals.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
+            k++
             }
-
-            if(signalType == 'dislike' && !hasDisLiked){
-                proposalToUpdate.dislikes.push(accountId)
-                if(hasLiked){
-                    let k = 0
-                    while (k < proposalToUpdate.likes.length){
-                        if(proposalToUpdate.likes[k] == accountId){
-                            proposalToUpdate.likes.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
-                if(hasNeutral){
-                    let k = 0
-                    while (k < proposalToUpdate.neutrals.length){
-                        if(proposalToUpdate.neutrals[k] == accountId){
-                            proposalToUpdate.neutrals.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
-            }
-
-            if(signalType == 'neutral' && !hasNeutral){
-                proposalToUpdate.neutrals.push(accountId)
-                if(hasLiked){
-                    let k = 0
-                    while (k < proposalToUpdate.likes.length){
-                        if(proposalToUpdate.likes[k] == accountId){
-                            proposalToUpdate.likes.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
-                if(hasDisLiked){
-                    let k = 0
-                    while (k < proposalToUpdate.dislikes.length){
-                        if(proposalToUpdate.dislikes[k] == accountId){
-                            proposalToUpdate.dislikes.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
-            }
-        currentProperties.opportunities[i] = proposalToUpdate
-        break
         }
-    i++
+        if(hasNeutral){
+            let k = 0
+            while (k < currentProperties.neutrals.length){
+                if(currentProperties.neutrals[k] == accountId){
+                    currentProperties.neutrals.splice(k,1)
+                    break
+                }
+            k++
+            }
+        }
     }
 
-    try{
-        await curDaoIdx.set(stream, currentProperties)
-    } catch (err) {
-        console.log('error with signalling', err)
-    } 
-} else {
-    let i = 0
-    while (i < currentProperties.proposals.length){
-        
-        if(currentProperties.proposals[i].proposalId == proposalId.toString()){
-            let proposalToUpdate = currentProperties.proposals[i]
-            hasLiked = proposalToUpdate.likes.includes(accountId)
-            hasDisLiked = proposalToUpdate.dislikes.includes(accountId)
-            hasNeutral = proposalToUpdate.neutrals.includes(accountId)
-
-            if(signalType == 'like' && !hasLiked){
-                proposalToUpdate.likes.push(accountId)
-               
-                if(hasDisLiked){
-                    let k = 0
-                    while (k < proposalToUpdate.dislikes.length){
-                        if(proposalToUpdate.dislikes[k] == accountId){
-                            proposalToUpdate.dislikes.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
+    if(signalType == 'dislike' && !hasDisLiked){
+        currentProperties.dislikes.push(accountId)
+        if(hasLiked){
+            let k = 0
+            while (k < currentProperties.likes.length){
+                if(currentProperties.likes[k] == accountId){
+                    currentProperties.likes.splice(k,1)
+                    break
                 }
-                if(hasNeutral){
-                    let k = 0
-                    while (k < proposalToUpdate.neutrals.length){
-                        if(proposalToUpdate.neutrals[k] == accountId){
-                            proposalToUpdate.neutrals.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
+            k++
             }
-
-            if(signalType == 'dislike' && !hasDisLiked){
-                proposalToUpdate.dislikes.push(accountId)
-                if(hasLiked){
-                    let k = 0
-                    while (k < proposalToUpdate.likes.length){
-                        if(proposalToUpdate.likes[k] == accountId){
-                            proposalToUpdate.likes.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
-                if(hasNeutral){
-                    let k = 0
-                    while (k < proposalToUpdate.neutrals.length){
-                        if(proposalToUpdate.neutrals[k] == accountId){
-                            proposalToUpdate.neutrals.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
-            }
-
-            if(signalType == 'neutral' && !hasNeutral){
-                proposalToUpdate.neutrals.push(accountId)
-                if(hasLiked){
-                    let k = 0
-                    while (k < proposalToUpdate.likes.length){
-                        if(proposalToUpdate.likes[k] == accountId){
-                            proposalToUpdate.likes.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
-                if(hasDisLiked){
-                    let k = 0
-                    while (k < proposalToUpdate.dislikes.length){
-                        if(proposalToUpdate.dislikes[k] == accountId){
-                            proposalToUpdate.dislikes.splice(k,1)
-                            break
-                        }
-                    k++
-                    }
-                }
-            }
-        currentProperties.proposals[i] = proposalToUpdate
-        break
         }
-    i++
+        if(hasNeutral){
+            let k = 0
+            while (k < currentProperties.neutrals.length){
+                if(currentProperties.neutrals[k] == accountId){
+                    currentProperties.neutrals.splice(k,1)
+                    break
+                }
+            k++
+            }
+        }
     }
 
+    if(signalType == 'neutral' && !hasNeutral){
+        currentProperties.neutrals.push(accountId)
+        if(hasLiked){
+            let k = 0
+            while (k < currentProperties.likes.length){
+                if(currentProperties.likes[k] == accountId){
+                    currentProperties.likes.splice(k,1)
+                    break
+                }
+            k++
+            }
+        }
+        if(hasDisLiked){
+            let k = 0
+            while (k < currentProperties.dislikes.length){
+                if(currentProperties.dislikes[k] == accountId){
+                    currentProperties.dislikes.splice(k,1)
+                    break
+                }
+            k++
+            }
+        }
+    }
+    
     try{
         await curDaoIdx.set(stream, currentProperties)
     } catch (err) {
@@ -780,8 +733,6 @@ export async function signal(proposalId, signalType, curDaoIdx, accountId, propo
     }
 }
 
-
-}
 
 export async function spaceMint(metadata, owner) {
     let tokenId = generateId()

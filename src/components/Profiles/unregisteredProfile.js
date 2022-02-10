@@ -36,12 +36,15 @@ const useStyles = makeStyles((theme) => ({
     card: {
       margin: 'auto',
     },
-    progress: {
-        display: 'flex',
-        justifyContent: 'center',
-        height: '200px',
-        width: '200px',
-        alignItems: 'center',
+    centered: {
+        position: 'fixed',
+        top: '40%',
+        left: '40%',
+      },
+    noProfile: {
+        position: 'fixed',
+        top: '40%',
+        left: 'calc(50% - 105px)',
     },
     actionsContainer: {
       marginBottom: '20px',
@@ -51,9 +54,6 @@ const useStyles = makeStyles((theme) => ({
         height: 'auto',
         textAlign: 'center',
         marginRight: '15px',
-    },
-    centered: {
-        textAlign: 'center'
     },
     accHeading: {
       fontSize: '18px',
@@ -368,7 +368,8 @@ export default function UnregisteredProfile(props) {
                         <CircularProgress size={100} color="primary"  />
                    </div>
               )
-            : finished ? (<>
+            : guild ? 
+                finished ? (<>
               
                 <Grid container justifyContent="space-evenly" spacing={1} style={{marginTop:'20px', padding:'10px'}}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
@@ -498,10 +499,13 @@ export default function UnregisteredProfile(props) {
               </Grid>
               </>)
               : (
-                    <div className={classes.progress}>
+                    <div className={classes.centered}>
                         <CircularProgress size={100} color="primary"  />
                    </div>
               )
+              : <div className={classes.noProfile}>
+                    <Typography variant="h4">No Profile Yet.</Typography>
+                </div>
         }
            
           </div>

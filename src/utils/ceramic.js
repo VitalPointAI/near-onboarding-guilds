@@ -33,8 +33,8 @@ export const {
     TOKEN_CALL, AUTH_TOKEN, ALIASES
 } = config
 
-const {
-  keyStores: { InMemoryKeyStore },
+export const {
+  keyStores: { InMemoryKeyStore, BrowserLocalStorageKeyStore },
   Near, Account, Contract, KeyPair, InMemorySigner,
   utils: {
     format: {
@@ -223,9 +223,6 @@ class Ceramic {
 
   async getAppCeramic(accountId) {
 
-    let existingToken = get(AUTH_TOKEN, [])
-    if(!existingToken.length > 0){
-    
     let token = await axios.post(TOKEN_CALL, 
       {
       accountId: accountId
@@ -233,9 +230,9 @@ class Ceramic {
     )
     
     set(AUTH_TOKEN, token.data.token)
-    }
-
-    let authToken = get(AUTH_TOKEN, [])   
+  
+    let authToken = get(AUTH_TOKEN, [])
+   
     let retrieveSeed = await axios.post(APPSEED_CALL, {
       // ...data
     },{
@@ -280,17 +277,13 @@ class Ceramic {
   // needed to find accounts that had been registered with key did provider
   async getLegacyAppCeramic(accountId) {
 
-    let existingToken = get(AUTH_TOKEN, [])
-    if(!existingToken.length > 0){
-    
     let token = await axios.post(TOKEN_CALL, 
       {
       accountId: accountId
       }    
     )
-    
+   
     set(AUTH_TOKEN, token.data.token)
-    }
 
     let authToken = get(AUTH_TOKEN, [])   
     let retrieveSeed = await axios.post(APPSEED_CALL, {
@@ -317,7 +310,66 @@ class Ceramic {
   }
 
 
-  async associateAppDID(accountId, contract, ceramic) {
+
+  async useFundingAccount() {    
+
+    // Step 1:  get the keypair from the funding account's full access private key
+    let keyPair = KeyPair.fromString(process.env.FUNDING_ACCOUNT)
+
+    // Step 2:  load up an inMemorySigner using the keyPair for the account
+    let signer = await InMemorySigner.fromKeyPair(networkId, didRegistryContractName, keyPair)
+
+    // Step 3:  create a connection to the network using the signer's keystore and default config for testnet
+    const near = await nearApiJs.connect({
+      networkId, nodeUrl, walletUrl, deps: { keyStore: signer.keyStore },
+    })
+
+    // Step 4:  get the account object of the currentAccount.  At this point, we should have full control over the account.
+    let account = new nearApiJs.Account(near.connection, didRegistryContractName)
+   
+    // initiate the contract so its associated with this current account and exposing all the methods
+    let contract = new nearApiJs.Contract(account, didRegistryContractName, {
+      changeMethods: ['putDID', 'deleteDID', 'adjustKeyAllowance']
+    })
+    console.log('contract', contract)
+    return {
+      contract: contract,
+      pubKey: keyPair.getPublicKey().toString().split(':')[1]
+    }
+  }
+
+  async useSpecialAccessKey(registryContract) {
+
+    let keystore = new BrowserLocalStorageKeyStore()
+    
+    // Step 1:  get the keypair from the account's localstorage private key we set earlier
+    //let keyPair = await keystore.getKey(networkId, accountId)
+    let keyPair = KeyPair.fromRandom('ed25519')
+   
+    // Step 2:  load up an inMemorySigner using the keyPair for the account
+    let signer = await InMemorySigner.fromKeyPair(networkId, registryContract, keyPair)
+
+    // Step 3:  create a connection to the network using the signer's keystore and default config for testnet
+    const near = await nearApiJs.connect({
+      networkId, nodeUrl, walletUrl, deps: { keyStore: signer.keyStore },
+    })
+
+    // Step 4:  get the account object of the currentAccount.  At this point, we should have full control over the account.
+    let account = new nearApiJs.Account(near.connection, registryContract)
+   
+    // initiate the contract so its associated with this current account and exposing all the methods
+    let contract = new nearApiJs.Contract(account, registryContract, {
+      changeMethods: ['register', 'unregister']
+    })
+    console.log('contract', contract)
+    return {
+        contract: contract,
+        pubKey: keyPair.getPublicKey().toString().split(':')[1]
+    }
+  }
+
+
+  async associateAppDID(accountId, contract, ceramic, publicKey) {
     /** Try and retrieve did from  contract if it exists */
       let did
         let didPresent = await contract.hasDID({accountId: accountId})
@@ -334,12 +386,14 @@ class Ceramic {
 
         /** No DID, so create a new one and store it in the contract */
         if (ceramic.did.id) {
+          let thisContract = this.useSpecialAccessKey(accountId, contract)
           try{
-            did = await contract.putDID({
+            did = await thisContract.contract.register({
+                publicKey: thisContract.pubKey,
                 accountId: accountId,
                 did: ceramic.did.id,
                 type: 'application'
-            }, GAS)
+            })
           } catch (err) {
             console.log('problem storing DID', err)
           }
@@ -409,13 +463,13 @@ class Ceramic {
 
 
   // application IDX - maintains most up to date schemas and definitions ensuring chain always has the most recent commit
-  async getAppIdx(contract, account, near){
+  async getAppIdx(contract, account, publicKey){
   
     const appClient = await this.getAppCeramic(account.accountId)
 
     const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
 
-    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient)
+    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient, publicKey)
   
     // Retrieve cached aliases
     let rootAliases = get(ALIASES, [])
@@ -425,10 +479,10 @@ class Ceramic {
     } else {
 
     // uncomment below to change a definition
-    // let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'dao profiles', contract)
-    // let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
-    // console.log('changed schema', changed)
-    // console.log('changed1 schema', changed1)
+    //  let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
+    //  let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'guild profiles', contract)
+    //  console.log('changed schema', changed)
+    //  console.log('changed1 schema', changed1)
 
       const definitions = this.getAlias(APP_OWNER_ACCOUNT, 'Definitions', appClient, definitionsSchema, 'alias definitions', contract)
       const schemas = this.getAlias(APP_OWNER_ACCOUNT, 'Schemas', appClient, schemaSchema, 'user schemas', contract)

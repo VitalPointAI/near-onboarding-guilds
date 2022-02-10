@@ -1,11 +1,22 @@
 import React, { useState, useContext, useEffect } from 'react'
 import ImageLoader from '../common/ImageLoader/imageLoader'
 import { appStore, onAppMount } from '../../state/app'
+import * as nearApiJs from 'near-api-js'
 import { Link } from 'react-router-dom'
 import { flexClass } from '../../App'
 import guild from '../../img/guild.png'
 import individual from '../../img/individual.png'
-import { parseNearAmount, STORAGE, GAS } from '../../state/near'
+import { ceramic } from '../../utils/ceramic'
+import { 
+    parseNearAmount, 
+    STORAGE, 
+    GAS, 
+    NO_GAS, 
+    networkId,
+    nodeUrl,
+    walletUrl,
+    InMemorySigner,
+    keyStores } from '../../state/near'
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'
@@ -29,6 +40,11 @@ const useStyles = makeStyles((theme) => ({
         paddingTop: 30, 
         paddingBottom: 60, 
     },
+    loading: {
+        position: 'fixed',
+        top: '40%',
+        left: 'calc(50% - 80px)',
+    },
     button: {
         width: '80%',
         fontSize: '40px'
@@ -45,48 +61,72 @@ const Registration = () => {
     const classes = useStyles()
     const matches = useMediaQuery('(max-width:500px)')
     const [loaded, setLoaded] = useState(false)
+    const [isAdmin, setIsAdmin] = useState()
     const { state, dispatch, update } = useContext(appStore)
     const {
         accountType,
-        didRegistryContract,
         did,
-        accountId
+        accountId,
+        isUpdated,
+        admins
     } = state
 
 useEffect(
     () => {
-        console.log('accounttype', accountType)
-        if(accountType){
-            setLoaded(true)
+        async function fetchData(){
+            if(isUpdated){}
+            if(accountType){
+                setLoaded(true)
+            }
+            if(admins && admins.includes(accountId)){
+                setIsAdmin(true)
+            } else {
+                setIsAdmin(false)
+            }
         }
 
-},[accountType]
+        fetchData()
+        .then((res) => {
+
+        })
+
+},[accountType, admins, isUpdated]
 )
+
+
 async function register(type){
-    console.log('did', did)
     if(did){
+        let freeContract = await ceramic.useFundingAccount()
+       
         try{
-            await didRegistryContract.putDID({
+            await freeContract.contract.putDID({
                 accountId: accountId,
                 did: did,
                 type: type
-            }, GAS, parseNearAmount((parseFloat(STORAGE)).toString()))
+            })
+           
         } catch (err) {
         console.log('error registering', err)
         }
     }
+    location.reload()
 }
 
 async function unregister(){
-    console.log('udid', did)
     if(did){
-        try{
-            await didRegistryContract.deleteDID({
-                accountId: accountId
-            }, GAS)
-        } catch (err) {
-        console.log('error unregistering', err)
+        let freeContract = await ceramic.useFundingAccount()
+      
+        if(freeContract){
+            try{
+                await freeContract.contract.deleteDID({
+                    accountId: accountId
+                })
+                
+            } catch (err) {
+            console.log('error unregistering', err)
+            }
         }
+        location.reload()
     }
 }
 
@@ -110,11 +150,17 @@ async function unregister(){
                 </Grid>
                 
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{margin:'5px'}}>
+                    {isAdmin ?<> 
+                        <Typography variant="overline">
+                            This account is an admin, it cannot unregister.
+                        </Typography><br></br></>
+                    : null}
                     <Button
                         variant="contained"
                         color="primary"
                         className={classes.button}
                         onClick={unregister}
+                        disabled={isAdmin}
                     >
                         <Typography variant="body1" style={{fontSize: '40px'}}>
                             Unregister
@@ -176,11 +222,17 @@ async function unregister(){
             </Grid>
             
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{margin:'5px'}} align="center">
+                {isAdmin ?<> 
+                    <Typography variant="overline">
+                        This account is an admin, it cannot unregister.
+                    </Typography><br></br></>
+                : null}
                 <Button
                     variant="contained"
                     color="primary"
                     className={classes.button}
                     onClick={unregister}
+                    disabled={isAdmin}
                 >
                     <Typography variant="body1" style={{fontSize: '40px'}}>
                         Unregister
@@ -225,11 +277,18 @@ async function unregister(){
             </>
         }
     </Grid>
-    : <><div className={classes.waiting}><div class={flexClass}><CircularProgress/></div><Grid container spacing={1} alignItems="center" justifyContent="center" >
-    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-      <Typography variant="h5" align="center">Loading...</Typography>
+    : <>
+    <div className={classes.loading}>
+    <Grid container spacing={1} alignItems="center" justifyContent="center" >
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+            <CircularProgress/>
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+            <Typography variant="h5" align="center">Loading...</Typography>
+        </Grid>
     </Grid>
-    </Grid></div></> 
+    </div>
+    </> 
     }    
     </>
     )
