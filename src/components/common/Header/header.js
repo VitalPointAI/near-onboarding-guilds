@@ -15,10 +15,11 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 
 import '../../../global.css'
 
-const nearLogo = require('../../../img/my-near-journey.png')
+const nearLogo = require('../../../img/near-guilds-logo.png')
 
 const logoStyle = {
-    maxWidth: '150px'
+    maxWidth: '150px',
+    marginTop: '10px'
 }
 
 const Header = ({ state, handleUpdate }) => {
@@ -88,18 +89,15 @@ const Header = ({ state, handleUpdate }) => {
         update('', {isUpdated: !isUpdated})
         setPopoverOpen(false)
     }
-
-
-    console.log('wallet', wallet)
     
     return (
         <div>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '5px', paddingBottom: '5px', paddingLeft: '5px', paddingTop: '5px', backgroundColor: 'black'}}>
+        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '5px', paddingLeft: '10px', backgroundColor: 'black'}}>
             
             {wallet && wallet.signedIn ? 
                 (
                     <>
-                    <Grid item style={{marginLeft: '25px'}}>
+                    <Grid item >
                         <LeftSideDrawer
                         state={state}                        
                         />
@@ -116,7 +114,7 @@ const Header = ({ state, handleUpdate }) => {
             wallet && !wallet.signedIn ? 
                 !matches ? (
                     <>
-                    <Grid item style={{marginLeft: '25px'}}>
+                    <Grid item>
                     <Link to="/"> 
                         <ImageLoader image={nearLogo} style={logoStyle}/>
                     </Link>
@@ -127,7 +125,7 @@ const Header = ({ state, handleUpdate }) => {
                     </>
                 ) : (
                     <>
-                    <Grid item style={{marginLeft: '25px'}}>
+                    <Grid item>
                         <LeftSideDrawer
                             state={state}
                         

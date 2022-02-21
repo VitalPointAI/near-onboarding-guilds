@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import { STORAGE, GAS, parseNearAmount } from '../../state/near'
+import { ceramic } from '../../utils/ceramic'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -36,35 +36,38 @@ export default function GuildRegister(props) {
     const { state, dispatch, update } = useContext(appStore)
 
     const {
-      didRegistryContract,
       accountId,
       did,
-      accountType,
-      pKey
+      accountType
     } = state
-
+    console.log('guild accounttype', accountType)
     useEffect(
         () => {
-          let urlVariables = window.location.search
-          const urlParameters = new URLSearchParams(urlVariables)
-          let transactionHash = urlParameters.get('transactionHashes')
-          accountType != undefined && transactionHash ? window.location.assign('/create-guild-profile') : null
+          if(accountType){
+            let urlVariables = window.location.search
+            const urlParameters = new URLSearchParams(urlVariables)
+            let transactionHash = urlParameters.get('transactionHashes')
+            accountType != 'not registered' ? window.location.assign('/create-guild-profile') : null
+          }
     }, [accountType]
     )
 
-   async function onSubmit(){
+    async function register(type){
       if(did){
-        try{
-          await didRegistryContract.register({
-            publicKey: pKey,
-            accountId: accountId,
-            did: did,
-            type: 'guild'
-          })
-        } catch (err) {
+          let freeContract = await ceramic.useFundingAccount()
+         
+          try{
+              await freeContract.contract.putDID({
+                  accountId: accountId,
+                  did: did,
+                  type: type
+              })
+              update('', {accountType: type})
+          } catch (err) {
           console.log('error registering', err)
-        }
+          }
       }
+      location.reload()
     }
 
     function handleNo(){
@@ -86,7 +89,7 @@ export default function GuildRegister(props) {
                   <AccountBoxIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Showcases your guild and is the first step towards obtaining verified status."
+                  primary="Showcases your guild and is the first step towards obtaining verified status and higher tier levels."
                 />
               </ListItem>
               <Divider variant="middle" />
@@ -111,7 +114,7 @@ export default function GuildRegister(props) {
           </List>
           <Grid container spacing={1} style={{padding: '10px'}}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-              <Button className={classes.spacing} style={{float: 'left', marginTop: '20px', marginRight: '15px'}} variant="contained" color="primary" onClick={onSubmit}>
+              <Button className={classes.spacing} style={{float: 'left', marginTop: '20px', marginRight: '15px'}} variant="contained" color="primary" onClick={(e) => register('guild')}>
                 Register
               </Button>
               <Typography variant="body2" style={{marginTop: '30px'}}>

@@ -150,6 +150,7 @@ export default function ExploreIndividuals(props) {
     return (
         <>
         <div className={classes.root}>
+    
         {!matches ? (<>
             <Grid container alignItems="center" justifyContent="space-evenly" spacing={1}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
@@ -216,7 +217,7 @@ export default function ExploreIndividuals(props) {
 
         </List>
         </Grid>
-       
+     
         </div>
     
         </>

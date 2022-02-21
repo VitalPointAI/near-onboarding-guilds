@@ -8,7 +8,7 @@ import LockTwoToneIcon from '@mui/icons-material/LockTwoTone'
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    margin: 0,
+    marginTop: '5px',
     float: 'right',
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0
@@ -31,6 +31,7 @@ export default function LogoutButton(props) {
             variant="contained"
             color="primary"
             className={classes.button}
+            style={{marginTop: '-5px'}}
             startIcon={<LockTwoToneIcon />}
             onClick={logout}
             >Sign Out</Button>

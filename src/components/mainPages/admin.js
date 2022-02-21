@@ -219,7 +219,8 @@ export default function Admin(props) {
   }
 
   
-    return (<>
+    return (
+      <div style={{padding: '10px'}}>
       <Typography variant="h5" style={{padding:'10px', marginTop:'20px', marginBottom:'20px'}}><SettingsIcon /> Admin Settings</Typography>
       <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
         <AccordionSummary
@@ -468,6 +469,6 @@ export default function Admin(props) {
         </Grid>
       </AccordionDetails>
     </Accordion>
-
-    </>)
+    </div>
+    )
 }

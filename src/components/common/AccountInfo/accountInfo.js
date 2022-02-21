@@ -130,7 +130,7 @@ export default function PersonaInfo(props) {
                 /> : null }
             {editGuildProfileClicked ? <EditGuildProfileForm
                 state={state}
-                handleEditGuildProfileClickState={handleEditGuildProfileClickState}
+                handleEditGuildClickState={handleEditGuildClickState}
                 curUserIdx={curUserIdx}
                 did={did}
                 accountId={accountId}

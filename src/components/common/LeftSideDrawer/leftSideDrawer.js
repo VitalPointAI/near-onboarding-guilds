@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useContext} from 'react'
 import { Link } from 'react-router-dom'
-import ImageLoader from '../ImageLoader/imageLoader'
 import clsx from 'clsx'
 import { appStore, onAppMount } from '../../../state/app'
-import defaultProfileImage from '../../../img/default-profile.png'
-import EditProfileForm from '../../EditProfile/editProfile'
 import EditGuildProfileForm from '../../EditProfile/editGuild'
 
 // Material UI
@@ -18,16 +15,10 @@ import Divider from '@mui/material/Divider'
 import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import AddBoxIcon from '@mui/icons-material/AddBox'
 import EditIcon from '@mui/icons-material/Edit'
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import DiamondIcon from '@mui/icons-material/Diamond'
-import Avatar from '@mui/material/Avatar'
-import GroupIcon from '@mui/icons-material/Group'
 import ExploreIcon from '@mui/icons-material/Explore'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import InfoIcon from '@mui/icons-material/Info'
-import CodeIcon from '@mui/icons-material/Code'
 import SchoolIcon from '@mui/icons-material/School'
 import ContactSupportIcon from '@mui/icons-material/ContactSupport'
 import PieChartIcon from '@mui/icons-material/PieChart'
@@ -159,7 +150,7 @@ const editProfileClick = (event) => {
     handleClick(event)
 }
 
-function handleEditGuildProfileClickState(property){
+function handleEditGuildClickState(property){
   setEditGuildProfileClicked(property)
 }
 
@@ -196,72 +187,73 @@ const list = (anchor) => (
 >
 {!matches ? (
   <div className='toolbar'>
-    <List>
-      <Link to='/'>
+  <List>
+    <Link to='/'>
         <ListItem button key={1}>
-          <ListItemIcon><PieChartIcon /></ListItemIcon>
-          <ListItemText primary='Dashboard'/>
+        <ListItemIcon><PieChartIcon /></ListItemIcon>
+        <ListItemText primary='Dashboard'/>
         </ListItem>
-      </Link>
-      <ListItem button key={7}>
-       
-        <ListItemIcon>
-          <Badge badgeContent={newNotifications} color='primary'>   
-          <NotificationsIcon />
-          </Badge>
-        </ListItemIcon>
-        
-        <ListItemText onClick={(e) => notificationsClick(e)} primary='Notifications'/>
-      </ListItem>
-    </List>
-    <Divider />
-    <Typography variant='h6'>Account</Typography>
-    <List>
-      <ListItem className='editProfile' button key={3} onClick={(e) => addPersonaClick(e)}>
-        <ListItemIcon><AddBoxIcon /></ListItemIcon>
-        <ListItemText primary='Edit Profile'/>
-      </ListItem>
-     
-      <Link to='/setup'>
-        <ListItem className='recoverKey' button key={4}>
-        <ListItemIcon><LocalHospitalIcon /></ListItemIcon>
-        <ListItemText primary='Recover Profile'/>
-      </ListItem>
     </Link>
-    <Link to='/registration'>
-      <ListItem className='registration' button key={5}>
-      <ListItemIcon><AppRegistrationIcon /></ListItemIcon>
-      <ListItemText primary='Registration'/>
+  </List>
+  <Divider />
+
+  <Typography variant='h6'>Account</Typography>
+  <List>
+    <ListItem button key={2} onClick={(e) => accountType == 'guild' ? editGuildProfileClick(e) : editProfileClick(e)}>
+        <ListItemIcon><EditIcon /></ListItemIcon>
+        <ListItemText primary='Edit Profile'/>
+    </ListItem>
+    <Link to='/setup'>
+      <ListItem className='recoverKey' button key={4}>
+      <ListItemIcon><LocalHospitalIcon /></ListItemIcon>
+      <ListItemText primary='Recover Profile'/>
     </ListItem>
     </Link>
-    </List>
-    <Divider />
-    <Typography variant='h6'>Rewards</Typography>
-    <List>
+    <Link to='/registration'>
+    <ListItem className='registration' button key={5}>
+      <ListItemIcon><AppRegistrationIcon /></ListItemIcon>
+      <ListItemText primary='Manage Registration'/>
+    </ListItem>
+    </Link>
+  </List>
+  <Divider />
+  <Typography variant='h6'>Discover</Typography>
+  <List>      
+    <Link to='/guilds'>
+      <ListItem className='exploreGuilds' button key={6}>
+        <ListItemIcon><ExploreIcon /></ListItemIcon>
+        <ListItemText primary='Explore Guilds'/>
+      </ListItem>
+    </Link>
+  </List>
+  <Divider />
+  <Typography variant='h6'>Rewards</Typography>
+  <List>
     <Link to='/leaderboards'>
-      <ListItem className='exploreleaderboards' button key={6}>
+      <ListItem className='exploreleaderboards' button key={8}>
       <ListItemIcon><LeaderboardIcon /></ListItemIcon>
       <ListItemText primary='Leaderboards'/>
       </ListItem>
     </Link>
     <Link to='/rewards'>
-        <ListItem className='exploreRewards' button key={7}>
-        <ListItemIcon><EmojiEventsIcon /></ListItemIcon>
-        <ListItemText primary='Explore Rewards'/>
-        </ListItem>
+      <ListItem className='exploreRewards' button key={9}>
+      <ListItemIcon><EmojiEventsIcon /></ListItemIcon>
+      <ListItemText primary='Explore Rewards'/>
+      </ListItem>
     </Link>
     <Divider />
     {admins && admins.includes(accountId) ? <>
-      <Link to='/admin'>
+    <Link to='/admin'>
       <ListItem className='admin' button key={99}>
       <ListItemIcon><SettingsIcon /></ListItemIcon>
       <ListItemText primary='Admin'/>
       </ListItem>
-      </Link>
-      <Divider />
-      </>
-    : null }
-    </List>
+    </Link>
+<Divider />
+</>
+: null }
+
+</List>
   </div>
   ) :
     wallet.signedIn ? (
@@ -304,12 +296,6 @@ const list = (anchor) => (
             <ListItemText primary='Explore Guilds'/>
           </ListItem>
         </Link>
-        <Link to='/people'>
-        <ListItem className='exploreIndividuals' button key={7}>
-            <ListItemIcon><GroupIcon /></ListItemIcon>
-            <ListItemText primary='Explore People'/>
-          </ListItem>
-        </Link>
         </List>
         <Divider />
         <Typography variant='h6'>Rewards</Typography>
@@ -347,7 +333,7 @@ const list = (anchor) => (
     <a href='/'>
       <ListItem button key={10}>
         <ListItemIcon><InfoIcon /></ListItemIcon>
-        <ListItemText primary='About My NEAR Journey'/>
+        <ListItemText primary='About NEAR Guilds'/>
       </ListItem>
     </a>
     <a href='/'>
@@ -377,17 +363,9 @@ return (
         {list('left')}
         </Drawer>
 
-        {editProfileClicked ? <EditProfileForm
-            state={state}
-            handleEditProfileClickState={handleEditProfileClickState}
-            accountId={accountId}
-            did={did}
-            curUserIdx={curUserIdx}
-        /> : null }
-
         {editGuildProfileClicked ? <EditGuildProfileForm
           state={state}
-          handleEditGuildProfileClickState={handleEditGuildProfileClickState}
+          handleEditGuildClickState={handleEditGuildClickState}
           accountId={accountId}
           did={did}
           curUserIdx={curUserIdx}

@@ -54,19 +54,22 @@ let config = {
     nameSuffix: '.testnet',
     nftFactorySuffix: '.nft.vitalpointai.testnet',
     contractName: 'testnet',
+    rootName: 'https://mynear.xyz',
     PLATFORM_SUPPORT_ACCOUNT: 'vitalpointai.testnet',
     didRegistryContractName: 'dids2.vitalpointai.testnet',
     nftFactoryContractName: 'nft.vitalpointai.testnet',
     fundingContractName: 'funding.vitalpointai.testnet',
     ACCOUNT_HELPER_URL: 'https://near-contract-helper.onrender.com',
     GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/catalyst-factory-tnet',
-    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/registry-tnet'
-}
+    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/registry-tnet',
+    GRAPH_CHEDDAR_API_URL: 'https://api.thegraph.com/subgraphs/name/aluhning/cheddar'
+  }
 
 if(process.env.ENV === 'localhost') {
   config = {
     ...config,
     factoryContractName: 'cdao.near',
+    rootName: 'http://localhost:3000',
     TOKEN_CALL: 'http://localhost:3000/token',
     APPSEED_CALL: 'http://localhost:3000/appseed',
   }

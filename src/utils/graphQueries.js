@@ -4,6 +4,7 @@ import { config } from '../state/config'
 const {
   GRAPH_FACTORY_API_URL,
   GRAPH_REGISTRY_API_URL,
+  GRAPH_CHEDDAR_API_URL
 } = config
 
 const FACTORY_QUERY=`
@@ -24,7 +25,7 @@ const FACTORY_QUERY=`
 `
 const GUILD_REGISTRATIONS = `
 query {
-    putDIDs(where: {type_in: ["guild"]})
+    putDIDs(first: 1000, where: {type_in: ["guild"]})
     {
         event
         blockTime
@@ -40,7 +41,7 @@ query {
 
 const GUILD_DELETIONS = `
 query {
-    deleteDIDs(where: {type_in: ["guild"]})
+    deleteDIDs(first: 1000, where: {type_in: ["guild"]})
     {
         event
         blockTime
@@ -139,6 +140,32 @@ query{
 }
 `
 
+// const ALL_MINTS = `
+// query GetMints($lastId: String!){
+//     ftmints(first: 1000, where: { id_gt: $lastID}){
+//         id
+//         blockTime
+//         action
+//         amount
+//         token
+//         to
+//     }
+// }
+// `
+
+// const ALL_TRANSFERS = `
+// query{
+//     transfers{
+//         id
+//         blockTime
+//         action
+//         amount
+//         transferFrom
+//         transferTo
+//     }
+// }
+// `
+
 const factoryClient = new ApolloClient({
     uri: GRAPH_FACTORY_API_URL,
     cache: new InMemoryCache(),
@@ -149,6 +176,10 @@ const registryClient = new ApolloClient({
     cache: new InMemoryCache(),
 })
     
+// const cheddarClient = new ApolloClient({
+//     uri: GRAPH_CHEDDAR_API_URL,
+//     cache: new InMemoryCache(),
+// })
 
 export default class Queries {
 
@@ -196,6 +227,18 @@ export default class Queries {
         const verifiedGuilds = await registryClient.query({query: gql(VERIFIED_GUILDS)})
         return verifiedGuilds
     }
+
+    // async getAllMints(lastId){
+    //     const allMints = await cheddarClient.query({query: ALL_MINTS, variables: {
+    //         lastId: lastId
+    //     }})
+    //     return allMints
+    // }
+
+    // async getAllTransfers(){
+    //     const allTransfers = await cheddarClient.query({query: gql(ALL_TRANSFERS)})
+    //     return allTransfers
+    // }
 
 }
 

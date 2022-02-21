@@ -60,7 +60,8 @@ export const {
     fundingContractName,
     REGISTRY_API_URL, 
     FIRST_TIME,
-    NO_GAS
+    NO_GAS,
+    rootName
 } = config
 
 export const {
@@ -197,7 +198,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             accountType = 'not registered'
             console.log('account not registered, not type avail', err)
         }
-
+        console.log('accounttype', accountType)
         let verificationStatus
         try{
             verificationStatus = await didRegistryContract.getVerificationStatus({accountId: accountId})
@@ -208,6 +209,10 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
         // graphQL queries
 
+        // let allMints = await queries.getAllMints()
+        // console.log('allMints', allMints)
+        // let allTransfers = await queries.getAllTransfers()
+        // console.log('allTransfers', allTransfers)
 
         // determine list of current guilds (take into account those that have been deleted)
         let currentGuildsList = await queries.getGuilds()
@@ -222,14 +227,19 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             for(let jj = 0; jj < deletedGuildsList.data.deleteDIDs.length; jj++){
                 if(currentGuildsList.data.putDIDs[ii].accountId == deletedGuildsList.data.deleteDIDs[jj].accountId){
                     guildExists = true
+                    console.log('guildexists', guildExists)
+                    console.log('x registered', parseFloat(currentGuildsList.data.putDIDs[ii].registered))
+                    console.log('x time', parseFloat(deletedGuildsList.data.deleteDIDs[jj].time))
                 }
                 if(guildExists){
-                    if(currentGuildsList.data.putDIDs[ii].registered > deletedGuildsList.data.deleteDIDs[jj].time){
+                    if(parseFloat(currentGuildsList.data.putDIDs[ii].registered) > parseFloat(deletedGuildsList.data.deleteDIDs[jj].time)){
                         mostRecent = true
+                        console.log('most recent', mostRecent)
                     }
                 }
             }
-            if(!exists || mostRecent){
+            if(!guildExists || mostRecent){
+                console.log('here')
                 currentGuilds.push(currentGuildsList.data.putDIDs[ii])
             }
         }
@@ -422,7 +432,7 @@ export async function login() {
         networkId, nodeUrl, walletUrl, deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
     })
     const connection = new nearAPI.WalletConnection(near)
-    connection.requestSignIn(contractName, 'Space Gem')
+    connection.requestSignIn(contractName, 'Space Gem', rootName)
 }
 
 

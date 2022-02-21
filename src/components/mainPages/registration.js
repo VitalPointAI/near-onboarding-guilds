@@ -1,31 +1,22 @@
 import React, { useState, useContext, useEffect } from 'react'
-import ImageLoader from '../common/ImageLoader/imageLoader'
 import { appStore, onAppMount } from '../../state/app'
-import * as nearApiJs from 'near-api-js'
-import { Link } from 'react-router-dom'
-import { flexClass } from '../../App'
-import guild from '../../img/guild.png'
-import individual from '../../img/individual.png'
 import { ceramic } from '../../utils/ceramic'
-import { 
-    parseNearAmount, 
-    STORAGE, 
-    GAS, 
-    NO_GAS, 
-    networkId,
-    nodeUrl,
-    walletUrl,
-    InMemorySigner,
-    keyStores } from '../../state/near'
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'
-import { CardContent, Card } from '@mui/material'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import CircularProgress from '@mui/material/CircularProgress'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import AccountBoxIcon from '@mui/icons-material/AccountBox'
+import Divider from '@mui/material/Divider'
+import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle'
+import StarsIcon from '@mui/icons-material/Stars'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -104,7 +95,7 @@ async function register(type){
                 did: did,
                 type: type
             })
-           
+            update('', {accountType: type})
         } catch (err) {
         console.log('error registering', err)
         }
@@ -121,7 +112,7 @@ async function unregister(){
                 await freeContract.contract.deleteDID({
                     accountId: accountId
                 })
-                
+                update('', {accountType: 'not registered'})
             } catch (err) {
             console.log('error unregistering', err)
             }
@@ -134,8 +125,8 @@ async function unregister(){
     <>
     {loaded ?
         !matches ?
-        <Grid container justifyContent="center" alignItems="center" spacing={3} >
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop: '50px', marginBottom:'40px'}}>
+        <Grid container justifyContent="center" alignItems="center" spacing={0} style={{padding: '10px'}} >
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop: '30px', marginBottom:'25px'}}>
                 <Typography variant="h4" align="center">
                    Manage Registration
                 </Typography>
@@ -144,7 +135,7 @@ async function unregister(){
             {accountType != 'not registered' ? <>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom:'20px'}}>
                     <Typography variant="h5" align="center">
-                    This account is registered as a/an:<br></br>
+                        This account is registered as a/an:<br></br>
                     <Typography variant="h4">{accountType}</Typography>
                     </Typography>
                 </Grid>
@@ -169,45 +160,70 @@ async function unregister(){
                 </Grid>
                 </> :
                 <>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom:'20px'}}>
-                    <Typography variant="h5" align="center">
-                    What kind of account is this?<br></br>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginBottom:'20px'}}>
+                    <Typography variant="h5">
+                        Please confirm<br></br>
+                        <b>{accountId}</b><br></br>
+                        is your Guild's account.
+                    </Typography>
+                    <Typography variant="overline">
+                        (account that manages your Guild's profile)
                     </Typography>
                 </Grid>
-                <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
-                    <Typography variant="h6">Guild</Typography><br></br>    
-                    <Button onClick={(e) => register('guild')}>
-                        <ImageLoader image={guild} style={{width:'70%'}}/>
-                    </Button>
-                </Grid>
-                    <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
-                        <Typography variant="h6">Individual</Typography><br></br>    
-                        <Button onClick={(e) => register('individual')}>
-                            <ImageLoader image={individual} style={{width:'70%'}}/>
+                <Grid container spacing={1} style={{padding: '10px'}}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                    <Typography variant="h6">Why register your guild?</Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+                    <List>
+                        <ListItem className={classes.spacing}>
+                            <ListItemIcon>
+                            <AccountBoxIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                            primary="Showcases your guild and is the first step towards obtaining verified status and higher tier levels."
+                            />
+                        </ListItem>
+                        <Divider variant="middle" />
+                        <ListItem className={classes.spacing}>
+                            <ListItemIcon>
+                            <SupervisedUserCircleIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                            primary="Enables guild discoverability - making it easier for people to find, join, and participate in your guild."
+                            />
+                        </ListItem>
+                        <Divider variant="middle" />
+                        <ListItem className={classes.spacing}>
+                        <ListItemIcon>
+                            <StarsIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                            primary="Allows your guild to show up on leaderboards and be eligible for reputation based rewards."
+                        />
+                        </ListItem>
+                        <Divider variant="middle" />
+                    </List>
+                    <Grid container spacing={1} style={{marginLeft: '20px', marginRight: '20px', width:'95%'}}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                        <Button className={classes.spacing} style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('guild')}>
+                            Register
                         </Button>
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{margin:'5px'}}>
-                    <Card>
-                        <CardContent>
-                            <Typography variant="body1">
-                                A <b>NEAR Guild</b> is a group of people with a unique identity
-                                based on purpose, vision, locale or other unifying characteristic who 
-                                come together to collaborate and achieve common objectives in support 
-                                of the NEAR ecosystem.
-                            </Typography><br></br>
-                            <Typography variant="body1">
-                                Register as a Guild if you are a guild leader setting up a guild,
-                                otherwise register as an individual.
-                            </Typography>
-                        </CardContent>
-                    </Card>
+                        <Typography variant="body2" style={{marginTop: '30px'}}>
+                            You can unregister at any time.
+                        </Typography>
+                        </Grid>
+                    </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
                 </Grid>
                 </>
             }
         </Grid>
         :
-        <Grid container justifyContent="center" alignItems="center" spacing={3} >
-        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop: '50px', marginBottom:'40px'}}>
+        <Grid container justifyContent="center" alignItems="center" spacing={0} style={{padding: '10px'}} >
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop: '30px', marginBottom:'25px'}}>
             <Typography variant="h4" align="center">
             Manage Registration
             </Typography>
@@ -241,38 +257,63 @@ async function unregister(){
             </Grid>
             </> :
             <>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom:'20px'}}>
-                <Typography variant="h5" align="center">
-                What kind of account is this?<br></br>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center" style={{marginBottom:'20px'}}>
+                <Typography variant="h5">
+                    Please confirm<br></br>
+                    <b>{accountId}</b><br></br>
+                    is your Guild's account.
+                </Typography>
+                <Typography variant="overline">
+                    (account that manages your Guild's profile)
                 </Typography>
             </Grid>
-            <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
-                <Typography variant="h6">Guild</Typography><br></br>    
-                <Button onClick={(e) => register('guild')}>
-                    <ImageLoader image={guild} style={{width:'70%'}}/>
-                </Button>
-            </Grid>
-                <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center">
-                    <Typography variant="h6">Individual</Typography><br></br>    
-                    <Button onClick={(e) => register('individual')}>
-                        <ImageLoader image={individual} style={{width:'70%'}}/>
+            <Grid container spacing={1} style={{padding: '10px'}}>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                <Typography variant="h6">Why register your guild?</Typography>
+                </Grid>
+                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
+                <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+                <List>
+                    <ListItem className={classes.spacing}>
+                        <ListItemIcon>
+                        <AccountBoxIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                        primary="Showcases your guild and is the first step towards obtaining verified status and higher tier levels."
+                        />
+                    </ListItem>
+                    <Divider variant="middle" />
+                    <ListItem className={classes.spacing}>
+                        <ListItemIcon>
+                        <SupervisedUserCircleIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                        primary="Enables guild discoverability - making it easier for people to find, join, and participate in your guild."
+                        />
+                    </ListItem>
+                    <Divider variant="middle" />
+                    <ListItem className={classes.spacing}>
+                    <ListItemIcon>
+                        <StarsIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary="Allows your guild to show up on leaderboards and be eligible for reputation based rewards."
+                    />
+                    </ListItem>
+                    <Divider variant="middle" />
+                </List>
+                <Grid container spacing={1} style={{marginLeft: '20px', marginRight: '20px', width:'95%'}}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                    <Button className={classes.spacing} style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('guild')}>
+                        Register
                     </Button>
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{margin:'5px'}}>
-                <Card>
-                    <CardContent>
-                        <Typography variant="body1">
-                            A <b>NEAR Guild</b> is a group of people with a unique identity
-                            based on purpose, vision, locale or other unifying characteristic who 
-                            come together to collaborate and achieve common objectives in support 
-                            of the NEAR ecosystem.
-                        </Typography><br></br>
-                        <Typography variant="body1">
-                            Register as a Guild if you are a guild leader setting up a guild,
-                            otherwise register as an individual.
-                        </Typography>
-                    </CardContent>
-                </Card>
+                    <Typography variant="body2" style={{marginTop: '30px'}}>
+                        You can unregister at any time.
+                    </Typography>
+                    </Grid>
+                </Grid>
+                </Grid>
+                <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
             </Grid>
             </>
         }

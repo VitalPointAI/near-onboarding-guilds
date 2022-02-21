@@ -7,7 +7,7 @@ import IndivProfile from '../Profiles/indivProfile'
 import GuildProfile from '../Profiles/guildProfile'
 import UnregisteredProfile from '../Profiles/unregisteredProfile'
 import RandomPhrase from '../../components/common/RandomPhrase/randomPhrase'
-import Landing from '../../components/mainPages/landing'
+import Landing from './landing'
 import { KEY_REDIRECT } from '../../utils/ceramic'
 
 // Material UI & styling
@@ -72,7 +72,7 @@ export const Home = ({ children }) => {
             : (<>
                 <div className={classes.centered}>
                     <CircularProgress/><br></br>
-                    <Typography variant="h6">Preparing your journey...</Typography><br></br>
+                    <Typography variant="h6">Preparing...</Typography><br></br>
                     <RandomPhrase />
                 </div>
             </>)

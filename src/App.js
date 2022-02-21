@@ -19,7 +19,9 @@ import ExploreIndividuals from './components/mainPages/individuals'
 import DisplayGuildProfile from './components/mainPages/displayGuildProfile'
 import DisplayIndivProfile from './components/mainPages/displayIndivProfile'
 import Admin from './components/mainPages/admin'
+import Pledge from './components/mainPages/pledge'
 import { Home } from './components/mainPages/home'
+
 
 // Material-UI Components
 import { makeStyles } from '@mui/styles'
@@ -152,6 +154,13 @@ const App = () => {
                     { children }
                 </ExploreGuilds>
             </Route>
+            <Route exact path="/pledge">
+                <Pledge
+                    state={state}
+                    >
+                    { children }
+                </Pledge>
+            </Route>
             <Route exact path="/people">
                 <ExploreIndividuals
                     state={state}
@@ -214,7 +223,7 @@ const App = () => {
             <Route path="/indiv-profiles/:indivDid">
                 <DisplayIndivProfile />
             </Route>
-        </div>
+        </div>     
         <Footer />
         </>
     )

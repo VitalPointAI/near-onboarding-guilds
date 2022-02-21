@@ -29,7 +29,7 @@
  
     vertical-align: middle;
     margin-bottom: 0% !important;
-    margin-top:calc(3% + 10px);
+   
     left: 0px;
     right: 0px;
     bottom: 0px;
@@ -45,16 +45,15 @@
 
 .left {
     text-align: start;
-    margin-left: 15px;
-    display: inline-flex;
+    margin-left: 8px;
     justify-content: flex-start;
 }
 
 .footerright {
     display: block;
     text-align: end;
-    margin-right: 15px;
-    padding-top: 10px;
+    margin-right: 8px;
+    padding-top: 5px;
 }
 
 .blue {

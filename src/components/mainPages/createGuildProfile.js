@@ -62,10 +62,10 @@ export default function CreateGuildProfile(props) {
 
     const handleEditGuildProfileClick = () => {
       handleExpanded()
-      handleEditGuildProfileClickState(true)
+      handleEditGuildClickState(true)
     }
   
-    function handleEditGuildProfileClickState(property){
+    function handleEditGuildClickState(property){
       setEditGuildProfileClicked(property)
     }
 
@@ -83,8 +83,8 @@ export default function CreateGuildProfile(props) {
         
         <Grid container spacing={1} style={{padding: '10px'}}>
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-          <Typography variant="h4" style={{marginTop:'40px', marginBottom: '30px'}}>You've found the perfect spot for your guild.</Typography><br></br>
-          <Typography variant="h5">Describe your guild for those travelling by.</Typography>
+          <Typography variant="h4" style={{marginTop:'40px', marginBottom: '30px'}}>Share Your Vision.</Typography><br></br>
+          <Typography variant="h5">Describe the Guild and why it exists.</Typography>
         </Grid>
         <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
         <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
@@ -128,7 +128,7 @@ export default function CreateGuildProfile(props) {
         )}
 
         {editGuildProfileClicked ? <EditGuildProfileForm
-          handleEditGuildProfileClickState={handleEditGuildProfileClickState}
+          handleEditGuildClickState={handleEditGuildClickState}
           handleGuildProfileEdit={handleGuildProfileEdit}
           curUserIdx={curUserIdx}
           did={did}

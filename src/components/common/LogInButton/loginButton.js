@@ -8,7 +8,7 @@ import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone'
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    margin: 0,
+    marginTop: '5px',
     float: 'right'
   },
   accountButton: {
@@ -29,6 +29,7 @@ export default function LoginButton(props) {
         variant="contained"
         color="primary"
         className={classes.button}
+        style={{marginTop: '-5px'}}
         startIcon={<LockOpenTwoToneIcon />}
         onClick={login}
         >Sign In</Button>
