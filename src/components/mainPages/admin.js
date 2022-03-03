@@ -19,8 +19,6 @@ import { EditorState, convertFromRaw, convertToRaw, ContentState } from 'draft-j
 import { Editor } from "react-draft-wysiwyg"
 import qs from 'qs'
 
-const axios = require('axios').default
-
 // Material UI components
 import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
@@ -125,7 +123,7 @@ export default function Admin(props) {
 
     getSecrets()
     .then((res) => {
-      
+
     })
 
   })
