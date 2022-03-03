@@ -47,6 +47,8 @@ let config = {
     IPFS_PROVIDER: 'https://cloudflare-ipfs.com/ipfs/',
     TOKEN_CALL: 'https://cdao.app/token',
     APPSEED_CALL: 'https://cdao.app/appseed',
+    FUNDING_SEED_CALL: 'https://mynear.xyz/funding-seed',
+    SENDY_API_KEY_CALL: 'https://mynear.xyz/sendy',
     networkId: 'testnet',
     nodeUrl: 'https://rpc.testnet.near.org',
     walletUrl: 'https://wallet.testnet.near.org',
@@ -73,6 +75,8 @@ if(process.env.ENV === 'localhost') {
     rootName: 'http://localhost:3000',
     TOKEN_CALL: 'http://localhost:3000/token',
     APPSEED_CALL: 'http://localhost:3000/appseed',
+    FUNDING_SEED_CALL: 'http://localhost:3000/funding-seed',
+    SENDY_API_KEY_CALL: 'http://localhost:3000/sendy',
   }
 }
 
@@ -82,6 +86,8 @@ if(process.env.ENV === 'test'){
     factoryContractName: 'cdao.near',
     TOKEN_CALL: 'https://mynear.xyz/token',
     APPSEED_CALL: 'https://mynear.xyz/appseed',
+    FUNDING_SEED_CALL: 'https://mynear.xyz/funding-seed',
+    SENDY_API_KEY_CALL: 'https://mynear.xyz/sendy',
   }
 }
 

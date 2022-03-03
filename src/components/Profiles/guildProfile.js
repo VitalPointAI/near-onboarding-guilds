@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import { ceramic } from '../../utils/ceramic'
-import { MAIL_URL } from '../../state/near'
+import { MAIL_URL, AUTH_TOKEN } from '../../state/near'
 import qs from 'qs'
 import Social from '../common/Social/social'
 
@@ -136,6 +136,24 @@ export default function GuildProfile(props) {
         guildDid,
         registered
     }= props
+
+    let token = await axios.post(TOKEN_CALL, 
+        {
+        accountId: accountId
+        }    
+      )
+      
+    set(AUTH_TOKEN, token.data.token)
+    
+    let authToken = get(AUTH_TOKEN, [])
+     
+    let retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
+        // ...data
+      },{
+        headers: {
+          'Authorization': `Basic ${authToken}`
+        }
+      })
   
     
     useEffect(
@@ -144,7 +162,7 @@ export default function GuildProfile(props) {
                 if(email){
                     let emailStatus
                     let data = {
-                        api_key: process.env.SENDY_API,
+                        api_key: retrieveSeed.data.seed,
                         email: email,
                         list_id: process.env.SENDY_LIST_ID
                     }

@@ -18,11 +18,13 @@ const client = new SecretClient(url, credential)
 
 const secretKey = process.env.SECRET_KEY
 const secretSeed = process.env.SEED
+const fundingSeed = process.env.FUNDING_SEED
+const sendyAPI = process.env.SENDY_API
 
 const allowList = ['https://mynear.xyz, https://ceramic-node.vitalpointai.com']
 
 app.use(cors({
-  origin: '*'
+  origin: allowList
 }));
 
 
@@ -45,8 +47,38 @@ app.post('/appseed', cors(), verifyToken, async (req, res) => {
       });
     }
   })
-  
+});
 
+app.post('/funding-seed', cors(), verifyToken, async (req, res) => {
+  const latestTokenResponse = await client.getSecret(secretKey)
+  jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
+    if(err) {
+      res.sendStatus(403);
+    } else {
+      const latestSecret = await client.getSecret(fundingSeed)
+      const seed = (latestSecret.value)
+      res.json({
+        seed: seed,
+        authData
+      });
+    }
+  })
+});
+
+app.post('/sendy', cors(), verifyToken, async (req, res) => {
+  const latestTokenResponse = await client.getSecret(secretKey)
+  jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
+    if(err) {
+      res.sendStatus(403);
+    } else {
+      const latestSecret = await client.getSecret(sendyAPI)
+      const seed = (latestSecret.value)
+      res.json({
+        seed: seed,
+        authData
+      });
+    }
+  })
 });
 
 app.post('/token', cors(), async (req, res) => {

@@ -62,7 +62,10 @@ export const {
     FIRST_TIME,
     NO_GAS,
     rootName,
-    MAIL_URL
+    MAIL_URL,
+    AUTH_TOKEN,
+    SENDY_API_KEY_CALL,
+    FUNDING_SEED_CALL
 } = config
 
 export const {

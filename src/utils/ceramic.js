@@ -31,7 +31,7 @@ export const {
     KEY_REDIRECT, APP_OWNER_ACCOUNT, IPFS_PROVIDER, FACTORY_DEPOSIT, CERAMIC_API_URL, APPSEED_CALL, 
     networkId, nodeUrl, walletUrl, nameSuffix,
     contractName, didRegistryContractName, factoryContractName,
-    TOKEN_CALL, AUTH_TOKEN, ALIASES
+    TOKEN_CALL, AUTH_TOKEN, ALIASES, FUNDING_SEED_CALL
 } = config
 
 export const {
@@ -312,10 +312,28 @@ class Ceramic {
 
 
 
-  async useFundingAccount() {    
+  async useFundingAccount(accountId) { 
+    
+    let token = await axios.post(TOKEN_CALL, 
+      {
+      accountId: accountId
+      }    
+    )
+    
+    set(AUTH_TOKEN, token.data.token)
+  
+    let authToken = get(AUTH_TOKEN, [])
+   
+    let retrieveSeed = await axios.post(FUNDING_SEED_CALL, {
+      // ...data
+    },{
+      headers: {
+        'Authorization': `Basic ${authToken}`
+      }
+    })
 
     // Step 1:  get the keypair from the funding account's full access private key
-    let keyPair = KeyPair.fromString(process.env.FUNDING_ACCOUNT)
+    let keyPair = KeyPair.fromString(retrieveSeed.data.seed)
 
     // Step 2:  load up an inMemorySigner using the keyPair for the account
     let signer = await InMemorySigner.fromKeyPair(networkId, didRegistryContractName, keyPair)

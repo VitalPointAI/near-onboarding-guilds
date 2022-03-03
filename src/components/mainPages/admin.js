@@ -7,6 +7,8 @@ import { GAS,
   fundingContractName,
   nameSuffix,
   formatNearAmount,
+  AUTH_TOKEN,
+  SENDY_API_KEY_CALL,
   MAIL_URL } from '../../state/near'
 import { ceramic } from '../../utils/ceramic'
 import AdminCard from '../Cards/AdminCard/adminCard'
@@ -16,6 +18,8 @@ import htmlToDraft from 'html-to-draftjs'
 import { EditorState, convertFromRaw, convertToRaw, ContentState } from 'draft-js'
 import { Editor } from "react-draft-wysiwyg"
 import qs from 'qs'
+
+const axios = require('axios').default
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -96,6 +100,24 @@ export default function Admin(props) {
     accountId,
     appIdx
   } = state
+
+  let token = await axios.post(TOKEN_CALL, 
+    {
+    accountId: accountId
+    }    
+  )
+  
+  set(AUTH_TOKEN, token.data.token)
+
+  let authToken = get(AUTH_TOKEN, [])
+  
+  let retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
+      // ...data
+    },{
+      headers: {
+        'Authorization': `Basic ${authToken}`
+      }
+    })
 
   useEffect(() => {
 
@@ -252,7 +274,7 @@ export default function Admin(props) {
     let title = subject + '|' + Date.now()
     console.log('title', title)
     let data = {
-        api_key: process.env.SENDY_API,
+        api_key: retrieveSeed.data.seed,
         from_name: 'NEAR Guilds',
         from_email: process.env.FROM_EMAIL,
         reply_to: process.env.REPLY_EMAIL,
