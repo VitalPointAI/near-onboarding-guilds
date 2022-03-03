@@ -101,23 +101,35 @@ export default function Admin(props) {
     appIdx
   } = state
 
-  let token = await axios.post(TOKEN_CALL, 
-    {
-    accountId: accountId
-    }    
-  )
-  
-  set(AUTH_TOKEN, token.data.token)
+  let retrieveSeed
+  useEffect(() => {
+    async function getSecrets() {
+      let token = await axios.post(TOKEN_CALL, 
+        {
+        accountId: accountId
+        }    
+      )
+      
+      set(AUTH_TOKEN, token.data.token)
+    
+      let authToken = get(AUTH_TOKEN, [])
+      
+      let retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
+          // ...data
+        },{
+          headers: {
+            'Authorization': `Basic ${authToken}`
+          }
+        })
+    }
 
-  let authToken = get(AUTH_TOKEN, [])
-  
-  let retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
-      // ...data
-    },{
-      headers: {
-        'Authorization': `Basic ${authToken}`
-      }
+    getSecrets()
+    .then((res) => {
+      
     })
+
+  })
+  
 
   useEffect(() => {
 
