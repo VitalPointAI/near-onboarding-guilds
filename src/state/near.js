@@ -61,7 +61,8 @@ export const {
     REGISTRY_API_URL, 
     FIRST_TIME,
     NO_GAS,
-    rootName
+    rootName,
+    MAIL_URL
 } = config
 
 export const {
@@ -172,20 +173,58 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         //await fundingContract.init({adminId: 'vitalpointai.testnet'})
 
         // ********* Get Registry Admin ****************
+        try{
         let superAdmin = await didRegistryContract.getSuperAdmin()
         console.log('super admin', superAdmin)
+        update('', superAdmin)
+        } catch (err) {
+            console.log('problem getting super admin', err)
+        }
 
-        let admins = await didRegistryContract.getAdmins()
-        console.log('admins', admins)
+        // ********* Account Admin Status ****************
+        try{
+            let admins = await didRegistryContract.getAdmins()
+            console.log('admins', admins)
+            if(admins.includes(accountId)){
+                update('', {isAdmin: true, admins: admins})
+            } else {
+                update('', {isAdmin: false, admins: admins})
+            }
+        } catch (err) {
+            console.log('problem getting admins', err)
+        }
+
+        // ********* Account Verifier Status ****************
+        try{
+            let isVerifier = await didRegistryContract.getVerificationStatus({accountId: accountId})
+            if(isVerifier){
+                update('', {isVerifier: true})
+            }
+        } catch (err) {
+            update('', {isVerifier: false})
+            console.log('problem getting verification status')
+        }
+       
+
         // ******** Identity Initialization *********
 
         //Initiate App Ceramic Components
 
         const appIdx = await ceramic.getAppIdx(didRegistryContract, account, pKey)
         console.log('appidx', appIdx)
+
         let curUserIdx = await ceramic.getUserIdx(account, appIdx, near, factoryContract, didRegistryContract)
         console.log('curuseridx', curUserIdx)
-        
+
+        // ********* All Announcements ****************
+        try{
+            let announcements = await appIdx.get('announcements', appIdx.id)
+            update('', {announcements: announcements})
+            console.log('announcements', announcements)
+        } catch (err) {
+            console.log('problem getting all announcements', err)
+        }
+
         let did
         if (curUserIdx) {
             did = curUserIdx.id
@@ -223,26 +262,68 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         let currentGuilds = []
         let guildExists = false
         let mostRecent = false
-        for(let ii = 0; ii < currentGuildsList.data.putDIDs.length; ii++){
-            for(let jj = 0; jj < deletedGuildsList.data.deleteDIDs.length; jj++){
-                if(currentGuildsList.data.putDIDs[ii].accountId == deletedGuildsList.data.deleteDIDs[jj].accountId){
-                    guildExists = true
-                    console.log('guildexists', guildExists)
-                    console.log('x registered', parseFloat(currentGuildsList.data.putDIDs[ii].registered))
-                    console.log('x time', parseFloat(deletedGuildsList.data.deleteDIDs[jj].time))
-                }
-                if(guildExists){
-                    if(parseFloat(currentGuildsList.data.putDIDs[ii].registered) > parseFloat(deletedGuildsList.data.deleteDIDs[jj].time)){
-                        mostRecent = true
-                        console.log('most recent', mostRecent)
+        let lastIndexAdd
+        let lastIndexDelete
+        for(let m = 0; m < currentGuildsList.data.putDIDs.length; m++){
+            guildExists = false
+            for(let z = 0; z < currentGuilds.length; z++){
+                if(currentGuildsList.data.putDIDs[m].accountId == currentGuilds[z].accountId)
+                guildExists = true
+                console.log('m', m)
+                console.log('z', z)
+                console.log('guild exists', guildExists)
+            }
+            if(!guildExists){
+                for(let n = 0; n < currentGuildsList.data.putDIDs.length; n++){
+                    if(currentGuildsList.data.putDIDs[m].accountId == currentGuildsList.data.putDIDs[n].accountId){
+                        lastIndexAdd = n
+                        console.log('lastindexadd', lastIndexAdd)
                     }
                 }
+                for(let x = 0; x < deletedGuildsList.data.deleteDIDs.length; x++){
+                    if(currentGuildsList.data.putDIDs[lastIndexAdd].accountId == deletedGuildsList.data.deleteDIDs[x].accountId){
+                        lastIndexDelete = x
+                        console.log('lastindexdelete', lastIndexDelete)
+                    }
+                }
+                if(lastIndexAdd > 0){
+                    if(parseFloat(currentGuildsList.data.putDIDs[lastIndexAdd].registered) > parseFloat(deletedGuildsList.data.deleteDIDs[lastIndexDelete].time)) {
+                        currentGuilds.push(currentGuildsList.data.putDIDs[lastIndexAdd])
+                        console.log('currentGuilds compare', currentGuilds)
+                    }
+                } else {
+                    currentGuilds.push(currentGuildsList.data.putDIDs[m])
+                    console.log('currentGuilds', currentGuilds)
+                }
             }
-            if(!guildExists || mostRecent){
-                console.log('here')
-                currentGuilds.push(currentGuildsList.data.putDIDs[ii])
-            }
+            
         }
+       
+        console.log('currentGuilds', currentGuilds)
+
+        
+        // for(let ii = 0; ii < currentGuildsList.data.putDIDs.length; ii++){
+        //     for(let jj = 0; jj < deletedGuildsList.data.deleteDIDs.length; jj++){
+        //         if(currentGuildsList.data.putDIDs[ii].accountId == deletedGuildsList.data.deleteDIDs[jj].accountId){
+        //             guildExists = true
+        //             console.log('guildexists', guildExists)
+        //             console.log('x registered', parseFloat(currentGuildsList.data.putDIDs[ii].registered))
+        //             console.log('x time', parseFloat(deletedGuildsList.data.deleteDIDs[jj].time))
+        //         }
+        //         if(guildExists){
+        //             if(parseFloat(currentGuildsList.data.putDIDs[ii].registered) > parseFloat(deletedGuildsList.data.deleteDIDs[jj].time)){
+        //                 mostRecent = true
+        //                 console.log('most recent', mostRecent)
+        //                 console.log('here')
+        //                 currentGuilds.push(currentGuildsList.data.putDIDs[ii])
+        //                 console.log('currentGuilds step', currentGuilds)
+        //             }
+        //         }
+        //     }
+        //     if(!guildExists){
+        //         currentGuilds.push(currentGuildsList.data.putDIDs[ii])
+        //     }
+        // }
 
         // determine list of current individuals (take into account those that have been deleted)
         let currentIndividualsList = await queries.getIndividuals()
@@ -274,24 +355,66 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         console.log('addedVerifiers', addedVerifiers)
         let removedVerifiers = await queries.getRemovedVerifiers()
         console.log('removedVerifiers', removedVerifiers)
+
         let currentVerifiers = []
         let verifierExists = false
-        let mostRecentVerifier = false
-        for(let mm = 0; mm < addedVerifiers.data.addVerifiers.length; mm++){
-            for(let nn = 0; nn < removedVerifiers.data.removeVerifiers.length; nn++){
-                if(addedVerifiers.data.addVerifiers[mm].accountId == removedVerifiers.data.removeVerifiers[nn].accountId){
-                    verifierExists = true
+        let lastIndexAddVerifier
+        let lastIndexDeleteVerifier
+        for(let m = 0; m < addedVerifiers.data.addVerifiers.length; m++){
+            for(let z = 0; z < currentVerifiers.length; z++){
+                if(addedVerifiers.data.addVerifiers[m].accountId == currentVerifiers[z].accountId)
+                verifierExists = true
+            }
+            if(!verifierExists){
+                for(let n = 0; n < addedVerifiers.data.addVerifiers.length; n++){
+                    if(addedVerifiers.data.addVerifiers[m].accountId == addedVerifiers.data.addVerifiers[n].accountId){
+                        lastIndexAddVerifier = n
+                        console.log('lastindexaddverifier', lastIndexAddVerifier)
+                    }
                 }
-                if(verifierExists){
-                    if(addedVerifiers.data.addVerifiers[mm].time > removedVerifiers.data.removeVerifiers[nn].time){
-                        mostRecentVerifier = true
+                for(let x = 0; x < removedVerifiers.data.removeVerifiers.length; x++){
+                    if(addedVerifiers.data.addVerifiers[lastIndexAddVerifier].accountId == removedVerifiers.data.removeVerifiers[x].accountId){
+                        lastIndexDeleteVerifier = x
+                        console.log('lastindexdeleteverifier', lastIndexDeleteVerifier)
+                    }
+                }
+                console.log('at this point')
+                if(lastIndexAddVerifier >= 0 && lastIndexDeleteVerifier >= 0){
+                    console.log('in here')
+                    if(parseFloat(addedVerifiers.data.addVerifiers[lastIndexAddVerifier].time) > parseFloat(removedVerifiers.data.removeVerifiers[lastIndexDeleteVerifier].time)) {
+                        currentVerifiers.push(addedVerifiers.data.addVerifiers[lastIndexAddVerifier])
+                    }
+                } else {
+                    console.log('or here')
+                    console.log('last index add verifier', lastIndexAddVerifier)
+                    if(lastIndexAddVerifier >= 0){
+                        console.log('here is')
+                        console.log('record', addedVerifiers.data.addVerifiers[lastIndexAddVerifier] )
+                        currentVerifiers.push(addedVerifiers.data.addVerifiers[lastIndexAddVerifier])
                     }
                 }
             }
-            if(!verifierExists || mostRecentVerifier){
-                currentVerifiers.push(addedVerifiers.data.addVerifiers[mm])
-            }
         }
+        console.log('currentVerifiers', currentVerifiers)
+
+        // let currentVerifiers = []
+        // let verifierExists = false
+        // let mostRecentVerifier = false
+        // for(let mm = 0; mm < addedVerifiers.data.addVerifiers.length; mm++){
+        //     for(let nn = 0; nn < removedVerifiers.data.removeVerifiers.length; nn++){
+        //         if(addedVerifiers.data.addVerifiers[mm].accountId == removedVerifiers.data.removeVerifiers[nn].accountId){
+        //             verifierExists = true
+        //         }
+        //         if(verifierExists){
+        //             if(addedVerifiers.data.addVerifiers[mm].time > removedVerifiers.data.removeVerifiers[nn].time){
+        //                 mostRecentVerifier = true
+        //             }
+        //         }
+        //     }
+        //     if(!verifierExists || mostRecentVerifier){
+        //         currentVerifiers.push(addedVerifiers.data.addVerifiers[mm])
+        //     }
+        // }
 
         // determine list of guilds awaiting verification
         let verifiedGuilds = await queries.getVerifiedGuilds()
@@ -316,8 +439,6 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         }
 
         update('', {
-            superAdmin,
-            admins, 
             did,
             currentGuilds,
             currentIndividuals,

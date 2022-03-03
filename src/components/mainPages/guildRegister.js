@@ -81,8 +81,8 @@ export default function GuildRegister(props) {
           <Typography variant="h4" style={{marginTop:'40px', marginBottom: '40px'}}>To be found or not to be found?</Typography>
           <Typography variant="h6" style={{marginTop:'40px'}}>Decide if you want to register your guild.</Typography>
         </Grid>
-        <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
-        <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+        
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
           <List>
               <ListItem className={classes.spacing}>
                 <ListItemIcon>
@@ -131,7 +131,7 @@ export default function GuildRegister(props) {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
+       
       </Grid>
         </>
         

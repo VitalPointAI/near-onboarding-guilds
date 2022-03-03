@@ -100,7 +100,7 @@ async function register(type){
         console.log('error registering', err)
         }
     }
-    location.reload()
+//    location.reload()
 }
 
 async function unregister(){
@@ -117,7 +117,7 @@ async function unregister(){
             console.log('error unregistering', err)
             }
         }
-        location.reload()
+   //     location.reload()
     }
 }
 
@@ -131,7 +131,7 @@ async function unregister(){
                    Manage Registration
                 </Typography>
             </Grid>
-
+    
             {accountType != 'not registered' ? <>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom:'20px'}}>
                     <Typography variant="h5" align="center">
@@ -174,8 +174,8 @@ async function unregister(){
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                     <Typography variant="h6">Why register your guild?</Typography>
                     </Grid>
-                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
-                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+                   
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                     <List>
                         <ListItem className={classes.spacing}>
                             <ListItemIcon>
@@ -216,7 +216,7 @@ async function unregister(){
                         </Grid>
                     </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
+                   
                 </Grid>
                 </>
             }

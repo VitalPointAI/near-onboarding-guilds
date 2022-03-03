@@ -86,8 +86,8 @@ export default function CreateGuildProfile(props) {
           <Typography variant="h4" style={{marginTop:'40px', marginBottom: '30px'}}>Share Your Vision.</Typography><br></br>
           <Typography variant="h5">Describe the Guild and why it exists.</Typography>
         </Grid>
-        <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
-        <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+       
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
           <List>
               <ListItem className={classes.spacing}>
                 <ListItemIcon>
@@ -123,7 +123,7 @@ export default function CreateGuildProfile(props) {
                 </Button> <Typography variant="body2" style={{marginTop: '15px'}}>It only takes a few minutes and you can edit it later.</Typography>
             </Grid>
         </Grid>
-        <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
+       
       </Grid>
         )}
 

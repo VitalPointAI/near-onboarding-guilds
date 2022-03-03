@@ -20,6 +20,7 @@ import { commentsSchema } from '../schemas/comments'
 import { notificationSchema } from '../schemas/notifications'
 import { metadataSchema } from '../schemas/metadata'
 import { apiKeysSchema } from '../schemas/apiKeys'
+import { announcementSchema } from '../schemas/announcements'
 
 import { config } from '../state/config'
 
@@ -492,6 +493,7 @@ class Ceramic {
       const notifications = this.getAlias(APP_OWNER_ACCOUNT, 'notifications', appClient, notificationSchema, 'notifications', contract)
       const daoProfile = this.getAlias(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'guild profiles', contract)
       const apiKeys = this.getAlias(APP_OWNER_ACCOUNT, 'apiKeys', appClient, apiKeysSchema, 'guild api keys', contract)
+      const announcements = this.getAlias(APP_OWNER_ACCOUNT, 'announcements', appClient, announcementSchema, 'guild announcements', contract)
      
       const done = await Promise.all([
         appDid, 
@@ -502,7 +504,8 @@ class Ceramic {
         comments,
         notifications,
         daoProfile,
-        apiKeys
+        apiKeys,
+        announcements
       ])
       
       let rootAliases = {
@@ -513,7 +516,8 @@ class Ceramic {
         comments: done[5],
         notifications: done[6],
         daoProfile: done[7],
-        apiKeys: done[8]
+        apiKeys: done[8],
+        announcements: done[9]
       }
 
       // cache aliases

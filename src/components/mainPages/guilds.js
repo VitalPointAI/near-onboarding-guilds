@@ -83,6 +83,18 @@ export default function ExploreGuilds(props) {
                 if(currentGuilds && near){
                     setGuildCount(currentGuilds.length)
                     sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
+                    console.log('sortedGuilds', sortedGuilds)
+                    for(let x = 0; x < sortedGuilds.length; x++){
+                        let result = await appIdx.get('daoProfile', sortedGuilds[x].did)
+                        console.log('result', result)
+                        if(result){
+                            let category
+                            result.category ? category = result.category : category = ''
+                            let newObject = {...sortedGuilds[x], category: category}
+                            sortedGuilds[x] = newObject
+                        }
+                    }
+                    console.log('sortedguilds2', sortedGuilds)
                     setGuilds(sortedGuilds)                
                 }
 
@@ -219,9 +231,17 @@ export default function ExploreGuilds(props) {
         }
     }
 
-    const searchData = (pattern) => {
+    const searchData = async (pattern) => {
         if (!pattern) {
             let sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
+            for(let x = 0; x < sortedGuilds.length; x++){
+                let result = await appIdx.get('daoProfile', sortedGuilds[x].did)
+                if(result){
+                    result.category ? category = result.category : category = ''
+                    let newObject = {...sortedGuilds[x], category: category}
+                    sortedGuilds[x] = newObject
+                }
+            }
             setGuilds(sortedGuilds)
             return
         }
@@ -247,21 +267,33 @@ export default function ExploreGuilds(props) {
 
     return (
         <>
-        <div className={classes.root}>
-        {!matches ? (<>
-            <Grid container alignItems="center" justifyContent="space-evenly" spacing={1}>
+       
+        {!matches ? (
+            <Grid container spacing={1}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <Typography style={{color:'#1341a4', fontSize:'80px',fontWeight:'700', marginTop: '30px', lineHeight:'1em', verticalAlign:'middle'}}>
+                    <Typography variant="h4" style={{color:'#1341a4',fontWeight:'700', marginTop: '30px', lineHeight:'1em', verticalAlign:'middle'}}>
                         Explore {guilds ? guildCount : null} 
-                        {guilds && guildCount > 1 ? 'Guilds': null} 
-                        {guilds && guildCount == 1 ? 'Guild': null}
-                        {guilds && guildCount == 0 ? 'Guilds': null}
+                        {guilds && guildCount > 1 ? ' Guilds': null} 
+                        {guilds && guildCount == 1 ? ' Guild': null}
+                        {guilds && guildCount == 0 ? ' Guilds': null}
                     </Typography>
                 </Grid>
-            </Grid>
-        </>
-        ) : (<>
-            <Grid container alignItems="center" justifyContent="space-evenly" spacing={1}>
+            
+
+                <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
+                </Grid>
+                <Grid item xs={10} sm={10} md={6} lg={6} xl={6}>
+                <SearchBar
+                    placeholder="Search"
+                    onChange={(e) => searchData(e.target.value)}
+                />
+                </Grid>
+                <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
+                </Grid>
+           </Grid>
+        
+        ) : (
+            <Grid container spacing={1}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                     <Typography style={{color:'#1341a4', fontSize:'30px',fontWeight:'700', marginTop: '30px', lineHeight:'1em', verticalAlign:'middle'}}>
                         Explore {guilds ? guildCount : null} 
@@ -270,29 +302,30 @@ export default function ExploreGuilds(props) {
                         {guilds && guildCount == 0 ? ' Guilds': null}
                     </Typography>
                 </Grid>
+ 
+         
+                <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
+                </Grid>
+                <Grid item xs={10} sm={10} md={6} lg={6} xl={6}>
+                <SearchBar
+                    placeholder="Search"
+                    onChange={(e) => searchData(e.target.value)}
+                />
+                </Grid>
+                <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
+                </Grid>
             </Grid>
-            </>
+            
 
         )}
         
-        <Grid container alignItems="center" justifyContent="space-between" spacing={0} >
-            <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
-            </Grid>
-            <Grid item xs={10} sm={10} md={6} lg={6} xl={6}>
-            <SearchBar
-                placeholder="Search"
-                onChange={(e) => searchData(e.target.value)}
-            />
-            </Grid>
-            <Grid item xs={1} sm={1} md={3} lg={3} xl={3}>
-            </Grid>
-        </Grid>
-        <Grid container spacing={0} justifyContent="center" alignItems="center" style={{paddingLeft:'10px', paddingRight:'10px'}}>
-        <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+        
+
+        <List sx={{ bgcolor: 'background.paper', paddingLeft: '10px', paddingRight: '10px' }}>
           {guilds && guildCount > 0 ? 
             (<>
               
-            {guilds.map(({accountId, blockTime, did, owner}, i) => {
+            {guilds.map(({accountId, blockTime, did, owner, category}, i) => {
                 console.log('guilds', guilds)
                 return ( 
                     <GuildCard
@@ -305,6 +338,8 @@ export default function ExploreGuilds(props) {
                         state={state}
                         makeSearchGuilds={makeSearchGuilds}
                         status={'active'}
+                        registered={true}
+                        category={category}
                     />
                )
             }
@@ -315,10 +350,8 @@ export default function ExploreGuilds(props) {
         }
 
         </List>
-        </Grid>
        
-        </div>
-    
+       
         </>
     )
 }

@@ -345,13 +345,18 @@ console.log('platform', platform)
         event.preventDefault();
         setFinished(false)
         let now = new Date().getTime()
-      
-        let formattedDate = formatDate(now)
+        let foundingDate
+        if (date == ''){
+            foundingDate = formatDate(now)
+        } else {
+            foundingDate = date
+        }
+        let updateDate = formatDate(now)
     
         let record = {
             contractId: contractId,
             summoner: state.accountId,
-            date: formattedDate,
+            date: foundingDate,
             category: category,
             name: name,
             logo: logo,
@@ -373,7 +378,8 @@ console.log('platform', platform)
             platform: platform,
             likes: currentLikes,
             dislikes: currentDisLikes,
-            neutrals: currentNeutrals
+            neutrals: currentNeutrals,
+            lastUpdated: updateDate
         }
 
          //ADD WEBHOOK HERE

@@ -6,16 +6,22 @@ import { GAS,
   didRegistryContractName, 
   fundingContractName,
   nameSuffix,
-  formatNearAmount } from '../../state/near'
+  formatNearAmount,
+  MAIL_URL } from '../../state/near'
 import { ceramic } from '../../utils/ceramic'
 import AdminCard from '../Cards/AdminCard/adminCard'
 import VerifierCard from '../Cards/VerifierCard/verifierCard'
+import draftToHtml from 'draftjs-to-html'
+import htmlToDraft from 'html-to-draftjs'
+import { EditorState, convertFromRaw, convertToRaw, ContentState } from 'draft-js'
+import { Editor } from "react-draft-wysiwyg"
+import qs from 'qs'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
-import { TextField } from '@mui/material'
+import { TextField, Paper } from '@mui/material'
 import { Typography, InputAdornment, Tooltip, Zoom, LinearProgress, Divider } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -24,6 +30,8 @@ import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+
+const axios = require('axios').default
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,6 +72,12 @@ export default function Admin(props) {
   const [verifier, setVerifier] = useState('')
   const [verified, setVerified] = useState(false)
 
+  const [message, setMessage] = useState(EditorState.createEmpty())
+  const [messageResult, setMessageResult] = useState('')
+  const [messagePlainText, setMessagePlainText] = useState('')
+  const [newMessageFinished, setNewMessageFinished] = useState(true)
+  const [subject, setSubject] = useState('')
+
   
 
   const {
@@ -77,13 +91,17 @@ export default function Admin(props) {
     admins,
     currentVerifiers,
     app,
-    wallet
+    wallet,
+    isAdmin,
+    accountId,
+    appIdx
   } = state
 
   useEffect(() => {
 
     async function fetchData() {
       if(isUpdated){}
+
       if(near){
         let accessKey
         let thisFreeContract = await ceramic.useFundingAccount()
@@ -131,6 +149,16 @@ export default function Admin(props) {
   const handleAllowanceChange = (event) => {
     let value = event.target.value
     setAllowance(value)
+  }
+
+  const handleSubjectChange = (event) => {
+    let value = event.target.value
+    setSubject(value)
+  }
+
+  const handleMessageChange = (editorState) => {
+    setMessage(editorState)
+    setMessagePlainText(editorState.getCurrentContent().getPlainText())
   }
 
   const handleTopupChange = (event) => {
@@ -199,27 +227,80 @@ export default function Admin(props) {
     setNewAdminFinished(false)
     try {
         await didRegistryContract.addAdmin({
-          accountId: newAdmin+nameSuffix
+          accountId: newAdmin + nameSuffix
         })
       } catch (err) {
         console.log('error adding new admin', err)
       }
   }
 
-  const newverifier = async (values) => {
+  async function newverifier() {
     event.preventDefault()
     setNewVerifierFinished(false)
     try {
         await didRegistryContract.addVerifier({
-          accountId: verifier+nameSuffix
+          accountId: verifier + nameSuffix
         })
       } catch (err) {
-        console.log('error adding new admin', err)
+        console.log('error adding new verifier', err)
       }
   }
 
+  async function sendMessage() {
+    setNewMessageFinished(false)
+    let url = `${MAIL_URL}/api/campaigns/create.php`
+    let title = subject + '|' + Date.now()
+    console.log('title', title)
+    let data = {
+        api_key: process.env.SENDY_API,
+        from_name: 'NEAR Guilds',
+        from_email: process.env.FROM_EMAIL,
+        reply_to: process.env.REPLY_EMAIL,
+        title: title,
+        subject: subject,
+        plain_text: messagePlainText,
+        html_text: draftToHtml(convertToRaw(message.getCurrentContent())),
+        list_ids: process.env.SENDY_LIST_ID,
+        brand_id: process.env.BRAND_ID,
+        track_opens: 1,
+        track_clicks: 1,
+        send_campaign: 1
+    }
   
-    return (
+    try{
+      let axiosCall = await axios.post(url,
+            qs.stringify(data),
+            {
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded'
+                }
+            })
+    console.log('axioscall', axiosCall)
+    if(axiosCall.data == 'Campaign created and now sending'){
+      let record = {
+        adminId: accountId,
+        subject: subject,
+        message: draftToHtml(convertToRaw(message.getCurrentContent())),
+        date: Date.now().toString()
+      }
+
+      await appIdx.set('announcements', record)
+    }
+    if(axiosCall){
+      setMessageResult(axiosCall.data)
+      setMessage(EditorState.createEmpty())
+      setMessagePlainText('')
+      setSubject('')
+      setNewMessageFinished(true)
+    }
+    } catch (err) {
+        console.log('error sending message', err)
+    }
+}
+
+  
+    return (<>
+      {isAdmin ?
       <div style={{padding: '10px'}}>
       <Typography variant="h5" style={{padding:'10px', marginTop:'20px', marginBottom:'20px'}}><SettingsIcon /> Admin Settings</Typography>
       <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
@@ -227,11 +308,12 @@ export default function Admin(props) {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
+         
         >
           <Typography sx={{ width: '33%', flexShrink: 0 }}>
             Funding
           </Typography>
-          <Typography sx={{ color: 'text.secondary' }}>Remaining Balance: {fundingAccountBalance} Ⓝ</Typography>
+          <Typography sx={{ color: 'text.secondary', marginLeft: '10px' }}>Remaining Balance:<br></br> {fundingAccountBalance} Ⓝ</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Grid container spacing={0} style={{padding: '20px', marginBottom: '5px', marginLeft: '0px'}} alignItems="center" justifyContent="space-evenly">
@@ -274,11 +356,12 @@ export default function Admin(props) {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2bh-content"
           id="panel2bh-header"
+         
         >
           <Typography sx={{ width: '33%', flexShrink: 0 }}>
             Allowance
           </Typography>
-          <Typography sx={{ color: 'text.secondary' }}>Remaining Allowance: {keyBalance ? keyBalance : '0'} Ⓝ</Typography>
+          <Typography sx={{ color: 'text.secondary', marginLeft: '10px' }}>Remaining Allowance:<br></br> {keyBalance ? keyBalance : '0'} Ⓝ</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Grid container spacing={0} style={{padding: '20px', marginBottom: '5px', marginLeft: '0px'}} alignItems="center" justifyContent="space-evenly">
@@ -320,12 +403,13 @@ export default function Admin(props) {
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel3bh-content"
-          id="panel2bh-header"
+          id="panel3bh-header"
+         
         >
           <Typography sx={{ width: '33%', flexShrink: 0 }}>
-            Manage Admins
+            Manage Administrators
           </Typography>
-          <Typography sx={{ color: 'text.secondary' }}> {admins ? admins.length : '0'} Admins</Typography>
+          <Typography sx={{ color: 'text.secondary', marginLeft: '10px' }}> {admins ? admins.length : '0'} Admins</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Grid container spacing={0} justifyContent="center" alignItems="center" style={{paddingLeft:'10px', paddingRight:'10px'}}>
@@ -398,16 +482,17 @@ export default function Admin(props) {
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel4bh-content"
         id="panel2bh-header"
+        
       >
         <Typography sx={{ width: '33%', flexShrink: 0 }}>
           Manage Verifiers
         </Typography>
-        <Typography sx={{ color: 'text.secondary' }}> {currentVerifiers ? currentVerifiers.length : '0'} Verifiers</Typography>
+        <Typography sx={{ color: 'text.secondary', marginLeft: '10px' }}> {currentVerifiers ? currentVerifiers.length : '0'} Verifiers</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Grid container spacing={0} justifyContent="center" alignItems="center" style={{paddingLeft:'10px', paddingRight:'10px'}}>
           <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            {admins && admins.length > 0 ? 
+            {currentVerifiers && currentVerifiers.length > 0 ? 
               (<>
               {currentVerifiers.map((accountId, i) => {
                   return ( 
@@ -435,7 +520,8 @@ export default function Admin(props) {
               inputRef={register({
                 validate: {
                 exists: value => app.accountTaken,
-                registered: value => verifierRegistered
+                registered: value => verifierRegistered,
+                verified: value => verified
                 }        
               })}
               InputProps={{
@@ -453,11 +539,11 @@ export default function Admin(props) {
                 isVerified(v + nameSuffix)
               }}
             />
-          {errors.verifier && <p style={{color: 'red'}}>You must provide a valid account name.</p>}        
+          {errors.verifier && <p style={{color: 'red'}}>You must provide a valid and registered account name that is not already a verifier.</p>}        
           </Grid>
           <Grid item xs={3} sm={3} md={3} lg={3} xl={3}>
             {newVerifierFinished ?
-              <Button onClick={handleSubmit(newverifier)} color="primary" variant="contained" type="submit" style={{marginLeft: '3px'}}>
+              <Button onClick={newverifier} color="primary" variant="contained" style={{marginLeft: '3px'}}>
                 Add
               </Button>
             : <LinearProgress />
@@ -469,6 +555,76 @@ export default function Admin(props) {
         </Grid>
       </AccordionDetails>
     </Accordion>
+    <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel5bh-content"
+        id="panel5bh-header"
+        
+      >
+        <Typography sx={{ width: '33%', flexShrink: 0 }}>
+          Message
+        </Typography>
+        <Typography sx={{ color: 'text.secondary', marginLeft: '10px' }}>Message all guilds</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Grid container spacing={0} style={{padding: '10px', marginBottom: '5px', marginLeft: '0px'}} alignItems="center" justifyContent="space-evenly">
+          <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="left">
+            <Typography variant="h6" style={{marginTop: '15px'}}>Message</Typography>
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="left">
+            <TextField
+              margin="dense"
+              id="subject-id"
+              variant="outlined"
+              name="subject"
+              label="Message Subject"
+              value={subject}              
+              onChange={handleSubjectChange}
+            />
+            {errors.subject && <p style={{color: 'red'}}>You must provide a message subject.</p>}        
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="left">
+            <Paper style={{padding: '5px'}}>
+                  <Editor
+                  editorState={message}
+                  toolbarClassName="toolbar-class"
+                  wrapperClassName="wrapper-class"
+                  editorClassName="editor-class"
+                  toolbar={{
+                      inline: { inDropdown: true },
+                      list: { inDropdown: true },
+                      textAlign: { inDropdown: true },
+                      link: { inDropdown: true },
+                      image: { inDropdown: true },
+                      history: { inDropdown: true },
+                    }}
+                  onEditorStateChange={handleMessageChange}
+                  editorStyle={{minHeight:'200px'}}
+                  />
+              </Paper>
+          </Grid>
+          <Grid item xs={3} sm={3} md={3} lg={3} xl={3}>
+            {newMessageFinished ?
+               
+              <Button onClick={sendMessage} color="primary" variant="contained" style={{marginLeft: '3px', marginTop: '10px'}}>
+                Send
+              </Button>
+            : <LinearProgress />
+            }
+          </Grid>
+          <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="left">
+            {messageResult != '' ?
+            <Typography variant="overline">{messageResult}</Typography>
+            : null}
+          </Grid>
+        </Grid>
+      </AccordionDetails>
+    </Accordion>
     </div>
+    : <Typography variant="h5">Sorry, you need to be an Administrator to access this page.</Typography>
+    }
+    </>
+    
     )
 }

@@ -20,7 +20,8 @@ class Registry {
               'retrieveAlias',
               'getType',
               'hasAlias',
-              'getVerificationStatus'
+              'getVerificationStatus',
+              'getTier'
           ],
           // Change methods can modify the state. But you don't receive the returned value when called.
           changeMethods: [
@@ -36,7 +37,8 @@ class Registry {
               'storeAlias',
               'deleteAlias',
               'putDID',
-              'deleteDID'
+              'deleteDID',
+              'changeTier'
           ],
       })
         return didRegistryContract

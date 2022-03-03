@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import { ceramic } from '../../utils/ceramic'
+import { MAIL_URL } from '../../state/near'
+import qs from 'qs'
+import Social from '../common/Social/social'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -24,6 +27,11 @@ import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import VerifiedIcon from '@mui/icons-material/Verified'
+import MailIcon from '@mui/icons-material/Mail'
+import { Button, LinearProgress, Divider } from '@mui/material'
+
+
+const axios = require('axios').default
 
 // CSS Styles
 
@@ -74,6 +82,7 @@ export default function GuildProfile(props) {
     const [individual, setIndividual] = useState(false)
     const [guild, setGuild] = useState(false)
     
+    const [contractId, setContractId] = useState('')
     const [open, setOpen] = useState(true)
     const [purpose, setPurpose] = useState('')
     const [name, setName] = useState('')
@@ -101,6 +110,10 @@ export default function GuildProfile(props) {
     const [developerSkillSet, setDeveloperSkillSet] = useState({})
     const [personaSkillSet, setPersonaSkillSet] = useState([])
     const [personaSpecificSkillSet, setPersonaSpecificSkillSet] = useState([])
+    const [summoner, setSummoner] = useState('')
+    const [updated, setUpdated] = useState('')
+    const [emailNotifications, setEmailNotifications] = useState(false)
+    const [emailFinished, setEmailFinished] = useState(true)
 
     const classes = useStyles()
 
@@ -120,8 +133,49 @@ export default function GuildProfile(props) {
     } = state
 
     const {
-        guildDid
+        guildDid,
+        registered
     }= props
+  
+    
+    useEffect(
+        () => {
+            async function getEmailStatus(){
+                if(email){
+                    let emailStatus
+                    let data = {
+                        api_key: process.env.SENDY_API,
+                        email: email,
+                        list_id: process.env.SENDY_LIST_ID
+                    }
+                    let url = `${MAIL_URL}/api/subscribers/subscription-status.php`
+                    try{
+                        emailStatus = await axios.post(url,
+                            qs.stringify(data),
+                            {
+                                headers: {
+                                    'content-type': 'application/x-www-form-urlencoded'
+                                }
+                            })
+                        console.log('emailstatus', emailStatus)
+                        if(emailStatus.data == 'Subscribed') {
+                            setEmailNotifications(true)
+                        }
+                        if(emailStatus.data == 'Email does not exist in list' || emailStatus.data == 'Unsubscribed' || emailStatus.data == 'Unconfirmed' || emailStatus.data == 'Bounced'){
+                            setEmailNotifications(false)
+                        }
+                    } catch (err) {
+                        console.log('error getting email status', err)
+                    }
+                }
+            }
+
+            getEmailStatus()
+            .then((res) => {
+
+            })
+
+        }, [email])
 
     useEffect(
         () => {
@@ -133,6 +187,8 @@ export default function GuildProfile(props) {
                 console.log('result', result)
                 if(result) {
                     setGuild(true)
+                    result.summoner ? setSummoner(result.summoner) : setSummoner('')
+                    result.contractId ? setContractId(result.contractId) : setContractId('')
                     result.purpose ? setPurpose(result.purpose) : setPurpose('')
                     result.name ? setName(result.name) : setName('')
                     result.date ? setDate(result.date) : setDate('')
@@ -153,6 +209,7 @@ export default function GuildProfile(props) {
                     result.telegram? setTelegram(result.telegram): setTelegram('')
                     result.website? setWebsite(result.website): setWebsite('')
                     result.platform ? setPlatform(result.platform) : setPlatform('')
+                    result.lastUpdated ? setUpdated(result.lastUpdated) : setUpdated('')
                 }
             } else {
                 if(did && appIdx){
@@ -160,6 +217,8 @@ export default function GuildProfile(props) {
                     console.log('result', result)
                         if(result) {
                             setGuild(true)
+                            result.summoner ? setSummoner(result.summoner) : setSummoner('')
+                            result.contractId ? setContractId(result.contractId) : setContractId('')
                             result.purpose ? setPurpose(result.purpose) : setPurpose('')
                             result.name ? setName(result.name) : setName('')
                             result.date ? setDate(result.date) : setDate('')
@@ -180,6 +239,7 @@ export default function GuildProfile(props) {
                             result.telegram? setTelegram(result.telegram): setTelegram('')
                             result.website? setWebsite(result.website): setWebsite('')
                             result.platform ? setPlatform(result.platform) : setPlatform('')
+                            result.lastUpdated ? setUpdated(result.lastUpdated) : setUpdated('')
                         }
                 }
             }
@@ -192,7 +252,61 @@ export default function GuildProfile(props) {
           
     }, [did, appIdx, isUpdated]
     )
-console.log('finished', finished)
+
+
+
+    async function optin() {
+        setEmailFinished(false)
+        let subscribeUrl = `${MAIL_URL}/subscribe`
+        let data = {
+            api_key: process.env.SENDY_API, 
+            email: email,
+            name: name,
+            list: process.env.SENDY_LIST_ID,
+            boolean: true
+        }
+        try{
+            axiosCall = await axios.post(subscribeUrl,
+                qs.stringify(data),
+                {
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded'
+                    }
+                })
+        console.log('axioscall', axiosCall)
+        setEmailNotifications(true)
+        setEmailFinished(true)
+       
+        } catch (err) {
+            console.log('error subscribing', err)
+        }
+    }
+
+    async function optout() {
+        setEmailFinished(false)
+        let deleteUrl = `${MAIL_URL}/api/subscribers/delete.php`
+        let data = {
+            api_key: process.env.SENDY_API, 
+            email: email,
+            list_id: process.env.SENDY_LIST_ID
+        }
+        try{
+            axiosCall = await axios.post(deleteUrl,
+                qs.stringify(data),
+                {
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded'
+                    }
+                })
+        console.log('axiosCalldelete', axiosCall)
+        setEmailNotifications(false)
+        setEmailFinished(true)
+        } catch (err) {
+            console.log('error subscribing', err)
+        }
+    }
+
+
     const languages = language.map((item, i) => {
       if (i == language.length -1){
         item = item
@@ -211,14 +325,27 @@ console.log('finished', finished)
               
                 <Grid container justifyContent="space-evenly" spacing={1} style={{marginTop:'20px', padding:'10px'}}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                        <Avatar src={logo} style={{width:'75%', height:'auto', marginBottom:'10px'}}  />
+                    {summoner == accountId ? 
+                            emailFinished ? 
+                                emailNotifications ?
+                                    <Chip icon={<MailIcon />} label="Email Notifications: ON" variant="outlined" onClick={optout}/>
+                                : <Chip icon={<MailIcon />} label="Email Notifications: OFF" variant="outlined" onClick={optin}/>
+                            : <LinearProgress/>
+                    : null
+                    }
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                        <Avatar src={logo} style={{width:'25%', height:'auto', marginBottom:'10px'}}  />
                         <Typography variant="h5">
                             {name ? name : accountId}
                         </Typography>
                         <Stack direction="row" spacing={1} justifyContent="center">
-                            {accountType == 'guild' ? <Chip icon={<AppRegistrationIcon />} label="Registered" /> : <Chip icon={<AppRegistrationIcon />} label=" Not Registered" /> }
+                            {accountType == 'guild' || registered ? <Chip icon={<AppRegistrationIcon />} label="Registered" /> : <Chip icon={<AppRegistrationIcon />} label=" Not Registered" /> }
                             {verificationStatus ? <Chip icon={<VerifiedIcon />} label="Verified" variant="outlined" /> : null }
                         </Stack>
+                        <Divider variant="middle" style={{marginTop: '15px', marginBottom:'15px'}}/>
+                            <Social did={guildDid ? guildDid : did} type={accountType} appIdx={appIdx} style={{paddingLeft: '15px', paddingRight:'15px'}}/>
+                        <Divider variant="middle" style={{marginTop: '15px', marginBottom:'15px'}}/>
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                         <Typography variant="h6">General Information</Typography>
@@ -228,8 +355,10 @@ console.log('finished', finished)
                             
                             </TableHead>
                             <TableBody>
-                            {accountId ? <TableRow key={accountId}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{accountId}</TableCell></TableRow> : null }
-                            {date ? <TableRow key={date}><TableCell>Updated</TableCell><TableCell component="th" scope="row">{date}</TableCell></TableRow> : null }
+                            {summoner ? <TableRow key={summoner}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{summoner}</TableCell></TableRow> : null }
+                            {contractId ? <TableRow key={contractId}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{contractId}</TableCell></TableRow> : null }
+                            {date ? <TableRow key={'5'}><TableCell>Founded</TableCell><TableCell component="th" scope="row">{date}</TableCell></TableRow> : null }
+                            {updated ? <TableRow key={updated}><TableCell>Updated</TableCell><TableCell component="th" scope="row">{updated}</TableCell></TableRow> : null }
                             {category ? <TableRow key={category}><TableCell>Category</TableCell><TableCell component="th" scope="row">{category}</TableCell></TableRow> : null }
                             {country ? <TableRow key={country}><TableCell>Country</TableCell><TableCell component="th" scope="row">{country}</TableCell></TableRow> : null }
                             {language && language.length > 0 ? <TableRow key='language'><TableCell>Language</TableCell><TableCell component="th" scope="row">{language.map((item, i) => { return (<><Typography key={i} variant="overline">{item},</Typography> </>) })}</TableCell></TableRow>: null }                
@@ -314,28 +443,7 @@ console.log('finished', finished)
                                     </Table>
                                 </TableContainer>
                             </Grid>        
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <Typography variant="h6">Contacts and Connections</Typography>
-                            </Grid>
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <TableContainer component={Paper}>
-                                <Table className={classes.table} size="small" aria-label="a dense table">
-                                <TableHead>
-                                
-                                </TableHead>
-                                <TableBody>
-                                {email ? <TableRow key={email}><TableCell>Email</TableCell><TableCell component="a" href={`mailto:${email}`} scope="row">{email}</TableCell></TableRow> : null }
-                                {discord ? <TableRow key={discord}><TableCell>Discord</TableCell><TableCell component="th" scope="row">{discord}</TableCell></TableRow> : null }
-                                {twitter ? <TableRow key={twitter}><TableCell>Twitter</TableCell><TableCell component="a" href={`https://twitter.com/${twitter}`} scope="row">{twitter}</TableCell></TableRow> : null }
-                                {reddit ? <TableRow key={reddit}><TableCell>Reddit</TableCell><TableCell component="a" href={`https://reddit.com/user/${reddit}`} scope="row">{reddit}</TableCell></TableRow> : null }
-                                {telegram ? <TableRow key={telegram}><TableCell>Telegram</TableCell><TableCell component="a" href={`https://t.me/${telegram}`} scope="row">{telegram}</TableCell></TableRow> : null }
-                                {website ? <TableRow key={website}><TableCell>Website</TableCell><TableCell component="a" href={`https://${website}`} scope="row">{website}</TableCell></TableRow> : null }
-                                {platform ? <TableRow key={platform}><TableCell>DAO</TableCell><TableCell component="a" href={`https://${platform}`} scope="row">{platform}</TableCell></TableRow> : null }
-                                </TableBody>
-                                </Table>
-                            </TableContainer>
-                            </Grid>
-                            </Grid>
+                          </Grid>
                             </AccordionDetails>
                         </Accordion>
                     </Grid>

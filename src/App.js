@@ -20,6 +20,7 @@ import DisplayGuildProfile from './components/mainPages/displayGuildProfile'
 import DisplayIndivProfile from './components/mainPages/displayIndivProfile'
 import Admin from './components/mainPages/admin'
 import Pledge from './components/mainPages/pledge'
+import Announcements from './components/mainPages/announcements'
 import { Home } from './components/mainPages/home'
 
 
@@ -27,6 +28,8 @@ import { Home } from './components/mainPages/home'
 import { makeStyles } from '@mui/styles'
 import CircularProgress from '@mui/material/CircularProgress'
 import Typography from '@mui/material/Typography'
+import Grid from '@mui/material/Grid'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 
 
@@ -52,6 +55,9 @@ const useStyles = makeStyles((theme) => ({
       marginTop: '-100px',
       marginLeft: '-100px'
     },
+    content: {
+        maxWidth: '40%'
+    },
     centeredPhrase: {
         maxWidth: '450px',
         height: '100px',
@@ -62,6 +68,12 @@ const useStyles = makeStyles((theme) => ({
         marginTop: '-80px',
         marginLeft: '-100px'
       },
+    container: {
+        maxWidth: '40%'
+    },
+    containerFull: {
+        maxWidth: '100%'
+    }
     }));
 
 const App = () => {
@@ -69,6 +81,7 @@ const App = () => {
     const { state, dispatch, update } = useContext(appStore)
 
     const classes = useStyles()
+    const matches = useMediaQuery('(max-width:500px)')
 
     const onMount = () => {
         dispatch(onAppMount());
@@ -119,6 +132,10 @@ const App = () => {
         <>
         <div className={classes.root}>
         <Header state={state}/>
+        
+        <Grid container alignItems="center" justifyContent="center" >
+            <Grid item align="center" className={`${!matches ? classes.container : classes.containerFull}`}>
+        
             <Route exact path="/">
                 <Home 
                     state={state}
@@ -132,13 +149,6 @@ const App = () => {
                     >
                     { children }
                 </NewKey>
-            </Route>
-            <Route exact path="/choice">
-                <Choice
-                    state={state}
-                    >
-                    { children }
-                </Choice>
             </Route>
             <Route exact path="/admin">
             <Admin
@@ -196,6 +206,13 @@ const App = () => {
                     { children }
                 </CreateGuildProfile>
             </Route>
+            <Route exact path="/announcements">
+                <Announcements
+                    state={state}
+                    >
+                    { children }
+                </Announcements>
+            </Route>
             <Route exact path="/create-indiv-profile">
                 <CreateIndivProfile
                     state={state}
@@ -223,6 +240,9 @@ const App = () => {
             <Route path="/indiv-profiles/:indivDid">
                 <DisplayIndivProfile />
             </Route>
+           </Grid>
+        </Grid>
+
         </div>     
         <Footer />
         </>

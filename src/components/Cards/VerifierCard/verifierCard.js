@@ -100,15 +100,15 @@ export default function VerifierCard(props) {
 
       async function fetchData() {
           if(isUpdated){}
-          if(personId && appIdx && near){
-            let did = await ceramic.getDid(personId, factoryContract, didRegistryContract)
+          if(personId.accountId && appIdx && near){
+            let did = await ceramic.getDid(personId.accountId, factoryContract, didRegistryContract)
             setDid(did)
             // Registration Status
             did ? setRegistered(true) : setRegistered(false)
             
             // Verification Status
             try{
-              let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: personId})
+              let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: personId.accountId})
                 if(verificationStatus != 'null'){
                   setVerified(verificationStatus)
                 }
@@ -118,7 +118,7 @@ export default function VerifierCard(props) {
             
             let thisCurUserIdx
             try{
-              let personAccount = new nearAPI.Account(near.connection, personId)
+              let personAccount = new nearAPI.Account(near.connection, personId.accountId)
               thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, near, didRegistryContract)
               setCurUserIdx(thisCurUserIdx)
               } catch (err) {
@@ -178,7 +178,7 @@ export default function VerifierCard(props) {
   }
 
   async function handleSignal(sig){
-    await signal(sig, curUserIdx, personId, 'individual')
+    await signal(sig, curUserIdx, personId.accountId, 'individual')
     update('', {isUpdated: !isUpdated})
   }
   
@@ -193,13 +193,13 @@ export default function VerifierCard(props) {
     setRemoveVerifierFinished(false)
     try {
         await didRegistryContract.removeVerifier({
-          accountId: personId
+          accountId: personId.accountId
         })
       } catch (err) {
         console.log('error removing verifier', err)
       }
   }
-
+console.log('personid verify', personId.accountId)
     return(
         <>
         {!display ? <LinearProgress /> : 
@@ -220,18 +220,18 @@ export default function VerifierCard(props) {
             }}>
             </div>
             </Link><br></br>
-            {admins && admins.includes(accountId) && accountId != personId ? <Button variant="outlined" onClick={removeVerifier}>Remove</Button> : null }
+            {admins && admins.includes(accountId) && accountId != personId.accountId ? <Button variant="outlined" onClick={removeVerifier}>Remove</Button> : null }
             </ListItemAvatar>
             <ListItemText
               primary={ <Grid container spacing={1} justifyContent="space-between" alignItems="center">
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-              <Typography variant="h5">{name != '' ? name : personId.split('.')[0]}</Typography>
+              <Typography variant="h5">{name != '' ? name : personId.accountId ? personId.accountId.split('.')[0] : 'nil'}</Typography>
               </Grid>  
               </Grid>}
               secondary={ <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
-              {personId == superAdmin ? <Chip icon={<StarsIcon />} label="Super Admin" /> : null }
-              {admins.includes(personId) ? 
-                personId != superAdmin ? 
+              {personId && personId.accountId == superAdmin ? <Chip icon={<StarsIcon />} label="Super Admin" /> : null }
+              {admins.includes(personId.accountId) ? 
+                personId.accountId != superAdmin ? 
                   <Chip icon={<StarsIcon />} label="Admin" variant="outlined" />
                   : null
               : null
@@ -257,7 +257,7 @@ export default function VerifierCard(props) {
       
         {introClicked ? <Intro
           handleIntroClickState={handleIntroClickState}
-          personId={personId}
+          personId={personId.accountId}
           /> : null }
         </>
        

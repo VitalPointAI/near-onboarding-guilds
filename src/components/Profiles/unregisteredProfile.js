@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
+import EditGuildProfileForm from '../EditProfile/editGuild'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -23,6 +24,7 @@ import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import VerifiedIcon from '@mui/icons-material/Verified'
+import { Button } from '@mui/material'
 
 // CSS Styles
 
@@ -105,6 +107,13 @@ export default function UnregisteredProfile(props) {
     const [sponsorActivated, setSponsorActivated] = useState(false) 
     const [website, setWebsite] = useState('')
     const [telegram, setTelegram] = useState('')
+    const [contractId, setContractId] = useState('')
+    const [summoner, setSummoner] = useState('')
+    const [updated, setUpdated] = useState('')
+
+    const [guildProfileEdit, setGuildProfileEdit] = useState(false)
+    const [editGuildProfileClicked, setEditGuildProfileClicked] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null)
 
     const classes = useStyles()
 
@@ -139,6 +148,12 @@ export default function UnregisteredProfile(props) {
 
       }, []
   )
+
+  useEffect(
+    () => {
+      guildProfileEdit ? window.location.assign('/'): null
+    }, [guildProfileEdit]
+    )
    
     useEffect(
         () => {
@@ -168,6 +183,8 @@ export default function UnregisteredProfile(props) {
                 let result = await appIdx.get('daoProfile', did)
                 if(result) {
                     setGuild(true)
+                    result.summoner ? setSummoner(result.summoner) : setSummoner('')
+                    result.contractId ? setContractId(result.contractId) : setContractId('')
                     result.purpose ? setPurpose(result.purpose) : setPurpose('')
                     result.name ? setName(result.name) : setName('')
                     result.date ? setDate(result.date) : setDate('')
@@ -188,6 +205,7 @@ export default function UnregisteredProfile(props) {
                     result.telegram? setTelegram(result.telegram): setTelegram('')
                     result.website? setWebsite(result.website): setWebsite('')
                     result.platform ? setPlatform(result.platform) : setPlatform('')
+                    result.lastUpdated ? setUpdated(result.lastUpdated) : setUpdated('')
                 }
               }
             }
@@ -200,6 +218,23 @@ export default function UnregisteredProfile(props) {
           
     }, [did, isUpdated]
     )
+
+     const handleEditGuildProfileClick = () => {
+    handleExpanded()
+    handleEditGuildClickState(true)
+    }
+
+    function handleEditGuildClickState(property){
+    setEditGuildProfileClicked(property)
+    }
+
+    function handleGuildProfileEdit(property){
+    setGuildProfileEdit(property)
+    }
+
+    function handleExpanded() {
+        setAnchorEl(null)
+    }
 
     const languages = language.map((item, i) => {
       if (i == language.length -1){
@@ -390,9 +425,12 @@ export default function UnregisteredProfile(props) {
                             
                             </TableHead>
                             <TableBody>
+                            {summoner ? <TableRow key={summoner}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{summoner}</TableCell></TableRow> : null }
+                            {contractId ? <TableRow key={contractId}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{contractId}</TableCell></TableRow> : null }
                             {member ? <TableRow key={member}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{member}</TableCell></TableRow> : null }
                             {accountType == 'guild' ? <TableRow key={'accountType'}><TableCell>Registered</TableCell><TableCell component="th" scope="row">Yes</TableCell></TableRow> : <TableRow key={'accountType'}><TableCell>Registered</TableCell><TableCell component="th" scope="row">No</TableCell></TableRow> }
-                            {date ? <TableRow key={date}><TableCell>Founded</TableCell><TableCell component="th" scope="row">{birthdate}</TableCell></TableRow> : null }
+                            {date ? <TableRow key={date}><TableCell>Founded</TableCell><TableCell component="th" scope="row">{date}</TableCell></TableRow> : null }
+                            {updated ? <TableRow key={updated}><TableCell>Updated</TableCell><TableCell component="th" scope="row">{updated}</TableCell></TableRow> : null }
                             {country ? <TableRow key={country}><TableCell>Country</TableCell><TableCell component="th" scope="row">{country}</TableCell></TableRow> : null }
                             {language && language.length > 0 ? <TableRow key='language'><TableCell>Language</TableCell><TableCell component="th" scope="row">{language.map((item, i) => { return (<><Typography key={i} variant="overline">{item},</Typography> </>) })}</TableCell></TableRow>: null }                
                             </TableBody>
@@ -411,7 +449,7 @@ export default function UnregisteredProfile(props) {
                             <AccordionDetails>
                                 <Grid container spacing={1} justifyContent="center">
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                        <Typography variant="body1">{purpose ? purpose : 'no identified yet'}</Typography>
+                                        <Typography variant="body1">{purpose ? purpose : 'not identified yet'}</Typography>
                                     </Grid>
                                 </Grid>
                             </AccordionDetails>
@@ -503,11 +541,27 @@ export default function UnregisteredProfile(props) {
                         <CircularProgress size={100} color="primary"  />
                    </div>
               )
-              : <div className={classes.noProfile}>
+              : (<div className={classes.noProfile}>
                     <Typography variant="h4">No Profile Yet.</Typography>
+                    <br></br>
+                    <Button className={classes.spacing} variant="contained" color="primary" onClick={handleEditGuildProfileClick}>
+                        Create Profile
+                    </Button>
+ 
                 </div>
-        }
+                )}
+
+                {editGuildProfileClicked ? <EditGuildProfileForm
+                    handleEditGuildClickState={handleEditGuildClickState}
+                    handleGuildProfileEdit={handleGuildProfileEdit}
+                    curUserIdx={curUserIdx}
+                    did={did}
+                    accountId={accountId}
+                    /> : null}
+        
            
           </div>
+          
         )
+        
 }

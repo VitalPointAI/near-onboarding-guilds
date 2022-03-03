@@ -26,10 +26,10 @@ export const daoProfileSchema = {
         "title": "text",
         "maxLength": 4000,
       },
-      country: {
+      "country": {
         type: 'string'
       },
-      language: {
+      "language": {
         type: 'array'
       },
       "email":{
@@ -78,6 +78,15 @@ export const daoProfileSchema = {
         type: 'array'
       },
       "neutrals": {
+        type: 'array'
+      },
+      "lastUpdated": {
+        type: 'string'
+      },
+      "tier": {
+        type: 'string'
+      },
+      "notifications": {
         type: 'array'
       },
    },

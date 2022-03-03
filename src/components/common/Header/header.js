@@ -12,6 +12,8 @@ import {ceramic} from '../../../utils/ceramic'
 // Material UI
 import Grid from '@mui/material/Grid'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import Stack from '@mui/material/Stack'
+import { Typography } from '@mui/material'
 
 import '../../../global.css'
 
@@ -92,10 +94,10 @@ const Header = ({ state, handleUpdate }) => {
     
     return (
         <div>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '5px', paddingLeft: '10px', backgroundColor: 'black'}}>
+        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '10px', paddingLeft: '10px', backgroundColor: 'black'}}>
             
             {wallet && wallet.signedIn ? 
-                (
+                !matches ? (
                     <>
                     <Grid item >
                         <LeftSideDrawer
@@ -106,10 +108,39 @@ const Header = ({ state, handleUpdate }) => {
                         </Link>
                     </Grid>
                     <Grid item style={{minWidth: '100px'}} >
-                        {wallet && !wallet.signedIn ? <LoginButton /> :   <LogoutButton /> }
+                        {wallet && !wallet.signedIn ? <LoginButton /> :  
+                            <Stack direction="row" spacing={1} justifyContent="center">
+                                <Typography variant="overline" style={{color:'#FFFFFF'}}>
+                                    {accountId}
+                                </Typography>
+                                <LogoutButton /> 
+                            </Stack>
+                        }
                     </Grid>
                     </>
-                ) 
+                )
+                : (
+                    <>
+                    <Grid item >
+                        <LeftSideDrawer
+                        state={state}                        
+                        />
+                        <Link to="/"> 
+                            <ImageLoader image={nearLogo} style={logoStyle}/>
+                        </Link>
+                    </Grid>
+                    <Grid item style={{minWidth: '100px'}} >
+                        {wallet && !wallet.signedIn ? <LoginButton /> :  
+                            <Stack spacing={1} justifyContent="center">
+                                <Typography variant="overline" style={{color:'#FFFFFF'}}>
+                                    {accountId.length <= 17 ? accountId : accountId.substring(0,15) + "..."}
+                                </Typography>
+                                <LogoutButton /> 
+                            </Stack>
+                        }
+                    </Grid>
+                    </>
+                )
             :  
             wallet && !wallet.signedIn ? 
                 !matches ? (
@@ -120,7 +151,14 @@ const Header = ({ state, handleUpdate }) => {
                     </Link>
                     </Grid>
                     <Grid item style={{minWidth: '100px'}}>
-                        {wallet && !wallet.signedIn ? <LoginButton /> :  <LogoutButton /> }
+                        {wallet && !wallet.signedIn ? <LoginButton /> :   
+                            <Stack direction="row" spacing={1} justifyContent="center">
+                                <Typography variant="overline" style={{color:'#FFFFFF'}}>
+                                    {accountId}
+                                </Typography>
+                                <LogoutButton /> 
+                            </Stack>
+                        }
                     </Grid>
                     </>
                 ) : (
@@ -135,7 +173,14 @@ const Header = ({ state, handleUpdate }) => {
                         </Link>
                     </Grid>
                     <Grid item style={{minWidth: '100px'}}>
-                        {wallet && !wallet.signedIn ? <LoginButton /> :   <LogoutButton /> }
+                        {wallet && !wallet.signedIn ? <LoginButton /> :  
+                            <Stack spacing={1} justifyContent="center">
+                                <Typography variant="overline" style={{color:'#FFFFFF'}}>
+                                    {accountId.length <= 17 ? accountId : accountId.substring(0,15) + "..."}
+                                </Typography>
+                                <LogoutButton /> 
+                            </Stack>
+                        }
                     </Grid>
                     </>
                 ) 

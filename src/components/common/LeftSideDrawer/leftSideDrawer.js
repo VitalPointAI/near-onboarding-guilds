@@ -29,6 +29,7 @@ import Badge from '@mui/material/Badge'
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import LeaderboardIcon from '@mui/icons-material/Leaderboard'
+import CampaignIcon from '@mui/icons-material/Campaign'
 
 const useStyles = makeStyles((theme) => ({
     list: {
@@ -199,7 +200,7 @@ const list = (anchor) => (
 
   <Typography variant='h6'>Account</Typography>
   <List>
-    <ListItem button key={2} onClick={(e) => accountType == 'guild' ? editGuildProfileClick(e) : editProfileClick(e)}>
+    <ListItem button key={2} onClick={(e) => editGuildProfileClick(e)}>
         <ListItemIcon><EditIcon /></ListItemIcon>
         <ListItemText primary='Edit Profile'/>
     </ListItem>
@@ -218,9 +219,15 @@ const list = (anchor) => (
   </List>
   <Divider />
   <Typography variant='h6'>Discover</Typography>
-  <List>      
+  <List>
+    <Link to='/announcements'>
+      <ListItem className='announcements' button key={6}>
+        <ListItemIcon><CampaignIcon /></ListItemIcon>
+        <ListItemText primary='Announcements'/>
+      </ListItem>
+    </Link>
     <Link to='/guilds'>
-      <ListItem className='exploreGuilds' button key={6}>
+      <ListItem className='exploreGuilds' button key={7}>
         <ListItemIcon><ExploreIcon /></ListItemIcon>
         <ListItemText primary='Explore Guilds'/>
       </ListItem>
@@ -270,7 +277,7 @@ const list = (anchor) => (
 
         <Typography variant='h6'>Account</Typography>
         <List>
-          <ListItem button key={2} onClick={(e) => accountType == 'guild' ? editGuildProfileClick(e) : editProfileClick(e)}>
+          <ListItem button key={2} onClick={(e) => editGuildProfileClick(e)}>
               <ListItemIcon><EditIcon /></ListItemIcon>
               <ListItemText primary='Edit Profile'/>
           </ListItem>
@@ -289,9 +296,15 @@ const list = (anchor) => (
         </List>
         <Divider />
         <Typography variant='h6'>Discover</Typography>
-        <List>      
+        <List>
+        <Link to='/announcements'>
+          <ListItem className='announcements' button key={6}>
+            <ListItemIcon><CampaignIcon /></ListItemIcon>
+            <ListItemText primary='Announcements'/>
+          </ListItem>
+        </Link>
         <Link to='/guilds'>
-          <ListItem className='exploreGuilds' button key={6}>
+          <ListItem className='exploreGuilds' button key={7}>
             <ListItemIcon><ExploreIcon /></ListItemIcon>
             <ListItemText primary='Explore Guilds'/>
           </ListItem>
