@@ -54,7 +54,7 @@ export default function GuildRegister(props) {
 
     async function register(type){
       if(did){
-          let freeContract = await ceramic.useFundingAccount()
+          let freeContract = await ceramic.useFundingAccount(accountId)
          
           try{
               await freeContract.contract.putDID({

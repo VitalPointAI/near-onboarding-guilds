@@ -137,7 +137,7 @@ export default function Admin(props) {
 
       if(near){
         let accessKey
-        let thisFreeContract = await ceramic.useFundingAccount()
+        let thisFreeContract = await ceramic.useFundingAccount(accountId)
         setFreeContract(thisFreeContract)
         console.log('thisfreecontract', thisFreeContract)
         let publicKey = "ed25519:" + thisFreeContract.pubKey

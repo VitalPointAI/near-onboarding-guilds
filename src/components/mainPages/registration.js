@@ -87,7 +87,7 @@ useEffect(
 
 async function register(type){
     if(did){
-        let freeContract = await ceramic.useFundingAccount()
+        let freeContract = await ceramic.useFundingAccount(accountId)
        
         try{
             await freeContract.contract.putDID({
@@ -105,7 +105,7 @@ async function register(type){
 
 async function unregister(){
     if(did){
-        let freeContract = await ceramic.useFundingAccount()
+        let freeContract = await ceramic.useFundingAccount(accountId)
       
         if(freeContract){
             try{
