@@ -9,6 +9,7 @@ import { GAS,
   formatNearAmount,
   AUTH_TOKEN,
   SENDY_API_KEY_CALL,
+  TOKEN_CALL,
   MAIL_URL } from '../../state/near'
 import { ceramic } from '../../utils/ceramic'
 import AdminCard from '../Cards/AdminCard/adminCard'
@@ -112,7 +113,7 @@ export default function Admin(props) {
     
       let authToken = get(AUTH_TOKEN, [])
       
-      let retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
+      retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
           // ...data
         },{
           headers: {

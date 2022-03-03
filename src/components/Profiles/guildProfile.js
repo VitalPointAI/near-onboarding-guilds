@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import { ceramic } from '../../utils/ceramic'
-import { MAIL_URL, AUTH_TOKEN } from '../../state/near'
+import { MAIL_URL, AUTH_TOKEN, TOKEN_CALL, SENDY_API_KEY_CALL } from '../../state/near'
 import qs from 'qs'
 import Social from '../common/Social/social'
 
@@ -150,7 +150,7 @@ export default function GuildProfile(props) {
       
         let authToken = get(AUTH_TOKEN, [])
         
-        let retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
+        retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
             // ...data
           },{
             headers: {
