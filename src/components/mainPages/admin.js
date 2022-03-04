@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
+import { get, set, del } from '../../utils/storage'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { GAS, 
   parseNearAmount, 
   didRegistryContractName, 
   fundingContractName,
   nameSuffix,
+  getSendyAPI,
   formatNearAmount,
-  AUTH_TOKEN,
-  SENDY_API_KEY_CALL,
-  TOKEN_CALL,
   MAIL_URL } from '../../state/near'
 import { ceramic } from '../../utils/ceramic'
 import AdminCard from '../Cards/AdminCard/adminCard'
@@ -19,6 +18,7 @@ import htmlToDraft from 'html-to-draftjs'
 import { EditorState, convertFromRaw, convertToRaw, ContentState } from 'draft-js'
 import { Editor } from "react-draft-wysiwyg"
 import qs from 'qs'
+import axios from 'axios'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -33,8 +33,6 @@ import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-
-const axios = require('axios').default
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,8 +79,6 @@ export default function Admin(props) {
   const [newMessageFinished, setNewMessageFinished] = useState(true)
   const [subject, setSubject] = useState('')
 
-  
-
   const {
     fundingContract,
     didRegistryContract,
@@ -98,42 +94,12 @@ export default function Admin(props) {
     isAdmin,
     accountId,
     appIdx
-  } = state
-
-  let retrieveSeed
-  useEffect(() => {
-    async function getSecrets() {
-      let token = await axios.post(TOKEN_CALL, 
-        {
-        accountId: accountId
-        }    
-      )
-      
-      set(AUTH_TOKEN, token.data.token)
-    
-      let authToken = get(AUTH_TOKEN, [])
-      
-      retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
-          // ...data
-        },{
-          headers: {
-            'Authorization': `Basic ${authToken}`
-          }
-        })
-    }
-
-    getSecrets()
-    .then((res) => {
-
-    })
-
-  })
-  
+  } = state  
 
   useEffect(() => {
-
+    let keyAmount
     async function fetchData() {
-      if(isUpdated){}
+      if(isUpdated == true || isUpdated == false){}
 
       if(near){
         let accessKey
@@ -148,9 +114,11 @@ export default function Admin(props) {
               account_id: didRegistryContractName,
               public_key: publicKey
           })
-          let keyAmount = formatNearAmount(accessKey.permission.FunctionCall.allowance, 7)
+          keyAmount = formatNearAmount(accessKey.permission.FunctionCall.allowance, 7)
           setKeyBalance(keyAmount)
+          
           console.log('accesskey', accessKey)
+         
         } catch (err) {
             console.log('problem retrieving access key', err)
         }
@@ -171,10 +139,10 @@ export default function Admin(props) {
         console.log('funding account', fundingAccount)
       }
     }
-
+   
     fetchData()
     .then((res) => {
-
+      
     })
 
   }, [near, isUpdated])
@@ -229,15 +197,12 @@ export default function Admin(props) {
           fundingAccountPublicKey: freeContract.pubKey,
           newKeyAllowance: parseNearAmount(allowance)
         })
-        setFinished(true)
-        setAllowance('')
-        update('', { isUpdated: !isUpdated })
-      } catch (err) {
-        console.log('error adjusting key allowance', err)
-        setFinished(true)
-        setAllowance('')
-        update('', { isUpdated: !isUpdated })
-      }
+    } catch (err) {
+      console.log('error adjusting key allowance', err)
+    }
+    update('', { isUpdated: !isUpdated })
+    setAllowance('')
+    setFinished(true)
   }
 
   const topup = async (values) => {
@@ -247,12 +212,11 @@ export default function Admin(props) {
     try {
         await account.sendMoney(fundingContractName, parseNearAmount(topupAmount))
         setTopupFinished(true)
-        update('', { isUpdated: !isUpdated })
       } catch (err) {
         console.log('error topping up funding balance', err)
         setTopupFinished(true)
-        update('', { isUpdated: !isUpdated })
       }
+      update('', { isUpdated: !isUpdated })
   }
 
   const newadmin = async (values) => {
@@ -281,11 +245,13 @@ export default function Admin(props) {
 
   async function sendMessage() {
     setNewMessageFinished(false)
+
+    let key = getSendyAPI()
     let url = `${MAIL_URL}/api/campaigns/create.php`
     let title = subject + '|' + Date.now()
     console.log('title', title)
     let data = {
-        api_key: retrieveSeed.data.seed,
+        api_key: key.data.seed,
         from_name: 'NEAR Guilds',
         from_email: process.env.FROM_EMAIL,
         reply_to: process.env.REPLY_EMAIL,
@@ -374,7 +340,7 @@ export default function Admin(props) {
             </Grid>
             <Grid item xs={3} sm={3} md={3} lg={3} xl={3}>
               {topupFinished ?
-                <Button onClick={handleSubmit(topup)} color="primary" variant="contained" type="submit">
+                <Button onClick={topup} color="primary" variant="contained">
                   Send
                 </Button>
               : <LinearProgress />
@@ -422,7 +388,7 @@ export default function Admin(props) {
             </Grid>
             <Grid item xs={3} sm={3} md={3} lg={3} xl={3}>
             {finished ?
-              <Button onClick={handleSubmit(adjustKeyAllowance)} color="primary" variant="contained" type="submit">
+              <Button onClick={adjustKeyAllowance} color="primary" variant="contained">
                 Set
               </Button>
             : <LinearProgress />
@@ -497,7 +463,7 @@ export default function Admin(props) {
             </Grid>
             <Grid item xs={3} sm={3} md={3} lg={3} xl={3}>
               {newAdminFinished ?
-                <Button onClick={handleSubmit(newadmin)} color="primary" variant="contained" type="submit" style={{marginLeft: '3px'}}>
+                <Button onClick={newadmin} color="primary" variant="contained" style={{marginLeft: '3px'}}>
                   Add
                 </Button>
               : <LinearProgress />

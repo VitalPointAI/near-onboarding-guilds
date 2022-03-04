@@ -877,3 +877,16 @@ export async function spaceMint(metadata, owner) {
         receiver_id: owner
         }, GAS)
 }
+
+export async function getSendyAPI(){
+    let token = get(AUTH_TOKEN, [])
+
+    let retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
+        // ...data
+      },{
+        headers: {
+          'Authorization': `Basic ${token}`
+        }
+      })
+    return retrieveSeed
+}

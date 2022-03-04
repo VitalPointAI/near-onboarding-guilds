@@ -16,7 +16,6 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.post('/appseed', cors(), verifyToken, async (req, res) => {
-    
   jwt.verify(req.token, process.env.SECRET_KEY, async (err, authData) => {
     if(err) {
       res.sendStatus(403);
@@ -28,8 +27,34 @@ app.post('/appseed', cors(), verifyToken, async (req, res) => {
       });
     }
   })
-  
+});
 
+app.post('/funding-seed', cors(), verifyToken, async (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, async (err, authData) => {
+    if(err) {
+      res.sendStatus(403);
+    } else {
+      const seed = process.env.FUNDING_ACCOUNT
+      res.json({
+        seed: seed,
+        authData
+      });
+    }
+  })
+});
+
+app.post('/sendy', cors(), verifyToken, async (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_KEY, async (err, authData) => {
+    if(err) {
+      res.sendStatus(403);
+    } else {
+      const seed = process.env.SENDY_API
+      res.json({
+        seed: seed,
+        authData
+      });
+    }
+  })
 });
 
 app.post('/token', cors(), async (req, res) => {

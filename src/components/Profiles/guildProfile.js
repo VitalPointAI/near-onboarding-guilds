@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import { ceramic } from '../../utils/ceramic'
-import { MAIL_URL, AUTH_TOKEN, TOKEN_CALL, SENDY_API_KEY_CALL } from '../../state/near'
+import { MAIL_URL, getSendyAPI } from '../../state/near'
 import qs from 'qs'
 import Social from '../common/Social/social'
 
@@ -29,7 +28,6 @@ import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import MailIcon from '@mui/icons-material/Mail'
 import { Button, LinearProgress, Divider } from '@mui/material'
-
 
 const axios = require('axios').default
 
@@ -137,43 +135,15 @@ export default function GuildProfile(props) {
         registered
     }= props
 
-    let retrieveSeed
-    useEffect(() => {
-      async function getSecrets() {
-        let token = await axios.post(TOKEN_CALL, 
-          {
-          accountId: accountId
-          }    
-        )
-        
-        set(AUTH_TOKEN, token.data.token)
-      
-        let authToken = get(AUTH_TOKEN, [])
-        
-        retrieveSeed = await axios.post(SENDY_API_KEY_CALL, {
-            // ...data
-          },{
-            headers: {
-              'Authorization': `Basic ${authToken}`
-            }
-          })
-      }
-  
-      getSecrets()
-      .then((res) => {
-        
-      })
-  
-    })
-  
     
     useEffect(
         () => {
             async function getEmailStatus(){
                 if(email){
+                    let key = getSendyAPI()
                     let emailStatus
                     let data = {
-                        api_key: retrieveSeed.data.seed,
+                        api_key: key.data.seed,
                         email: email,
                         list_id: process.env.SENDY_LIST_ID
                     }
@@ -282,13 +252,15 @@ export default function GuildProfile(props) {
     }, [did, appIdx, isUpdated]
     )
 
+   
 
 
     async function optin() {
         setEmailFinished(false)
+        let key = getSendyAPI()
         let subscribeUrl = `${MAIL_URL}/subscribe`
         let data = {
-            api_key: process.env.SENDY_API, 
+            api_key: key.data.seed, 
             email: email,
             name: name,
             list: process.env.SENDY_LIST_ID,
@@ -313,9 +285,10 @@ export default function GuildProfile(props) {
 
     async function optout() {
         setEmailFinished(false)
+        let key = getSendyAPI()
         let deleteUrl = `${MAIL_URL}/api/subscribers/delete.php`
         let data = {
-            api_key: process.env.SENDY_API, 
+            api_key: key.data.seed, 
             email: email,
             list_id: process.env.SENDY_LIST_ID
         }

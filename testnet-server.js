@@ -1,4 +1,4 @@
-require('dotenv').config({ path: './.env.test' })
+//require('dotenv').config({ path: './.env.test' })
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
@@ -24,7 +24,7 @@ const sendyAPI = process.env.SENDY_API
 const allowList = ['https://mynear.xyz, https://ceramic-node.vitalpointai.com']
 
 app.use(cors({
-  origin: allowList
+  origin: '*'
 }));
 
 
@@ -34,7 +34,7 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.post('/appseed', cors(), verifyToken, async (req, res) => {
-  const latestTokenResponse = await client.getSecret(secretKey)
+  let latestTokenResponse = await client.getSecret(secretKey)
   jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
     if(err) {
       res.sendStatus(403);
@@ -50,7 +50,7 @@ app.post('/appseed', cors(), verifyToken, async (req, res) => {
 });
 
 app.post('/funding-seed', cors(), verifyToken, async (req, res) => {
-  const latestTokenResponse = await client.getSecret(secretKey)
+  let latestTokenResponse = await client.getSecret(secretKey)
   jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
     if(err) {
       res.sendStatus(403);
@@ -66,7 +66,7 @@ app.post('/funding-seed', cors(), verifyToken, async (req, res) => {
 });
 
 app.post('/sendy', cors(), verifyToken, async (req, res) => {
-  const latestTokenResponse = await client.getSecret(secretKey)
+  let latestTokenResponse = await client.getSecret(secretKey)
   jwt.verify(req.token, latestTokenResponse.value, async (err, authData) => {
     if(err) {
       res.sendStatus(403);
@@ -85,7 +85,7 @@ app.post('/token', cors(), async (req, res) => {
   const accountId = req.body.accountId
   console.log('account', accountId)
   if(!accountId) res.sendStatus(403)
-  const latestTokenSecret = await client.getSecret(secretKey)
+  let latestTokenSecret = await client.getSecret(secretKey)
   jwt.sign({ accountId: accountId }, latestTokenSecret.value, (err, token) => {
     res.json({
       token
@@ -126,4 +126,5 @@ function verifyToken(req, res, next){
 app.listen(3000, () => {
   console.log('running')
   console.log('and listening')
+  console.log('secret', secretKey)
 });
