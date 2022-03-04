@@ -7,6 +7,7 @@ import { factory } from '../utils/factory'
 import { nft } from '../utils/nft'
 import { funding } from '../utils/funding'
 import { queries } from '../utils/graphQueries'
+const axios = require('axios').default
 
 export const {
     FUNDING_DATA, 
