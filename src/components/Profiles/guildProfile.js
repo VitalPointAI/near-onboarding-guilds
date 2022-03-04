@@ -257,7 +257,7 @@ export default function GuildProfile(props) {
 
     async function optin() {
         setEmailFinished(false)
-        let key = getSendyAPI()
+        let key = await getSendyAPI()
         let subscribeUrl = `${MAIL_URL}/subscribe`
         let data = {
             api_key: key.data.seed, 
@@ -285,7 +285,7 @@ export default function GuildProfile(props) {
 
     async function optout() {
         setEmailFinished(false)
-        let key = getSendyAPI()
+        let key = await getSendyAPI()
         let deleteUrl = `${MAIL_URL}/api/subscribers/delete.php`
         let data = {
             api_key: key.data.seed, 
