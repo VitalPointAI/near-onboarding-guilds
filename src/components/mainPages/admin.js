@@ -246,7 +246,7 @@ export default function Admin(props) {
   async function sendMessage() {
     setNewMessageFinished(false)
 
-    let key = getSendyAPI()
+    let key = await getSendyAPI()
     let url = `${MAIL_URL}/api/campaigns/create.php`
     let title = subject + '|' + Date.now()
     console.log('title', title)

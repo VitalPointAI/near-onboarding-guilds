@@ -140,7 +140,7 @@ export default function GuildProfile(props) {
         () => {
             async function getEmailStatus(){
                 if(email){
-                    let key = getSendyAPI()
+                    let key = await getSendyAPI()
                     let emailStatus
                     let data = {
                         api_key: key.data.seed,
