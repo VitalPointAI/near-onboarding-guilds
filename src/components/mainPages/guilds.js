@@ -73,8 +73,19 @@ export default function ExploreGuilds(props) {
 
     const matches = useMediaQuery('(max-width:500px)')
 
-    let sortedGuilds
+    useEffect(() => {
+        if(isUpdated){}
 
+        async function fetchRecommendedGuilds() {
+            // get user's skills and values
+            let userPersona = await appIdx.get('profile', did)
+            console.log('userPersona', userPersona)
+            if(userPersona){
+                userPersona.values
+            }
+        }
+    })
+    let sortedGuilds
     useEffect(
         () => {
             if(isUpdated){}
@@ -85,7 +96,7 @@ export default function ExploreGuilds(props) {
                     sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
                     console.log('sortedGuilds', sortedGuilds)
                     for(let x = 0; x < sortedGuilds.length; x++){
-                        let result = await appIdx.get('daoProfile', sortedGuilds[x].did)
+                        let result = await appIdx.get('guildProfile', sortedGuilds[x].did)
                         console.log('result', result)
                         if(result){
                             let category
@@ -104,7 +115,7 @@ export default function ExploreGuilds(props) {
                 //     while (i < currentGuildsList.data.putDIDs.length){
                 //         let account
                 //         let guildDid = currentGuildsList.data.putDIDs[i].did
-                //         let guildInfo = await appIdx.get('daoProfile', guildDid)
+                //         let guildInfo = await appIdx.get('guildProfile', guildDid)
                 //         if(guildInfo.contractId){
                 //             setContractId(guildInfo.contractId)
                 //             try {
@@ -235,7 +246,7 @@ export default function ExploreGuilds(props) {
         if (!pattern) {
             let sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
             for(let x = 0; x < sortedGuilds.length; x++){
-                let result = await appIdx.get('daoProfile', sortedGuilds[x].did)
+                let result = await appIdx.get('guildProfile', sortedGuilds[x].did)
                 if(result){
                     result.category ? category = result.category : category = ''
                     let newObject = {...sortedGuilds[x], category: category}

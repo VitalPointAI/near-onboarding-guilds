@@ -56,7 +56,7 @@ export default function PersonaInfo(props) {
             }
             
             if(did && accountType == 'guild') {
-                let result = await appIdx.get('daoProfile', did)
+                let result = await appIdx.get('guildProfile', did)
                 if(result){
                     result.logo ? setLogo(result.logo) : setLogo(logoName)
                 }

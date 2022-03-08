@@ -96,6 +96,11 @@ export default function GuildProfile(props) {
     const [category, setCategory] = useState('')
     const [skills, setSkills] = useState([])
     const [specificSkills, setSpecificSkills] = useState([])
+    const [values, setValues] = useState([])
+    const [teach, setTeach] = useState([])
+    const [focus, setFocus] = useState([])
+    const [projects, setProjects] = useState([])
+    const [services, setServices] = useState([])
     const [platform, setPlatform] = useState('')
     const [discordActivated, setDiscordActivated] = useState(false)
     const [proposalsActivated, setProposalsActivated] = useState(false)
@@ -182,7 +187,7 @@ export default function GuildProfile(props) {
         async function fetchData() {
             if(isUpdated){}
             if(guildDid && appIdx){
-                let result = await appIdx.get('daoProfile', guildDid)
+                let result = await appIdx.get('guildProfile', guildDid)
                 console.log('result', result)
                 if(result) {
                     setGuild(true)
@@ -195,7 +200,12 @@ export default function GuildProfile(props) {
                     result.country ? setCountry(result.country) : setCountry('')
                     result.language ? setLanguage(result.language) : setLanguage([])
                     result.skills ? setSkills(result.skills) : setSkills([])
-                    result.specificSkills ? setSpecificSkills(result.specificSkills) : setValue([])
+                    result.specificSkills ? setSpecificSkills(result.specificSkills) : setSpecificSkills([])
+                    result.teach ? setTeach(result.teach) : setTeach([])
+                    result.focus ? setFocus(result.focus) : setFocus([])
+                    result.projects ? setProjects(result.projects) : setProjects([])
+                    result.values ? setValues(result.values) : setValues([])
+                    result.services ? setServices(result.services) : setServices([])
                     result.category ? setCategory(result.category) : setCategory('')
                     result.discordActivation ? setDiscordActivated(true) : setDiscordActivated(false)
                     result.proposalActivation ? setProposalsActivated(true) : setProposalsActivated(false)
@@ -212,7 +222,7 @@ export default function GuildProfile(props) {
                 }
             } else {
                 if(did && appIdx){
-                    let result = await appIdx.get('daoProfile', did)
+                    let result = await appIdx.get('guildProfile', did)
                     console.log('result', result)
                         if(result) {
                             setGuild(true)
@@ -225,7 +235,12 @@ export default function GuildProfile(props) {
                             result.country ? setCountry(result.country) : setCountry('')
                             result.language ? setLanguage(result.language) : setLanguage([])
                             result.skills ? setSkills(result.skills) : setSkills([])
-                            result.specificSkills ? setSpecificSkills(result.specificSkills) : setValue([])
+                            result.specificSkills ? setSpecificSkills(result.specificSkills) : setSpecificSkills([])
+                            result.teach ? setTeach(result.teach) : setTeach([])
+                            result.focus ? setFocus(result.focus) : setFocus([])
+                            result.projects ? setProjects(result.projects) : setProjects([])
+                            result.values ? setValues(result.values) : setValues([])
+                            result.services ? setServices(result.services) : setServices([])
                             result.category ? setCategory(result.category) : setCategory('')
                             result.discordActivation ? setDiscordActivated(true) : setDiscordActivated(false)
                             result.proposalActivation ? setProposalsActivated(true) : setProposalsActivated(false)
@@ -337,7 +352,7 @@ export default function GuildProfile(props) {
                     }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                        <Avatar src={logo} style={{width:'25%', height:'auto', marginBottom:'10px'}}  />
+                        <Avatar src={logo} style={{width:'25%', height:'auto', maxHeight:'150px', marginBottom:'10px'}}  />
                         <Typography variant="h5">
                             {name ? name : accountId}
                         </Typography>
@@ -405,6 +420,30 @@ export default function GuildProfile(props) {
                                     
                                     </TableHead>
                                     <TableBody>
+                                    {values && values.length > 0 ?
+                                        values.map((values, index) => {
+                                        
+                                            return (
+                                            <TableRow key={values.name}>
+                                                <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                            )
+                                        
+                                    })
+                                    : null
+                                    }
+                                    </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                <Typography variant="h6">Desired General Skills</Typography>
+                                <TableContainer component={Paper}>
+                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <TableHead>
+                                    
+                                    </TableHead>
+                                    <TableBody>
                                     {skills && skills.length > 0 ?
                                         skills.map((values, index) => {
                                         
@@ -422,7 +461,7 @@ export default function GuildProfile(props) {
                                 </TableContainer>
                             </Grid>
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                <Typography variant="h6">Desired Skills</Typography>
+                                <Typography variant="h6">Desired Specific Skills</Typography>
                                 <TableContainer component={Paper}>
                                     <Table className={classes.table} size="small" aria-label="a dense table">
                                     <TableHead>
@@ -444,7 +483,103 @@ export default function GuildProfile(props) {
                                     </TableBody>
                                     </Table>
                                 </TableContainer>
-                            </Grid>        
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                <Typography variant="h6">Focus Areas</Typography>
+                                <TableContainer component={Paper}>
+                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <TableHead>
+                                    
+                                    </TableHead>
+                                    <TableBody>
+                                    {focus && focus.length > 0 ?
+                                        focus.map((values, index) => {
+                                        
+                                            return (
+                                            <TableRow key={values.name}>
+                                                <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                            )
+                                        
+                                    })
+                                    : null
+                                    }
+                                    </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                <Typography variant="h6">Subjects Taught</Typography>
+                                <TableContainer component={Paper}>
+                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <TableHead>
+                                    
+                                    </TableHead>
+                                    <TableBody>
+                                    {teach && teach.length > 0 ?
+                                        teach.map((values, index) => {
+                                        
+                                            return (
+                                            <TableRow key={values.name}>
+                                                <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                            )
+                                        
+                                    })
+                                    : null
+                                    }
+                                    </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                <Typography variant="h6">Current Projects</Typography>
+                                <TableContainer component={Paper}>
+                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <TableHead>
+                                    
+                                    </TableHead>
+                                    <TableBody>
+                                    {projects && projects.length > 0 ?
+                                        projects.map((values, index) => {
+                                        
+                                            return (
+                                            <TableRow key={values.name}>
+                                                <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                            )
+                                        
+                                    })
+                                    : null
+                                    }
+                                    </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                                <Typography variant="h6">Services Offered</Typography>
+                                <TableContainer component={Paper}>
+                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <TableHead>
+                                    
+                                    </TableHead>
+                                    <TableBody>
+                                    {services && services.length > 0 ?
+                                        services.map((values, index) => {
+                                        
+                                            return (
+                                            <TableRow key={values.name}>
+                                                <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                            )
+                                        
+                                    })
+                                    : null
+                                    }
+                                    </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
                           </Grid>
                             </AccordionDetails>
                         </Accordion>

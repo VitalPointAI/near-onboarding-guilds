@@ -761,9 +761,9 @@ export async function signal(signalType, curDaoIdx, accountId, proposalType){
     switch(proposalType){
         case 'guild':
             try{
-                currentProperties = await curDaoIdx.get('daoProfile', curDaoIdx.id)
+                currentProperties = await curDaoIdx.get('guildProfile', curDaoIdx.id)
                 console.log('currentproperties', currentProperties)
-                stream = 'daoProfile'
+                stream = 'guildProfile'
                 break
             } catch (err) {
                 console.log('problem retrieving guild signal details', err)

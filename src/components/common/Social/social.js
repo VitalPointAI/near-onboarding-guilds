@@ -34,7 +34,7 @@ export default function Social(props){
         () => {
             async function retrieveData(){
                 if(appIdx && did){
-                    let result = await appIdx.get(type =='guild' ? 'daoProfile' : 'profile', did)
+                    let result = await appIdx.get(type =='guild' ? 'guildProfile' : 'profile', did)
                     if(result){
                         result.email ? setEmailLink(`mailto:${result.email}`) : null
                         result.reddit ? setRedditLink(`https://reddit.com/user/${result.reddit}`) : null

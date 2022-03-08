@@ -1,4 +1,4 @@
-export const daoProfileSchema = {
+export const guildProfileSchema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     title: 'Profile',
     type: 'object',
@@ -50,6 +50,9 @@ export const daoProfileSchema = {
       "twitter": {
         type: "string"
       },
+      "values": {
+        type: "array"
+      },
       "skills": {
         type: "array"
       },
@@ -87,6 +90,18 @@ export const daoProfileSchema = {
         type: 'string'
       },
       "notifications": {
+        type: 'array'
+      },
+      "teach": {
+        type: 'array'
+      },
+      "focus": {
+        type: 'array'
+      },
+      "projects": {
+        type: 'array'
+      },
+      "services": {
         type: 'array'
       },
    },

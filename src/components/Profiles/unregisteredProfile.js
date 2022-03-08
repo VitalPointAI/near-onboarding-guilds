@@ -180,7 +180,7 @@ export default function UnregisteredProfile(props) {
                 result.personaSkills ? setPersonaSkillSet(result.personaSkills) : setPersonaSkillSet([])
                 result.personaSpecificSkills ? setPersonaSpecificSkillSet(result.personaSpecificSkills) : setPersonaSpecificSkillSet([])
               } else {
-                let result = await appIdx.get('daoProfile', did)
+                let result = await appIdx.get('guildProfile', did)
                 if(result) {
                     setGuild(true)
                     result.summoner ? setSummoner(result.summoner) : setSummoner('')

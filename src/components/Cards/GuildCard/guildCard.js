@@ -122,7 +122,7 @@ export default function GuildCard(props) {
       async function fetchData() {
         if(isUpdated){}
 
-        let guildInfo = await appIdx.get('daoProfile', did)
+        let guildInfo = await appIdx.get('guildProfile', did)
         console.log('guildInfo', guildInfo)
         let thisDaoPlatform
         if(guildInfo && guildInfo.contractId){
@@ -190,9 +190,9 @@ export default function GuildCard(props) {
           }
           console.log('thiscurdaoidx', thisCurDaoIdx)
 
-          let thisDaoDid = await ceramic.getDid(contractId, factoryContract, didRegistryContract)
-          setDaoDid(thisDaoDid)
-          let result = await appIdx.get('daoProfile', thisDaoDid)
+          let thisGuildDid = await ceramic.getDid(contractId, factoryContract, didRegistryContract)
+          setDaoDid(thisGuildDid)
+          let result = await appIdx.get('guildProfile', thisGuildDid)
           console.log('result', result)
           if(result){
                 result.name != '' ? setName(result.name) : setName('')
@@ -426,22 +426,6 @@ export default function GuildCard(props) {
             ) 
           : null
         }
-       
-          {editDaoClicked ? <EditDaoForm
-            state={state}
-            handleEditDaoClickState={handleEditDaoClickState}
-            curDaoIdx={curDaoIdx}
-            handleUpdate={handleUpdate}
-            contractId={contractId}
-            /> : null }
-          
-           {detailsClicked ? <DaoProfileDisplay
-            state={state}
-            handleDetailsClickedState={handleDetailsClickedState}
-            curDaoIdx={curDaoIdx}
-            handleUpdate={handleUpdate}
-            contractId={contractId}
-            /> : null }
 
           {purposeClicked ? <Purpose
             handlePurposeClickState={handlePurposeClickState}

@@ -47,7 +47,7 @@ export default function GuildRegister(props) {
             let urlVariables = window.location.search
             const urlParameters = new URLSearchParams(urlVariables)
             let transactionHash = urlParameters.get('transactionHashes')
-            accountType != 'not registered' ? window.location.assign('/create-guild-profile') : null
+            accountType == 'guild' ? window.location.assign('/create-guild-profile') : null
           }
     }, [accountType]
     )

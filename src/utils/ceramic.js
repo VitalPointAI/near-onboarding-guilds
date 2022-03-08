@@ -12,7 +12,7 @@ import { DID } from 'dids'
 
 // schemas
 import { profileSchema } from '../schemas/profile'
-import { daoProfileSchema } from '../schemas/daoProfile'
+import { guildProfileSchema } from '../schemas/guildProfile'
 import { accountKeysSchema } from '../schemas/accountKeys'
 import { definitionsSchema } from '../schemas/definitions'
 import { schemaSchema } from '../schemas/schemas'
@@ -491,15 +491,15 @@ console.log('TOKENCALL', TOKEN_CALL)
     const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient, publicKey)
   
     // Retrieve cached aliases
-    let rootAliases = get(ALIASES, [])
-    if(rootAliases.length > 0){
-        const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases[0]})
-        return appIdx
-    } else {
+    // let rootAliases = get(ALIASES, [])
+    // if(rootAliases.length > 0){
+    //const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases[0]})
+    //     return appIdx
+    // } else {
 
     // uncomment below to change a definition
     //  let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
-    //  let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'guild profiles', contract)
+    //  let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
     //  console.log('changed schema', changed)
     //  console.log('changed1 schema', changed1)
 
@@ -509,7 +509,7 @@ console.log('TOKENCALL', TOKEN_CALL)
       const accountsKeys = this.getAlias(APP_OWNER_ACCOUNT, 'accountsKeys', appClient, accountKeysSchema, 'user account info', contract)
       const comments = this.getAlias(APP_OWNER_ACCOUNT, 'comments', appClient, commentsSchema, 'comments', contract)
       const notifications = this.getAlias(APP_OWNER_ACCOUNT, 'notifications', appClient, notificationSchema, 'notifications', contract)
-      const daoProfile = this.getAlias(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'guild profiles', contract)
+      const guildProfile = this.getAlias(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
       const apiKeys = this.getAlias(APP_OWNER_ACCOUNT, 'apiKeys', appClient, apiKeysSchema, 'guild api keys', contract)
       const announcements = this.getAlias(APP_OWNER_ACCOUNT, 'announcements', appClient, announcementSchema, 'guild announcements', contract)
      
@@ -521,7 +521,7 @@ console.log('TOKENCALL', TOKEN_CALL)
         accountsKeys, 
         comments,
         notifications,
-        daoProfile,
+        guildProfile,
         apiKeys,
         announcements
       ])
@@ -533,7 +533,7 @@ console.log('TOKENCALL', TOKEN_CALL)
         accountsKeys: done[4],
         comments: done[5],
         notifications: done[6],
-        daoProfile: done[7],
+        guildProfile: done[7],
         apiKeys: done[8],
         announcements: done[9]
       }
@@ -546,7 +546,7 @@ console.log('TOKENCALL', TOKEN_CALL)
       const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases})
 
       return appIdx
-     }
+    // }
   }
 
 

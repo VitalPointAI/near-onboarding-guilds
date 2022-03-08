@@ -70,6 +70,9 @@ export const profileSchema = {
       "personaSpecificSkills": {
         type: "array"
       },
+      "personaValues": {
+        type: "array"
+      },
       "nftContract": {
         type: 'string'
       },
