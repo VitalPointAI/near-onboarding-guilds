@@ -259,8 +259,8 @@ export default function Admin(props) {
         subject: subject,
         plain_text: messagePlainText,
         html_text: draftToHtml(convertToRaw(message.getCurrentContent())),
-        list_ids: process.env.SENDY_LIST_ID,
-        brand_id: process.env.BRAND_ID,
+        list_ids: process.env.NG_SENDY_LIST_ID,
+        brand_id: process.env.NG_BRAND_ID,
         track_opens: 1,
         track_clicks: 1,
         send_campaign: 1

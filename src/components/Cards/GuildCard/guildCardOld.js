@@ -6,7 +6,7 @@ import { ceramic } from '../../../utils/ceramic'
 import { catalystDao } from '../../../utils/catalystDao'
 import Purpose from '../Purpose/purpose'
 import Social from '../../common/Social/social'
-import { signalCounter, rootName } from '../../../state/near'
+import { signal } from '../../../state/near'
 
 
 // Material UI Components
@@ -61,9 +61,6 @@ const useStyles = makeStyles((theme) => ({
 const imageName = require('../../../img/default_logo.png') // default no-image avatar
 const sortDown = require('../../../img/sortdown.png')
 const sortUp = require('../../../img/sortup.png')
-const heart = require('../../../img/heart.png')
-const brokenHeart = require('../../../img/broken-heart.png')
-
 export default function GuildCard(props) {
 
   const { state, dispatch, update } = useContext(appStore);
@@ -88,23 +85,9 @@ export default function GuildCard(props) {
     const [verified, setVerified] = useState(false)
     const [daoPlatform, setDaoPlatform] = useState('')
     const [daoPlatformLink, setDaoPlatformLink] = useState('')
-    const [guildDid, setGuildDid] = useState('')
+    const [daoDid, setDaoDid] = useState('')
     const [changeFinished, setChangeFinished] = useState(true)
     const [tier, setTier] = useState('0')
-    const [skills, setSkills] = useState([])
-    const [specificSkills, setSpecificSkills] = useState([])
-    const [values, setValues] = useState([])
-    const [teach, setTeach] = useState([])
-    const [focus, setFocus] = useState([])
-    const [projects, setProjects] = useState([])
-    const [services, setServices] = useState([])
-
-    const [valuePercentMatch, setValuePercentMatch] = useState(0)
-    const [subjectMatch, setSubjectMatch] = useState(false)
-    const [generalSkillsPercentMatch, setGeneralSkillsPercentMatch] = useState(0)
-    const [specificSkillsPercentMatch, setSpecificSkillsPercentMatch] = useState(0)
-    const [workPercentMatch, setWorkPercentMatch] = useState(0)
-    const [overallMatch, setOverallMatch] = useState(0)
 
     const [currentLikes, setCurrentLikes] = useState([])
     const [currentDisLikes, setCurrentDisLikes] = useState([])
@@ -141,7 +124,6 @@ export default function GuildCard(props) {
 
         let guildInfo = await appIdx.get('guildProfile', did)
         console.log('guildInfo', guildInfo)
-        console.log('guild did', did)
         let thisDaoPlatform
         if(guildInfo && guildInfo.contractId){
           if(guildInfo.contractId.split('.')[1].substr(0,4)=='cdao'){
@@ -209,7 +191,7 @@ export default function GuildCard(props) {
           console.log('thiscurdaoidx', thisCurDaoIdx)
 
           let thisGuildDid = await ceramic.getDid(contractId, factoryContract, didRegistryContract)
-          setGuildDid(thisGuildDid)
+          setDaoDid(thisGuildDid)
           let result = await appIdx.get('guildProfile', thisGuildDid)
           console.log('result', result)
           if(result){
@@ -219,13 +201,6 @@ export default function GuildCard(props) {
                 result.purpose != '' ? setPurpose(result.purpose) : setPurpose('')
                 result.owner != '' ? setOwner(result.owner) : setOwner('')
                 result.status = memberStatus
-                result.skills ? setSkills(result.skills) : setSkills([])
-                result.specificSkills ? setSpecificSkills(result.specificSkills) : setSpecificSkills([])
-                result.teach ? setTeach(result.teach) : setTeach([])
-                result.focus ? setFocus(result.focus) : setFocus([])
-                result.projects ? setProjects(result.projects) : setProjects([])
-                result.values ? setValues(result.values) : setValues([])
-                result.services ? setServices(result.services) : setServices([])
                 result.likes ? setCurrentLikes(result.likes) : setCurrentLikes([])
                 result.dislikes ? setCurrentDisLikes(result.dislikes) : setCurrentDisLikes([])
                 result.neutrals ? setCurrentNeutrals(result.neutrals) : setCurrentNeutrals([])
@@ -253,91 +228,6 @@ export default function GuildCard(props) {
 
   }, [contractId, near, isUpdated]
   )
-
-  useEffect(()=> {
-    async function determineMatch(){
-      let profile = await appIdx.get('profile', state.did)
-      console.log('profile', profile)
-      if(profile && values){
-        let valueMatch = 0
-
-        let valueTotal = profile.values ? profile.values.length : 0
-        console.log('valueTotal', valueTotal)
-        for(let x = 0; x < profile.values.length; x++){
-          for(let i = 0; i < values.length; i++){
-
-            console.log('profile value', profile.values[x].name.toLowerCase())
-            console.log('value value', values[i].name.toLowerCase())
-            if(profile.values[x].name.toLowerCase() == values[i].name.toLowerCase()){
-              valueMatch ++
-              console.log('valueMatch here', valueMatch)
-            }
-          }
-        }
-        let thisValuePercentMatch = Math.round((valueMatch/valueTotal * 100))
-        setValuePercentMatch(thisValuePercentMatch)
-
-        // Check if guild teaches what user wants to learn
-        let thisSubjectMatch = false
-        for(let y = 0; y < profile.learningGoals.length; y++){
-          for(let z = 0; z < teach.length; z++){
-            if(profile.learningGoals[y].name.toLowerCase() == teach[z].name.toLowerCase()){
-              thisSubjectMatch = true
-            }
-          }
-        }
-        setSubjectMatch(thisSubjectMatch)
-
-        // Check for general skills match
-        let generalSkillsMatch = 0
-        let generalSkillsTotal = profile.personaSkills.length
-        for(let x = 0; x < profile.personaSkills.length; x++){
-          for(let i = 0; i < skills.length; i++){
-            if(profile.personaSkills[x].name.toLowerCase() == skills[i].name.toLowerCase()){
-              generalSkillsMatch ++
-            }
-          }
-        }
-        let thisGeneralSkillsPercentMatch = Math.round((generalSkillsMatch/generalSkillsTotal * 100))
-        setGeneralSkillsPercentMatch(thisGeneralSkillsPercentMatch)
-
-         // Check for specific skills match
-         let specificSkillsMatch = 0
-         let specificSkillsTotal = profile.personaSkills.length
-         for(let x = 0; x < profile.personaSkills.length; x++){
-           for(let i = 0; i < skills.length; i++){
-             if(profile.personaSkills[x].name.toLowerCase() == skills[i].name.toLowerCase()){
-               specificSkillsMatch ++
-             }
-           }
-         }
-         let thisSpecificSkillsPercentMatch = Math.round((specificSkillsMatch/specificSkillsTotal * 100))
-         setSpecificSkillsPercentMatch(thisSpecificSkillsPercentMatch)
-
-          // Check for work/services match
-          let workMatch = 0
-          let workTotal = profile.workDesires.length
-          for(let x = 0; x < profile.workDesires.length; x++){
-            for(let i = 0; i < services.length; i++){
-              if(profile.workDesires[x].name.toLowerCase() == services[i].name.toLowerCase()){
-                workMatch ++
-              }
-            }
-          }
-          let thisWorkPercentMatch = Math.round((workMatch/workTotal * 100))
-          setWorkPercentMatch(thisWorkPercentMatch)
-
-          let overall = Math.round((thisValuePercentMatch + thisGeneralSkillsPercentMatch + thisSpecificSkillsPercentMatch + workMatch) / 4)
-          setOverallMatch(overall)
-      }
-
-    }
-
-    determineMatch()
-    .then((res) => {
-
-    })
-  }, [values])
 
   function handleUpdate(property){
     setIsUpdated(property)
@@ -391,8 +281,8 @@ export default function GuildCard(props) {
     }
   }
 
-  async function handleSignal(sig, contractId){
-    await signalCounter(sig, contractId, accountId, 'guild', near, appIdx, didRegistryContract, guildDid)
+  async function handleSignal(sig){
+    await signal(sig, curDaoIdx, accountId, 'guild')
     update('', {isUpdated: !isUpdated})
   }
   
@@ -421,71 +311,79 @@ export default function GuildCard(props) {
           finished ? 
           (
             <>
-            <ListItem alignItems="flex-start" style={{flexWrap:'wrap'}}>
-            <Grid container spacing={1} alignItems="center" justifyContent="space-between">
-              
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                <Stack direction="row" spacing={1} justifyContent="space-evenly">
-                  <Typography variant="overline">V: {valuePercentMatch}%</Typography>
-                  <Typography variant="overline">L: {subjectMatch ? 'yes' : 'no'}</Typography>
-                  <Typography variant="overline">G: {generalSkillsPercentMatch}%</Typography>
-                  <Typography variant="overline">S: {specificSkillsPercentMatch}%</Typography>
-                  <Typography variant="overline">W: {workPercentMatch}%</Typography>
-                  <Typography variant="h5">{overallMatch}%</Typography>
-                </Stack>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                  
-                    <a href={`${rootName}/guild-profiles/${guildDid}`}> 
-                    <div style={{width: '100%', 
-                      height: '100px',
-                      backgroundImage: `url(${logo})`, 
-                      backgroundSize: 'contain',
-                      backgroundPosition: 'center', 
-                      backgroundRepeat: 'no-repeat',
-                      backgroundOrigin: 'content-box'
-                      }}>
-                    </div>
-                    <Typography variant="h5">{name != '' ? name : contractId.split('.')[0]}</Typography>
-                    </a>
-                    <Stack direction="row" spacing={1} justifyContent="center" style={{marginTop:'5px'}}>
+            <ListItem alignItems="flex-start">
+            <ListItemAvatar>
+              <Stack direction="column" spacing={1}>
+                <Badge badgeContent={currentLikes.length} anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }} color="primary" max={9999999}>  
+                  <img src={sortUp} style={{width: '50px'}} onClick={(e) => handleSignal('like')}/>
+                </Badge>
+                <Badge badgeContent={currentDisLikes.length} anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }} color="primary" max={9999999}>  
+                  <img src={sortDown} style={{width: '50px'}} onClick={(e) => handleSignal('dislike')}/>
+                </Badge>
+              </Stack>
+            </ListItemAvatar>
+            <ListItemText
+              primary={
+                <Grid container spacing={1} alignItems="center" justifyContent="space-between">
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                    <Link to={`/guild-profiles/${daoDid}`}>  
+                    <div style={{width: 'auto', 
+                        height: '75px',
+                        backgroundImage: `url(${logo})`, 
+                        backgroundSize: 'contain',
+                        backgroundPosition: 'center', 
+                        backgroundRepeat: 'no-repeat',
+                        backgroundOrigin: 'content-box'
+                    }}>
                     {verified ? 
-                      <>
-                      <Chip icon={
-                          <VerifiedUserIcon />
-                      } label="Verified"/>
-                      <Chip icon={
-                            <MilitaryTechIcon />
-                      } label={`Tier ${tier}`}/>
-                      </>
-                    : <>
-                    <Chip icon={
-                          <GppMaybeIcon color="secondary"/>
-                    } label="Not Verified"/>
-                    <Chip icon={
-                            <MilitaryTechIcon />
-                    } label={`Tier ${tier}`}/>
-                    </>
+                      <Stack spacing={1} style={{float: 'right'}}>
+                        <Tooltip title="Verified">
+                          <VerifiedUserIcon  fontSize="large"/>
+                        </Tooltip>
+                        <Badge badgeContent={tier}>
+                          <Tooltip title="Tier">
+                            <MilitaryTechIcon fontSize="large"/>
+                          </Tooltip>
+                        </Badge>
+                      </Stack>
+                    :  <Stack spacing={1} style={{float: 'right'}}>
+                        <Tooltip title="Not Verified">
+                          <GppMaybeIcon color="secondary" fontSize="large"/>
+                        </Tooltip>
+                        <Badge badgeContent={tier}>
+                          <Tooltip title="Tier">
+                            <MilitaryTechIcon fontSize="large"/>
+                          </Tooltip>
+                        </Badge>
+                        </Stack>
                     }
-                   
-                      <Badge badgeContent={currentLikes.length} anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'left',
-                      }} color="primary" max={9999999}>  
-                        <img src={heart} style={{height: '30px'}} onClick={(e) => handleSignal('like', contractId)}/>
-                      </Badge>
-                      
-                  </Stack>
-                  
-                </Grid>                     
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-                  <Stack direction="row" spacing={1} justifyContent="space-between">  
-                    {purpose ? (<Button variant="outlined" style={{textAlign: 'center', fontSize: '80%', marginTop:'5px'}} onClick={handlePurposeClick}>Purpose</Button>) : null}
-                    {category != '' && category != 'undefined' && category ? <Chip icon={<CategoryIcon />} label={category} variant="outlined" style={{marginTop: '5px'}}/> : null}
-                  </Stack>
-              </Grid>
+                    </div>
+                    </Link>
+                  </Grid>
+                </Grid>
+                }
+              secondary={
+                <Grid container spacing={1} justifyContent="space-between" alignItems="center">
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
+                    <Typography variant="h5">{name != '' ? name : contractId.split('.')[0]}</Typography>
+                  </Grid>  
+                </Grid>
+              }
+            />
+            </ListItem>
+            <Grid container spacing={1} justifyContent="space-between" alignItems="center" style={{paddingLeft: '10px', paddingRight:'10px'}}>
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
-              <Social did={guildDid} type={'guild'} appIdx={appIdx} platform={daoPlatform} platformLink={daoPlatformLink}/>
+                <Stack direction="row" spacing={1}>  
+                  {purpose ? (<Button variant="outlined" style={{textAlign: 'center', fontSize: '80%', marginTop:'5px'}} onClick={handlePurposeClick}>Purpose</Button>) : null}
+                  {category != '' ? <Chip icon={<CategoryIcon />} label={category} variant="outlined" style={{marginTop: '5px'}}/> : <Chip icon={<CategoryIcon />} label="undefined" variant="outlined" style={{marginTop:'5px'}}/>}
+                  <Social did={daoDid} type={'guild'} appIdx={appIdx} platform={daoPlatform} platformLink={daoPlatformLink}/>
+                </Stack>
               </Grid>
               {(isVerifier || isAdmin) && accountId != contractId ?
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
@@ -523,13 +421,11 @@ export default function GuildCard(props) {
                 </Grid>
               : null }          
             </Grid>
-            <Divider variant="middle" style={{marginTop: '15px', width:'100%', marginBottom: '15px'}}/>
-            </ListItem>
-            </>
+            <Divider variant="middle" style={{marginTop: '15px', marginBottom: '15px'}}/>
+          </>
             ) 
           : null
         }
-       
 
           {purposeClicked ? <Purpose
             handlePurposeClickState={handlePurposeClickState}

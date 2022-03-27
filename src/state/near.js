@@ -257,6 +257,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         // let allTransfers = await queries.getAllTransfers()
         // console.log('allTransfers', allTransfers)
 
+        
         // determine list of current guilds (take into account those that have been deleted)
         let currentGuildsList = await queries.getGuilds()
         console.log('currentguildslist', currentGuildsList)
@@ -268,43 +269,37 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         let mostRecent = false
         let lastIndexAdd
         let lastIndexDelete
-        for(let m = 0; m < currentGuildsList.data.putDIDs.length; m++){
-            guildExists = false
-            for(let z = 0; z < currentGuilds.length; z++){
-                if(currentGuildsList.data.putDIDs[m].accountId == currentGuilds[z].accountId)
-                guildExists = true
-                console.log('m', m)
-                console.log('z', z)
-                console.log('guild exists', guildExists)
-            }
-            if(!guildExists){
-                for(let n = 0; n < currentGuildsList.data.putDIDs.length; n++){
-                    if(currentGuildsList.data.putDIDs[m].accountId == currentGuildsList.data.putDIDs[n].accountId){
-                        lastIndexAdd = n
-                        console.log('lastindexadd', lastIndexAdd)
-                    }
-                }
-                for(let x = 0; x < deletedGuildsList.data.deleteDIDs.length; x++){
-                    if(currentGuildsList.data.putDIDs[lastIndexAdd].accountId == deletedGuildsList.data.deleteDIDs[x].accountId){
-                        lastIndexDelete = x
-                        console.log('lastindexdelete', lastIndexDelete)
-                    }
-                }
-                if(lastIndexAdd > 0){
-                    if(parseFloat(currentGuildsList.data.putDIDs[lastIndexAdd].registered) > parseFloat(deletedGuildsList.data.deleteDIDs[lastIndexDelete].time)) {
-                        currentGuilds.push(currentGuildsList.data.putDIDs[lastIndexAdd])
-                        console.log('currentGuilds compare', currentGuilds)
-                    }
-                } else {
-                    currentGuilds.push(currentGuildsList.data.putDIDs[m])
-                    console.log('currentGuilds', currentGuilds)
-                }
-            }
-            
-        }
-       
-        console.log('currentGuilds', currentGuilds)
 
+    // first - start the loop to look through every one of the guild entries
+    for(let k = 0; k < currentGuildsList.data.putDIDs.length; k++){
+        console.log('account', currentGuildsList.data.putDIDs[k].accountId)
+        // make sure it hasn't already been added to the current guilds list
+        if(currentGuilds.filter(e => e.accountId == currentGuildsList.data.putDIDs[k].accountId).length == 0){
+                for(let n = 0; n < currentGuildsList.data.putDIDs.length; n++){
+                    if(currentGuildsList.data.putDIDs[k].accountId == currentGuildsList.data.putDIDs[n].accountId){
+                        lastIndexAdd = n
+                    }
+                }
+       
+            // step 2 - get index of the last time the accountId was deleted
+            for(let x = 0; x < deletedGuildsList.data.deleteDIDs.length; x++){
+                if(currentGuildsList.data.putDIDs[lastIndexAdd].accountId == deletedGuildsList.data.deleteDIDs[x].accountId){
+                    lastIndexDelete = x
+                }
+            }
+
+            //  step 3 - if there is a last index added, compare last added with 
+            //  last deleted to see if it is still an active guild.  Push it to the
+            //  list of current guilds.
+            if(lastIndexAdd > 0 ){
+                if(parseFloat(currentGuildsList.data.putDIDs[lastIndexAdd].registered) > parseFloat(deletedGuildsList.data.deleteDIDs[lastIndexDelete].time)) {
+                     currentGuilds.push(currentGuildsList.data.putDIDs[lastIndexAdd])
+                }
+            }
+        }
+    }
+    
+    console.log('currentGuilds', currentGuilds)
         
         // for(let ii = 0; ii < currentGuildsList.data.putDIDs.length; ii++){
         //     for(let jj = 0; jj < deletedGuildsList.data.deleteDIDs.length; jj++){
@@ -752,6 +747,55 @@ export function formatDateString(timestamp){
     } else {
         return null
     } 
+}
+
+export async function signalCounter(signalType, contractId, accountId, proposalType, near, appIdx, didRegistryContract, guildDid){
+    let currentProperties
+    let stream
+    console.log('contractId here', contractId)
+      console.log('guild did here', guildDid)
+    let guildAccount = new nearAPI.Account(near.connection, contractId)
+    let curDaoIdx = await ceramic.getUserIdx(guildAccount, appIdx, near, didRegistryContract)
+    console.log('this curdaoidx here', curDaoIdx)
+    switch(proposalType){
+        case 'guild':
+            try{
+                currentProperties = await curDaoIdx.get('guildProfile', guildDid)
+                console.log('currentproperties', currentProperties)
+                stream = 'guildProfile'
+                break
+            } catch (err) {
+                console.log('problem retrieving guild signal details', err)
+            }
+        case 'individual':
+            try{
+                currentProperties = await curDaoIdx.get('profile', curDaoIdx.id)
+                stream = 'profile'
+                break
+            } catch (err) {
+                console.log('problem retrieving individual signal details', err)
+            }
+        default:
+            break
+    }   
+  
+    let hasLiked = false
+    hasLiked = currentProperties.likes.includes(accountId)
+   
+    if(signalType == 'like' && !hasLiked){
+        currentProperties.likes.push(accountId)
+    }
+
+    if(signalType == 'like' && hasLiked){
+      let index = currentProperties.likes.indexOf(accountId)
+      currentProperties.likes.splice(index, 1)
+    }
+    
+    try{
+        await curDaoIdx.set(stream, currentProperties)
+    } catch (err) {
+        console.log('error with signalling', err)
+    }
 }
 
 export async function signal(signalType, curDaoIdx, accountId, proposalType){

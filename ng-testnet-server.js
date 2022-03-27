@@ -1,4 +1,4 @@
-//require('dotenv').config({ path: './.env.test' })
+require('dotenv').config({ path: '../.env.test' })
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
@@ -18,7 +18,7 @@ const client = new SecretClient(url, credential)
 
 const secretKey = process.env.SECRET_KEY
 const secretSeed = process.env.SEED
-const fundingSeed = process.env.FUNDING_SEED
+const fundingSeed = process.env.NG_FUNDING_SEED
 const sendyAPI = process.env.SENDY_API
 
 const allowList = ['https://mynear.xyz, https://ceramic-node.vitalpointai.com']
@@ -26,7 +26,6 @@ const allowList = ['https://mynear.xyz, https://ceramic-node.vitalpointai.com']
 app.use(cors({
   origin: '*'
 }));
-
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
@@ -98,7 +97,8 @@ app.get('/*', cors(), function (req, res) {
   //   'Content-Security-Policy-Report-Only',
   //   "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'"
   // );
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+ 
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 
@@ -126,5 +126,5 @@ function verifyToken(req, res, next){
 app.listen(3000, () => {
   console.log('running')
   console.log('and listening')
-  console.log('secret', secretKey)
+  console.log('nearguilds dir')
 });

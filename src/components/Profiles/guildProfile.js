@@ -150,7 +150,7 @@ export default function GuildProfile(props) {
                     let data = {
                         api_key: key.data.seed,
                         email: email,
-                        list_id: process.env.SENDY_LIST_ID
+                        list_id: process.env.NG_SENDY_LIST_ID
                     }
                     let url = `${MAIL_URL}/api/subscribers/subscription-status.php`
                     try{
@@ -278,7 +278,7 @@ export default function GuildProfile(props) {
             api_key: key.data.seed, 
             email: email,
             name: name,
-            list: process.env.SENDY_LIST_ID,
+            list: process.env.NG_SENDY_LIST_ID,
             boolean: true
         }
         try{
@@ -305,7 +305,7 @@ export default function GuildProfile(props) {
         let data = {
             api_key: key.data.seed, 
             email: email,
-            list_id: process.env.SENDY_LIST_ID
+            list_id: process.env.NG_SENDY_LIST_ID
         }
         try{
             axiosCall = await axios.post(deleteUrl,
