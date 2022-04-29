@@ -10,7 +10,7 @@ import { signal } from '../../../state/near'
 
 
 // Material UI Components
-import { makeStyles } from '@mui/styles'
+
 import Button from '@mui/material/Button'
 import { LinearProgress } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -33,30 +33,6 @@ import FormLabel from '@mui/material/FormLabel'
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech'
 import Tooltip from '@mui/material/Tooltip'
 import CategoryIcon from '@mui/icons-material/Category'
-
-const useStyles = makeStyles((theme) => ({
-    pos: {
-        marginTop: 0,
-    },
-    card: {
-      minWidth: '200px',
-      maxWidth: '200px',
-      verticalAlign: 'middle',
-      margin: '10px 10px 10px 10px',
-      padding: '2px'
-    },
-    cardMobile: {
-      minWidth: '100%',
-      verticalAlign: 'middle',
-      margin: '10px 10px 10px 10px',
-      padding: '2px'
-    },
-    square: {
-      float: 'left',
-      marginRight: '10px',
-      marginTop: '5px',
-    }
-  }));
 
 const imageName = require('../../../img/default_logo.png') // default no-image avatar
 const sortDown = require('../../../img/sortdown.png')
@@ -93,7 +69,6 @@ export default function GuildCard(props) {
     const [currentDisLikes, setCurrentDisLikes] = useState([])
     const [currentNeutrals, setCurrentNeutrals] = useState([])
 
-    const classes = useStyles();
 
     const { 
       summoner,
@@ -182,7 +157,7 @@ export default function GuildCard(props) {
           let thisCurDaoIdx
           try{
             let daoAccount = new nearAPI.Account(near.connection, contractId)
-            thisCurDaoIdx = await ceramic.getUserIdx(daoAccount, appIdx, near, didRegistryContract)
+            thisCurDaoIdx = await ceramic.getUserIdx(daoAccount, appIdx, factoryContract, didRegistryContract)
             setCurDaoIdx(thisCurDaoIdx)
           } catch (err) {
             console.log('problem getting curdaoidx', err)

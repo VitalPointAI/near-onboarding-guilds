@@ -62,24 +62,10 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 100,
       maxWidth: 400,
     },
-    heading: {
-      fontSize: '15px',
-      flexBasis: '33.33%',
-      flexShrink: 0,
-    },
-    secondaryHeading: {
-      fontSize: '15px',
-      color: "#000000",
-    },
     square: {
       width: '175px',
       height: 'auto'
     },
-    large: {
-        width: '100px',
-        height: '100px',
-        textAlign: 'center'
-    }, 
     formControl: {
       margin: '20px',
     },
@@ -676,7 +662,6 @@ export default function EditProfileForm(props) {
                               <TextField
                                 autoFocus
                                 margin="dense"
-                                id="input-with-icon-grid"
                                 id="profile-email"
                                 variant="outlined"
                                 name="email"

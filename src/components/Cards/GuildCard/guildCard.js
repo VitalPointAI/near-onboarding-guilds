@@ -6,13 +6,13 @@ import { ceramic } from '../../../utils/ceramic'
 import { catalystDao } from '../../../utils/catalystDao'
 import Purpose from '../Purpose/purpose'
 import Social from '../../common/Social/social'
-import { signalCounter, rootName } from '../../../state/near'
+import { signalCounter, guildRootName } from '../../../state/near'
+import { updateCurrentGuilds } from '../../../state/near'
 
 
 // Material UI Components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
-import { LinearProgress } from '@mui/material'
+import { LinearProgress, CircularProgress } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import NotInterestedIcon from '@mui/icons-material/NotInterested'
 import { Grid } from '@mui/material'
@@ -34,29 +34,6 @@ import MilitaryTechIcon from '@mui/icons-material/MilitaryTech'
 import Tooltip from '@mui/material/Tooltip'
 import CategoryIcon from '@mui/icons-material/Category'
 
-const useStyles = makeStyles((theme) => ({
-    pos: {
-        marginTop: 0,
-    },
-    card: {
-      minWidth: '200px',
-      maxWidth: '200px',
-      verticalAlign: 'middle',
-      margin: '10px 10px 10px 10px',
-      padding: '2px'
-    },
-    cardMobile: {
-      minWidth: '100%',
-      verticalAlign: 'middle',
-      margin: '10px 10px 10px 10px',
-      padding: '2px'
-    },
-    square: {
-      float: 'left',
-      marginRight: '10px',
-      marginTop: '5px',
-    }
-  }));
 
 const imageName = require('../../../img/default_logo.png') // default no-image avatar
 const sortDown = require('../../../img/sortdown.png')
@@ -76,7 +53,6 @@ export default function GuildCard(props) {
     const [editDaoClicked, setEditDaoClicked] = useState(false)
     const [purposeClicked, setPurposeClicked] = useState(false)
     const [claimed, setClaimed] = useState(false)
-    const [curDaoIdx, setCurDaoIdx] = useState()
     const [display, setDisplay] = useState(true)
     const [anchorEl, setAnchorEl] = useState(null)
     const [anchorE2, setAnchorE2] = useState(null)
@@ -88,7 +64,6 @@ export default function GuildCard(props) {
     const [verified, setVerified] = useState(false)
     const [daoPlatform, setDaoPlatform] = useState('')
     const [daoPlatformLink, setDaoPlatformLink] = useState('')
-    const [guildDid, setGuildDid] = useState('')
     const [changeFinished, setChangeFinished] = useState(true)
     const [tier, setTier] = useState('0')
     const [skills, setSkills] = useState([])
@@ -98,6 +73,7 @@ export default function GuildCard(props) {
     const [focus, setFocus] = useState([])
     const [projects, setProjects] = useState([])
     const [services, setServices] = useState([])
+    const [signalFinished, setSignalFinished] = useState(true)
 
     const [valuePercentMatch, setValuePercentMatch] = useState(0)
     const [subjectMatch, setSubjectMatch] = useState(false)
@@ -110,14 +86,13 @@ export default function GuildCard(props) {
     const [currentDisLikes, setCurrentDisLikes] = useState([])
     const [currentNeutrals, setCurrentNeutrals] = useState([])
 
-    const classes = useStyles();
 
     const { 
       summoner,
       contractId,
       status,
       makeSearchGuilds,
-      did,
+      guildDid,
       category
    } = props
  
@@ -137,11 +112,11 @@ export default function GuildCard(props) {
       () => {
       
       async function fetchData() {
-        if(isUpdated){}
+        if(isUpdated){await updateCurrentGuilds()}
 
-        let guildInfo = await appIdx.get('guildProfile', did)
+        let guildInfo = await appIdx.get('guildProfile', guildDid)
         console.log('guildInfo', guildInfo)
-        console.log('guild did', did)
+        console.log('guild did', guildDid)
         let thisDaoPlatform
         if(guildInfo && guildInfo.contractId){
           if(guildInfo.contractId.split('.')[1].substr(0,4)=='cdao'){
@@ -195,48 +170,32 @@ export default function GuildCard(props) {
           }
         }
 
-        // Get relevant profile info after finding DID
-        if(near){
-          let thisCurDaoIdx
-          try{
-            let daoAccount = new nearAPI.Account(near.connection, contractId)
-            thisCurDaoIdx = await ceramic.getUserIdx(daoAccount, appIdx, near, didRegistryContract)
-            setCurDaoIdx(thisCurDaoIdx)
-          } catch (err) {
-            console.log('problem getting curdaoidx', err)
-            return false
-          }
-          console.log('thiscurdaoidx', thisCurDaoIdx)
-
-          let thisGuildDid = await ceramic.getDid(contractId, factoryContract, didRegistryContract)
-          setGuildDid(thisGuildDid)
-          let result = await appIdx.get('guildProfile', thisGuildDid)
-          console.log('result', result)
-          if(result){
-                result.name != '' ? setName(result.name) : setName('')
-                result.date ? setDate(result.date) : setDate('')
-                result.logo !='' ? setLogo(result.logo) : setLogo(imageName)
-                result.purpose != '' ? setPurpose(result.purpose) : setPurpose('')
-                result.owner != '' ? setOwner(result.owner) : setOwner('')
-                result.status = memberStatus
-                result.skills ? setSkills(result.skills) : setSkills([])
-                result.specificSkills ? setSpecificSkills(result.specificSkills) : setSpecificSkills([])
-                result.teach ? setTeach(result.teach) : setTeach([])
-                result.focus ? setFocus(result.focus) : setFocus([])
-                result.projects ? setProjects(result.projects) : setProjects([])
-                result.values ? setValues(result.values) : setValues([])
-                result.services ? setServices(result.services) : setServices([])
-                result.likes ? setCurrentLikes(result.likes) : setCurrentLikes([])
-                result.dislikes ? setCurrentDisLikes(result.dislikes) : setCurrentDisLikes([])
-                result.neutrals ? setCurrentNeutrals(result.neutrals) : setCurrentNeutrals([])
-          } else {
-            setName('')
-            setDate('')
-            setLogo(imageName)
-            setPurpose('')
-            setOwner('')
-          }
+        // Get relevant profile info
+        if(guildInfo){
+              guildInfo.name != '' ? setName(guildInfo.name) : setName('')
+              guildInfo.date ? setDate(guildInfo.date) : setDate('')
+              guildInfo.logo !='' ? setLogo(guildInfo.logo) : setLogo(imageName)
+              guildInfo.purpose != '' ? setPurpose(guildInfo.purpose) : setPurpose('')
+              guildInfo.owner != '' ? setOwner(guildInfo.owner) : setOwner('')
+              guildInfo.status = memberStatus
+              guildInfo.skills ? setSkills(guildInfo.skills) : setSkills([])
+              guildInfo.specificSkills ? setSpecificSkills(guildInfo.specificSkills) : setSpecificSkills([])
+              guildInfo.teach ? setTeach(guildInfo.teach) : setTeach([])
+              guildInfo.focus ? setFocus(guildInfo.focus) : setFocus([])
+              guildInfo.projects ? setProjects(guildInfo.projects) : setProjects([])
+              guildInfo.values ? setValues(guildInfo.values) : setValues([])
+              guildInfo.services ? setServices(guildInfo.services) : setServices([])
+              guildInfo.likes ? setCurrentLikes(guildInfo.likes) : setCurrentLikes([])
+              guildInfo.dislikes ? setCurrentDisLikes(guildInfo.dislikes) : setCurrentDisLikes([])
+              guildInfo.neutrals ? setCurrentNeutrals(guildInfo.neutrals) : setCurrentNeutrals([])
+        } else {
+          setName('')
+          setDate('')
+          setLogo(imageName)
+          setPurpose('')
+          setOwner('')
         }
+        
         
         return true
       }
@@ -246,12 +205,14 @@ export default function GuildCard(props) {
         fetchData()
           .then((res) => {
             setFinished(true)
-            makeSearchGuilds(res)
+            if(makeSearchGuilds){
+              makeSearchGuilds(res)
+            }
           })
         return () => mounted = false
         }
 
-  }, [contractId, near, isUpdated]
+  }, [contractId, isUpdated]
   )
 
   useEffect(()=> {
@@ -392,7 +353,7 @@ export default function GuildCard(props) {
   }
 
   async function handleSignal(sig, contractId){
-    await signalCounter(sig, contractId, accountId, 'guild', near, appIdx, didRegistryContract, guildDid)
+    await signalCounter(sig, contractId, accountId, 'guild', near, appIdx, didRegistryContract, guildDid, factoryContract)
     update('', {isUpdated: !isUpdated})
   }
   
@@ -436,7 +397,7 @@ export default function GuildCard(props) {
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                   
-                    <a href={`${rootName}/guild-profiles/${guildDid}`}> 
+                    <a href={`${guildRootName}/guild-profiles/${guildDid}`}> 
                     <div style={{width: '100%', 
                       height: '100px',
                       backgroundImage: `url(${logo})`, 
@@ -472,7 +433,10 @@ export default function GuildCard(props) {
                         vertical: 'top',
                         horizontal: 'left',
                       }} color="primary" max={9999999}>  
+                      {signalFinished ?  
                         <img src={heart} style={{height: '30px'}} onClick={(e) => handleSignal('like', contractId)}/>
+                      : <CircularProgress fontSize="small" />
+                      }
                       </Badge>
                       
                   </Stack>

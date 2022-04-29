@@ -12,15 +12,6 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    margin: 'auto',
-    maxWidth: 325,
-    minWidth: 325,
-  },
-  card: {
-    margin: 'auto',
-  },
   rootForm: {
     '& > *': {
       margin: '10px',

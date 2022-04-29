@@ -9,6 +9,7 @@ import { GAS,
   nameSuffix,
   getSendyAPI,
   formatNearAmount,
+  networkId,
   MAIL_URL } from '../../state/near'
 import { ceramic } from '../../utils/ceramic'
 import AdminCard from '../Cards/AdminCard/adminCard'
@@ -249,7 +250,24 @@ export default function Admin(props) {
     let key = await getSendyAPI()
     let url = `${MAIL_URL}/api/campaigns/create.php`
     let title = subject + '|' + Date.now()
-    console.log('title', title)
+    
+    let listId
+    switch(true) {
+      case process.env.ENV == 'test' || process.env.ENV == 'prod':
+        listId = process.env.NG_SENDY_LIST_ID
+      case process.env.ENV == 'localhost':
+        listId = process.env.SENDY_LIST_ID
+    }
+
+    let brandId
+    switch(true) {
+      case process.env.ENV == 'test' || process.env.ENV == 'prod':
+        brandId = process.env.NG_BRAND_ID
+      case process.env.ENV == 'localhost':
+        brandId = process.env.BRAND_ID
+    }
+   
+  
     let data = {
         api_key: key.data.seed,
         from_name: 'NEAR Guilds',
@@ -259,8 +277,8 @@ export default function Admin(props) {
         subject: subject,
         plain_text: messagePlainText,
         html_text: draftToHtml(convertToRaw(message.getCurrentContent())),
-        list_ids: process.env.NG_SENDY_LIST_ID,
-        brand_id: process.env.NG_BRAND_ID,
+        list_ids: listId,
+        brand_id: brandId,
         track_opens: 1,
         track_clicks: 1,
         send_campaign: 1

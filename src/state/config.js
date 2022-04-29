@@ -45,10 +45,10 @@ let config = {
     APP_OWNER_ACCOUNT: 'vitalpointai.testnet',
     CERAMIC_API_URL: 'https://ceramic-node.vitalpointai.com',
     IPFS_PROVIDER: 'https://cloudflare-ipfs.com/ipfs/',
-    TOKEN_CALL: 'https://nearguilds.live/token',
-    APPSEED_CALL: 'https://nearguilds.live/appseed',
-    FUNDING_SEED_CALL: 'https://nearguilds.live/funding-seed',
-    SENDY_API_KEY_CALL: 'https://nearguilds.live/sendy',
+    TOKEN_CALL: 'https://testnet.nearguilds.live/token',
+    APPSEED_CALL: 'https://testnet.nearguilds.live/appseed',
+    FUNDING_SEED_CALL: 'https://testnet.nearguilds.live/funding-seed',
+    SENDY_API_KEY_CALL: 'https://testnet.nearguilds.live/sendy',
     networkId: 'testnet',
     nodeUrl: 'https://rpc.testnet.near.org',
     walletUrl: 'https://wallet.testnet.near.org',
@@ -56,22 +56,27 @@ let config = {
     nameSuffix: '.testnet',
     nftFactorySuffix: '.nft.vitalpointai.testnet',
     contractName: 'testnet',
-    rootName: 'https://nearguilds.live',
+    guildRootName: 'https://testnet.nearguilds.live',
+    personaRootName: 'https://nearpersonas.live',
+    daoRootName: 'https://cdao.app',
     PLATFORM_SUPPORT_ACCOUNT: 'vitalpointai.testnet',
     didRegistryContractName: 'dids2.vitalpointai.testnet',
     nftFactoryContractName: 'nft.vitalpointai.testnet',
     fundingContractName: 'funding.vitalpointai.testnet',
+    factoryContractName: 'factory1.vitalpointai.testnet',
     MAIL_URL: 'https://vitalpoint.ai/mail',
     ACCOUNT_HELPER_URL: 'https://near-contract-helper.onrender.com',
     GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/catalyst-factory-tnet',
-    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-tnet'
+    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-tnet',
+    VALIDATORS_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/near-validators'
   }
 
 if(process.env.ENV === 'localhost') {
   config = {
     ...config,
-    factoryContractName: 'cdao.near',
-    rootName: 'http://localhost:3000',
+    personaRootName: 'http://localhost:3000',
+    guildRootName: 'http://localhost:3000',
+    daoRootName: 'http://localhost:3003',
     TOKEN_CALL: 'http://localhost:3000/token',
     APPSEED_CALL: 'http://localhost:3000/appseed',
     FUNDING_SEED_CALL: 'http://localhost:3000/funding-seed',
@@ -82,7 +87,6 @@ if(process.env.ENV === 'localhost') {
 if(process.env.ENV === 'test'){
   config = {
     ...config,
-    factoryContractName: 'cdao.near',
   }
 }
 
@@ -103,12 +107,19 @@ if (process.env.ENV === 'prod') {
         contractName: 'near',
         didRegistryContractName: 'did.near',
         factoryContractName: 'cdao.near',
+        fundingContractName: 'funding.vitalpointai.near',
         tokenFactoryContractName: 'isft.near',
         nftFactoryContractName: 'isnft.near',
         APP_OWNER_ACCOUNT: 'aaron.near',
+        guildRootName: 'https://nearguilds.live',
         PLATFORM_SUPPORT_ACCOUNT: 'catalystsp.near',
+        TOKEN_CALL: 'https://nearguilds.live/token',
+        APPSEED_CALL: 'https://nearguilds.live/appseed',
+        FUNDING_SEED_CALL: 'https://nearguilds.live/funding-seed',
+        SENDY_API_KEY_CALL: 'https://nearguilds.live/sendy',
         GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/catalyst-factory-mnet',
-        GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-mnet'
+        GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-mnet',
+        VALIDATORS_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/near-validators'
       }
 }
 

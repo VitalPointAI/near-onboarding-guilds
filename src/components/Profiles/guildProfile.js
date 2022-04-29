@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import { MAIL_URL, getSendyAPI } from '../../state/near'
-import qs from 'qs'
 import Social from '../common/Social/social'
 
 // Material UI components
@@ -34,15 +32,6 @@ const axios = require('axios').default
 // CSS Styles
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      maxWidth: 800,
-      minWidth: 325,
-      minHeight: 325,
-      
-    },
-    card: {
-      margin: 'auto',
-    },
     progress: {
         display: 'flex',
         justifyContent: 'center',
@@ -50,29 +39,8 @@ const useStyles = makeStyles((theme) => ({
         width: '200px',
         alignItems: 'center',
     },
-    actionsContainer: {
-      marginBottom: '20px',
-    },
-    large: {
-        width: '100px',
-        height: 'auto',
-        textAlign: 'center',
-        marginRight: '15px',
-    },
-    centered: {
-        textAlign: 'center'
-    },
-    accHeading: {
-      fontSize: '18px',
-      fontWeight: 'bold',
-    },
-    heading: {
-      fontSize: 18,
-      marginLeft: '10px'
-    },
     }));
 
-const imageName = require('../../img/default-profile.png') // default no-image avatar
 const logoName = require('../../img/default_logo.png') // default logo
 
 export default function GuildProfile(props) {
@@ -102,6 +70,7 @@ export default function GuildProfile(props) {
     const [projects, setProjects] = useState([])
     const [services, setServices] = useState([])
     const [platform, setPlatform] = useState('')
+    const [personaValidators, setPersonaValidators] = useState([])
     const [discordActivated, setDiscordActivated] = useState(false)
     const [proposalsActivated, setProposalsActivated] = useState(false)
     const [passedProposalsActivated, setPassedProposalsActivated] = useState(false)
@@ -115,8 +84,9 @@ export default function GuildProfile(props) {
     const [personaSpecificSkillSet, setPersonaSpecificSkillSet] = useState([])
     const [summoner, setSummoner] = useState('')
     const [updated, setUpdated] = useState('')
-    const [emailNotifications, setEmailNotifications] = useState(false)
-    const [emailFinished, setEmailFinished] = useState(true)
+    const [pfpLogo, setPfpLogo] = useState(logoName)
+    const [nftContract, setNftContract] = useState('')
+    const [nftTokenId, setNftTokenId] = useState('')
 
     const classes = useStyles()
 
@@ -140,47 +110,6 @@ export default function GuildProfile(props) {
         registered
     }= props
 
-    
-    useEffect(
-        () => {
-            async function getEmailStatus(){
-                if(email){
-                    let key = await getSendyAPI()
-                    let emailStatus
-                    let data = {
-                        api_key: key.data.seed,
-                        email: email,
-                        list_id: process.env.NG_SENDY_LIST_ID
-                    }
-                    let url = `${MAIL_URL}/api/subscribers/subscription-status.php`
-                    try{
-                        emailStatus = await axios.post(url,
-                            qs.stringify(data),
-                            {
-                                headers: {
-                                    'content-type': 'application/x-www-form-urlencoded'
-                                }
-                            })
-                        console.log('emailstatus', emailStatus)
-                        if(emailStatus.data == 'Subscribed') {
-                            setEmailNotifications(true)
-                        }
-                        if(emailStatus.data == 'Email does not exist in list' || emailStatus.data == 'Unsubscribed' || emailStatus.data == 'Unconfirmed' || emailStatus.data == 'Bounced'){
-                            setEmailNotifications(false)
-                        }
-                    } catch (err) {
-                        console.log('error getting email status', err)
-                    }
-                }
-            }
-
-            getEmailStatus()
-            .then((res) => {
-
-            })
-
-        }, [email])
-
     useEffect(
         () => {
  
@@ -188,6 +117,7 @@ export default function GuildProfile(props) {
             if(isUpdated){}
             if(guildDid && appIdx){
                 let result = await appIdx.get('guildProfile', guildDid)
+                console.log('guild did', guildDid)
                 console.log('result', result)
                 if(result) {
                     setGuild(true)
@@ -196,7 +126,7 @@ export default function GuildProfile(props) {
                     result.purpose ? setPurpose(result.purpose) : setPurpose('')
                     result.name ? setName(result.name) : setName('')
                     result.date ? setDate(result.date) : setDate('')
-                    result.logo ? setLogo(result.logo) : setLogo(imageName)
+                    result.logo ? setLogo(result.logo) : setLogo(logoName)
                     result.country ? setCountry(result.country) : setCountry('')
                     result.language ? setLanguage(result.language) : setLanguage([])
                     result.skills ? setSkills(result.skills) : setSkills([])
@@ -210,6 +140,7 @@ export default function GuildProfile(props) {
                     result.discordActivation ? setDiscordActivated(true) : setDiscordActivated(false)
                     result.proposalActivation ? setProposalsActivated(true) : setProposalsActivated(false)
                     result.passedProposalActivation ? setPassedProposalsActivated(true) : setPassedProposalsActivated(false)
+                    result.validators ? setPersonaValidators(result.validators) : setPersonaValidators([])
                     result.sponsorActivation ? setSponsorActivated(true) : setSponsorActivated(false)
                     result.reddit? setReddit(result.reddit) : setReddit('')
                     result.discord? setDiscord(result.discord): setDiscord('')
@@ -219,10 +150,14 @@ export default function GuildProfile(props) {
                     result.website? setWebsite(result.website): setWebsite('')
                     result.platform ? setPlatform(result.platform) : setPlatform('')
                     result.lastUpdated ? setUpdated(result.lastUpdated) : setUpdated('')
+                    result.nftContract ? setNftContract(result.nftContract) : setNftContract('')
+                    result.nftTokenId ? setNftTokenId(result.nftTokenId) : setNftTokenId('')
+                    result.profileNft ? setPfpLogo(result.profileNft) : setPfpLogo(logoName)
                 }
             } else {
                 if(did && appIdx){
                     let result = await appIdx.get('guildProfile', did)
+                    console.log('did', did)
                     console.log('result', result)
                         if(result) {
                             setGuild(true)
@@ -231,7 +166,7 @@ export default function GuildProfile(props) {
                             result.purpose ? setPurpose(result.purpose) : setPurpose('')
                             result.name ? setName(result.name) : setName('')
                             result.date ? setDate(result.date) : setDate('')
-                            result.logo ? setLogo(result.logo) : setLogo(imageName)
+                            result.logo ? setLogo(result.logo) : setLogo(logoName)
                             result.country ? setCountry(result.country) : setCountry('')
                             result.language ? setLanguage(result.language) : setLanguage([])
                             result.skills ? setSkills(result.skills) : setSkills([])
@@ -244,6 +179,7 @@ export default function GuildProfile(props) {
                             result.category ? setCategory(result.category) : setCategory('')
                             result.discordActivation ? setDiscordActivated(true) : setDiscordActivated(false)
                             result.proposalActivation ? setProposalsActivated(true) : setProposalsActivated(false)
+                            result.validators ? setPersonaValidators(result.validators) : setPersonaValidators([])
                             result.passedProposalActivation ? setPassedProposalsActivated(true) : setPassedProposalsActivated(false)
                             result.sponsorActivation ? setSponsorActivated(true) : setSponsorActivated(false)
                             result.reddit? setReddit(result.reddit) : setReddit('')
@@ -254,6 +190,9 @@ export default function GuildProfile(props) {
                             result.website? setWebsite(result.website): setWebsite('')
                             result.platform ? setPlatform(result.platform) : setPlatform('')
                             result.lastUpdated ? setUpdated(result.lastUpdated) : setUpdated('')
+                            result.nftContract ? setNftContract(result.nftContract) : setNftContract('')
+                            result.nftTokenId ? setNftTokenId(result.nftTokenId) : setNftTokenId('')
+                            result.profileNft ? setPfpLogo(result.profileNft) : setPfpLogo(logoName)
                         }
                 }
             }
@@ -264,65 +203,8 @@ export default function GuildProfile(props) {
               setFinished(true)
             })
           
-    }, [did, appIdx, isUpdated]
+    }, [did, guildDid, appIdx, isUpdated]
     )
-
-   
-
-
-    async function optin() {
-        setEmailFinished(false)
-        let key = await getSendyAPI()
-        let subscribeUrl = `${MAIL_URL}/subscribe`
-        let data = {
-            api_key: key.data.seed, 
-            email: email,
-            name: name,
-            list: process.env.NG_SENDY_LIST_ID,
-            boolean: true
-        }
-        try{
-            axiosCall = await axios.post(subscribeUrl,
-                qs.stringify(data),
-                {
-                    headers: {
-                        'content-type': 'application/x-www-form-urlencoded'
-                    }
-                })
-        console.log('axioscall', axiosCall)
-        setEmailNotifications(true)
-        setEmailFinished(true)
-       
-        } catch (err) {
-            console.log('error subscribing', err)
-        }
-    }
-
-    async function optout() {
-        setEmailFinished(false)
-        let key = await getSendyAPI()
-        let deleteUrl = `${MAIL_URL}/api/subscribers/delete.php`
-        let data = {
-            api_key: key.data.seed, 
-            email: email,
-            list_id: process.env.NG_SENDY_LIST_ID
-        }
-        try{
-            axiosCall = await axios.post(deleteUrl,
-                qs.stringify(data),
-                {
-                    headers: {
-                        'content-type': 'application/x-www-form-urlencoded'
-                    }
-                })
-        console.log('axiosCalldelete', axiosCall)
-        setEmailNotifications(false)
-        setEmailFinished(true)
-        } catch (err) {
-            console.log('error subscribing', err)
-        }
-    }
-
 
     const languages = language.map((item, i) => {
       if (i == language.length -1){
@@ -341,18 +223,16 @@ export default function GuildProfile(props) {
             {finished ? (<>
               
                 <Grid container justifyContent="space-evenly" spacing={1} style={{marginTop:'20px', padding:'10px'}}>
+                   
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    {summoner == accountId ? 
-                            emailFinished ? 
-                                emailNotifications ?
-                                    <Chip icon={<MailIcon />} label="Email Notifications: ON" variant="outlined" onClick={optout}/>
-                                : <Chip icon={<MailIcon />} label="Email Notifications: OFF" variant="outlined" onClick={optin}/>
-                            : <LinearProgress/>
-                    : null
-                    }
-                    </Grid>
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                        <Avatar src={logo} style={{width:'25%', height:'auto', maxHeight:'150px', marginBottom:'10px'}}  />
+                        <div style={{width: '100%', 
+                            height: '100px',
+                            backgroundImage: `url(${pfpLogo != logoName && pfpLogo != '' ? pfpLogo : logo})`, 
+                            backgroundSize: 'contain',
+                            backgroundPosition: 'center', 
+                            backgroundRepeat: 'no-repeat',
+                            backgroundOrigin: 'content-box'
+                        }}></div>
                         <Typography variant="h5">
                             {name ? name : accountId}
                         </Typography>
@@ -361,7 +241,7 @@ export default function GuildProfile(props) {
                             {verificationStatus ? <Chip icon={<VerifiedIcon />} label="Verified" variant="outlined" /> : null }
                         </Stack>
                         <Divider variant="middle" style={{marginTop: '15px', marginBottom:'15px'}}/>
-                            <Social did={guildDid ? guildDid : did} type={accountType} appIdx={appIdx} style={{paddingLeft: '15px', paddingRight:'15px'}}/>
+                            <Social did={guildDid ? guildDid : did} type={accountType} appIdx={appIdx} platform={platform} summoner={summoner} style={{paddingLeft: '15px', paddingRight:'15px'}}/>
                         <Divider variant="middle" style={{marginTop: '15px', marginBottom:'15px'}}/>
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
@@ -373,7 +253,6 @@ export default function GuildProfile(props) {
                             </TableHead>
                             <TableBody>
                             {summoner ? <TableRow key={summoner}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{summoner}</TableCell></TableRow> : null }
-                            {contractId ? <TableRow key={contractId}><TableCell>NEAR Account</TableCell><TableCell component="th" scope="row">{contractId}</TableCell></TableRow> : null }
                             {date ? <TableRow key={'5'}><TableCell>Founded</TableCell><TableCell component="th" scope="row">{date}</TableCell></TableRow> : null }
                             {updated ? <TableRow key={updated}><TableCell>Updated</TableCell><TableCell component="th" scope="row">{updated}</TableCell></TableRow> : null }
                             {category ? <TableRow key={category}><TableCell>Category</TableCell><TableCell component="th" scope="row">{category}</TableCell></TableRow> : null }
@@ -581,6 +460,44 @@ export default function GuildProfile(props) {
                                 </TableContainer>
                             </Grid>
                           </Grid>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion>
+                            <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                            >
+                            <Typography variant="body1" color="primary">Staking</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                            <Grid container spacing={1} justifyContent="center">
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <Typography variant="h6">Staking Validators</Typography>
+                                <TableContainer component={Paper}>
+                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <TableHead>
+                                    
+                                    </TableHead>
+                                    <TableBody>
+                                    {personaValidators && personaValidators.length > 0 ?
+                                        personaValidators.map((values, index) => {
+                                        
+                                            return (
+                                            <TableRow key={values.name}>
+                                                <TableCell>{values.name}</TableCell>
+                                            </TableRow>
+                                            )
+                                        
+                                    })
+                                    : null
+                                    }
+                                             
+                                    </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </Grid>
+                            </Grid>
                             </AccordionDetails>
                         </Accordion>
                     </Grid>

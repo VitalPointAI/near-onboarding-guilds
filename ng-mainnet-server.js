@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env.test' })
+require('dotenv').config({ path: './.env.main' })
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
@@ -26,6 +26,7 @@ const allowList = ['https://mynear.xyz, https://ceramic-node.vitalpointai.com']
 app.use(cors({
   origin: '*'
 }));
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
@@ -56,6 +57,7 @@ app.post('/funding-seed', cors(), verifyToken, async (req, res) => {
     } else {
       const latestSecret = await client.getSecret(fundingSeed)
       const seed = (latestSecret.value)
+      
       res.json({
         seed: seed,
         authData
@@ -84,7 +86,7 @@ app.post('/token', cors(), async (req, res) => {
   const accountId = req.body.accountId
   console.log('account', accountId)
   if(!accountId) res.sendStatus(403)
-  let latestTokenSecret = await client.getSecret(secretKey)
+  const latestTokenSecret = await client.getSecret(secretKey)
   jwt.sign({ accountId: accountId }, latestTokenSecret.value, (err, token) => {
     res.json({
       token
@@ -97,8 +99,7 @@ app.get('/*', cors(), function (req, res) {
   //   'Content-Security-Policy-Report-Only',
   //   "default-src 'self'; font-src 'self'; img-src 'self'; script-src 'self'; style-src 'self'; frame-src 'self'"
   // );
- 
-  res.sendFile(path.join(__dirname, '/dist/index.html'));
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 
@@ -123,8 +124,7 @@ function verifyToken(req, res, next){
   }
 }
 
-app.listen(3003, () => {
+app.listen(3004, () => {
   console.log('running')
   console.log('and listening')
-  console.log('nearguilds dir')
 });

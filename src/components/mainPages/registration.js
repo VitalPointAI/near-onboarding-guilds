@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import { ceramic } from '../../utils/ceramic'
+import { updateCurrentGuilds } from '../../state/near'
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'
@@ -65,7 +66,7 @@ const Registration = () => {
 useEffect(
     () => {
         async function fetchData(){
-            if(isUpdated){}
+            if(isUpdated){await updateCurrentGuilds()}
             if(accountType){
                 setLoaded(true)
             }
@@ -112,7 +113,7 @@ async function unregister(){
                 await freeContract.contract.deleteDID({
                     accountId: accountId
                 })
-                update('', {accountType: 'not registered'})
+                update('', {accountType: 'none'})
             } catch (err) {
             console.log('error unregistering', err)
             }
@@ -132,7 +133,7 @@ async function unregister(){
                 </Typography>
             </Grid>
     
-            {accountType != 'not registered' ? <>
+            {accountType != 'none' ? <>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom:'20px'}}>
                     <Typography variant="h5" align="center">
                         This account is registered as a/an:<br></br>
@@ -229,7 +230,7 @@ async function unregister(){
             </Typography>
         </Grid>
 
-        {accountType != 'not registered' ? <>
+        {accountType != 'none' ? <>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom:'20px'}}>
                 <Typography variant="h5" align="center">
                 This account is registered as/an:<br></br>

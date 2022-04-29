@@ -61,28 +61,6 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 100,
         maxWidth: 400,
     },
-    large: {
-        width: '100px',
-        height: '100px',
-        textAlign: 'center'
-    }, 
-    formControl: {
-      margin: '20px',
-    },
-    hide: {
-      display: 'none'
-    },
-    square: {
-      width: '175px',
-      height: 'auto'
-    },
-    id: {
-      display: 'none'
-    },
-    toolbar: {
-        display: 'flex',
-        justifyContent: 'space-between'
-    },
     waiting: {
       minWidth: '100%',
       minHeight: '100%',
@@ -91,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     }
     }));
 
-const imageName = require('../../img/default_logo.png') // default no-image avatar
+const logoName = require('../../img/default_logo.png') // default no-image avatar
 const discordIcon = require('../../img/discord-icon.png')
 
 export default function EditGuildProfileForm(props) {
@@ -101,14 +79,13 @@ export default function EditGuildProfileForm(props) {
     const [date, setDate] = useState('')
     const [name, setName] = useState('')
     const [curDaoIdx, setCurDaoIdx] = useState()
-    const [logo, setLogo] = useState(imageName)
+    const [logo, setLogo] = useState('')
+    const [pfpLogo, setPfpLogo] = useState('')
     const [purpose, setPurpose] = useState(EditorState.createEmpty())
     const [category, setCategory] = useState('')
     const [webhook, setWebhook] = useState('')
-    const [platform, setPlatform] = useState('')
     const [country, setCountry] = useState('')
     const [language, setLanguage] = useState([])
-    const [contractId, setContractId] = useState('')
     const [discordActivated, setDiscordActivated] = useState(false)
     const [proposalsActivated, setProposalsActivated] = useState(false)
     const [passedProposalsActivated, setPassedProposalsActivated] = useState(false)
@@ -121,11 +98,11 @@ export default function EditGuildProfileForm(props) {
     const [telegram, setTelegram] = useState('')
     const [reddit, setReddit] = useState('')
     const [addDisabled, setAddDisabled] = useState(true)
+    const [nftContract, setNftContract] = useState('')
+    const [nftTokenId, setNftTokenId] = useState('')
 
-    const [nftContractId, setNftContractId] = useState('')
-    const [nfts, setNfts] = useState([])
-    const [profileNft, setProfileNft] = useState('')
-
+    const [pfpLogoLoaded, setPfpLogoLoaded] = useState(true)
+    const [pfpProgress, setPfpProgress] = useState(false)
     
     const [currentLikes, setCurrentLikes] = useState([])
     const [currentDisLikes, setCurrentDisLikes] = useState([])
@@ -134,7 +111,11 @@ export default function EditGuildProfileForm(props) {
     const countries = ["Afghanistan","Albania","Algeria","Andorra","Angola","Anguilla","Antigua & Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia","Bosnia & Herzegovina","Botswana","Brazil","British Virgin Islands","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Cayman Islands","Chad","Chile","China","Colombia","Congo","Cook Islands","Costa Rica","Cote D Ivoire","Croatia","Cruise Ship","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Estonia","Ethiopia","Falkland Islands","Faroe Islands","Fiji","Finland","France","French Polynesia","French West Indies","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece","Greenland","Grenada","Guam","Guatemala","Guernsey","Guinea","Guinea Bissau","Guyana","Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Isle of Man","Israel","Italy","Jamaica","Japan","Jersey","Jordan","Kazakhstan","Kenya","Kuwait","Kyrgyz Republic","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Macau","Macedonia","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Mauritania","Mauritius","Mexico","Moldova","Monaco","Mongolia","Montenegro","Montserrat","Morocco","Mozambique","Namibia","Nepal","Netherlands","Netherlands Antilles","New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Qatar","Reunion","Romania","Russia","Rwanda","Saint Pierre & Miquelon","Samoa","San Marino","Satellite","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","South Africa","South Korea","Spain","Sri Lanka","St Kitts & Nevis","St Lucia","St Vincent","St. Lucia","Sudan","Suriname","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor L'Este","Togo","Tonga","Trinidad & Tobago","Tunisia","Turkey","Turkmenistan","Turks & Caicos","Uganda","Ukraine","United Arab Emirates","United Kingdom","Uruguay","Uzbekistan","Venezuela","Vietnam","Virgin Islands (US)","Yemen","Zambia","Zimbabwe"];
     const languages = ['Abkhazian','Afar','Afrikaans','Akan','Albanian','Amharic','Arabic','Aragonese','Armenian','Assamese','Avaric','Avestan','Aymara','Azerbaijani','Bambara','Bashkir','Basque','Belarusian','Bengali','Bihari languages','Bislama','Bosnian','Breton','Bulgarian','Burmese','Catalan, Valencian','Central Khmer','Chamorro','Chechen','Chichewa, Chewa, Nyanja','Chinese','Church Slavonic, Old Bulgarian, Old Church Slavonic','Chuvash','Cornish','Corsican','Cree','Croatian','Czech','Danish','Divehi, Dhivehi, Maldivian','Dutch, Flemish','Dzongkha','English','Esperanto','Estonian','Ewe','Faroese','Fijian','Finnish','French','Fulah','Gaelic, Scottish Gaelic','Galician','Ganda', 'Georgian','German','Gikuyu, Kikuyu','Greek (Modern)','Greenlandic, Kalaallisut','Guarani','Gujarati','Haitian, Haitian Creole','Hausa','Hebrew','Herero','Hindi','Hiri Motu','Hungarian','Icelandic','Ido','Igbo','Indonesian','Interlingua (International Auxiliary Language Association)','Interlingue','Inuktitut','Inupiaq','Irish','Italian','Japanese','Javanese','Kannada','Kanuri','Kashmiri','Kazakh','Kinyarwanda','Komi','Kongo','Korean','Kwanyama, Kuanyama','Kurdish','Kyrgyz','Lao','Latin','Latvian','Letzeburgesch, Luxembourgish','Limburgish, Limburgan, Limburger','Lingala','Lithuanian','Luba-Katanga','Macedonian','Malagasy','Malay','Malayalam','Maltese','Manx','Maori','Marathi','Marshallese','Moldovan, Moldavian, Romanian','Mongolian','Nauru','Navajo, Navaho','Northern Ndebele','Ndonga','Nepali','Northern Sami','Norwegian','Norwegian Bokmål','Norwegian Nynorsk','Nuosu, Sichuan Yi','Occitan (post 1500)','Ojibwa','Oriya','Oromo','Ossetian, Ossetic','Pali','Panjabi, Punjabi','Pashto, Pushto','Persian','Polish','Portuguese','Quechua','Romansh','Rundi','Russian','Samoan','Sango','Sanskrit','Sardinian','Serbian','Shona','Sindhi','Sinhala, Sinhalese','Slovak','Slovenian','Somali','Sotho, Southern','South Ndebele','Spanish, Castilian','Sundanese','Swahili','Swati','Swedish','Tagalog','Tahitian','Tajik','Tamil','Tatar','Telugu','Thai','Tibetan','Tigrinya','Tonga (Tonga Islands)','Tsonga','Tswana','Turkish','Turkmen','Twi','Uighur, Uyghur','Ukrainian','Urdu','Uzbek','Venda','Vietnamese','Volap_k','Walloon','Welsh','Western Frisian','Wolof','Xhosa','Yiddish','Yoruba','Zhuang, Chuang','Zulu' ]
    
+    const daoPlatforms = ['Catalyst', 'Astro']
+    const [platform, setPlatform] = useState('')
+    const [daoContractId, setDaoContractId] = useState('')
     const [avatarLoaded, setAvatarLoaded] = useState(true)
+
     const [progress, setProgress] = useState(false)
 
     const { register, handleSubmit, watch, errors, control, reset, setValue, getValues } = useForm()
@@ -195,6 +176,14 @@ export default function EditGuildProfileForm(props) {
         control
       })
 
+    const {
+      fields: personaValidatorFields,
+      append: personaValidatorAppend,
+      remove: personaValidatorRemove} = useFieldArray({
+      name: "personaValidators",
+      control
+    })
+
     const guildValues = watch('guildValues', guildValuesFields)
     const guildTeach = watch('guildTeach', guildTeachFields)
     const guildFocus = watch('guildFocus', guildFocusFields)
@@ -202,7 +191,7 @@ export default function EditGuildProfileForm(props) {
     const guildProjects = watch('guildProjects', guildProjectsFields)
     const guildGeneralSkills = watch('guildGeneralSkills', guildGeneralSkillsFields)
     const guildSpecificSkills = watch('guildSpecificSkills', guildSpecificSkillsFields)
-    
+    const personaValidators = watch('personaValidators', personaValidatorFields)
   
     const { state, dispatch, update } = useContext(appStore)
 
@@ -215,20 +204,55 @@ export default function EditGuildProfileForm(props) {
 
     const {
       appIdx,
-      isUpdated
+      isUpdated,
+      account
     } = state
     
     const classes = useStyles()
 
     useEffect(() => {
-        if(logo != imageName && avatarLoaded){
+        if(logo != logoName && avatarLoaded){
           setProgress(false)
         }
-        if(logo != imageName && !avatarLoaded){
+        if(logo != logoName && !avatarLoaded){
           setProgress(true)
         }
       }, [logo, avatarLoaded]
       )
+
+      useEffect(() => {
+        if(pfpLogo != logoName && pfpLogoLoaded){
+          setPfpProgress(false)
+        }
+        if(pfpLogo != logoName && !pfpLogoLoaded){
+          setPfpProgress(true)
+        }
+      }, [pfpLogo, pfpLogoLoaded]
+      )
+  
+    useEffect(() => {
+      async function fetchNftData() {
+        if(nftContract && nftTokenId && near){
+          let data = await account.viewFunction(nftContract, 'nft_token', { token_id: nftTokenId })
+          if(data.metadata.media.length == 46 && data.metadata.media.substr(0,2) == "Qm"){
+            setPfpLogo(`${IPFS_PROVIDER}/${data.metadata.media}`)
+          }
+          if(data.metadata.media.length == 59 && data.metadata.media.substr(0,4) == "bafy"){
+            setPfpLogo(`${IPFS_PROVIDER}/${data.metadata.media}`)
+          }
+          if(data.metadata.media.substr(0,4) == "http"){
+            setPfpLogo(data.metadata.media)
+          }
+        }
+      }
+      
+
+      fetchNftData()
+      .then((res) => {
+
+      })
+
+    }, [nftContract, nftTokenId])
    
     useEffect(() => {
         async function fetchData() {
@@ -260,8 +284,7 @@ export default function EditGuildProfileForm(props) {
                     }
                 result.name ? setName(result.name) : setName('')
                 result.date ? setDate(result.date) : setDate('')
-                result.logo ? setLogo(result.logo) : setLogo(imageName)
-                result.contractId ? setContractId(result.contractId) : setContractId('')
+                result.logo ? setLogo(result.logo) : setLogo(logoName)
                 result.skills ? setValue('guildGeneralSkills', result.skills) : null
                 result.specificSkills ? setValue('guildSpecificSkills', result.specificSkills) : null
                 result.teach ? setValue('guildTeach', result.teach) : null
@@ -274,6 +297,7 @@ export default function EditGuildProfileForm(props) {
                 result.proposalActivation ? setProposalsActivated(true) : setProposalsActivated(false)
                 result.passedProposalActivation ? setPassedProposalsActivated(true) : setPassedProposalsActivated(false)
                 result.sponsorActivation ? setSponsorActivated(true) : setSponsorActivated(false)
+                result.validators && result.validators.length > 0 ? setValue('personaValidators', result.validators) : null
                 result.reddit? setReddit(result.reddit) : setReddit('')
                 result.discord? setDiscord(result.discord): setDiscord('')
                 result.twitter? setTwitter(result.twitter): setTwitter('')
@@ -283,10 +307,14 @@ export default function EditGuildProfileForm(props) {
                 result.country ? setCountry(result.country): setCountry('')
                 result.language ? setLanguage(result.language): setLanguage([])
                 result.platform ? setPlatform(result.platform) : setPlatform('')
+                result.contractId ? setDaoContractId(result.contractId) : setDaoContractId('')
                 result.likes ? setCurrentLikes(result.likes) : setCurrentLikes([])
                 result.dislikes ? setCurrentDisLikes(result.dislikes) : setCurrentDisLikes([])
                 result.neutrals ? setCurrentNeutrals(result.neutrals) : setCurrentNeutrals([])  
-            }
+                result.nftContract ? setNftContract(result.nftContract) : setNftContract('')
+                result.nftTokenId ? setNftTokenId(result.nftTokenId) : setNftTokenId('')
+                result.profileNft ? setPfpLogo(result.profileNft) : setPfpLogo(logoName)
+              }
            }
         }
        
@@ -309,9 +337,19 @@ export default function EditGuildProfileForm(props) {
         setAvatarLoaded(property)
     }
 
+    
+    function handlePfpLogoLoaded(property){
+      setPfpLogoLoaded(property)
+    }
+
     const handleNameChange = (event) => {
         let value = event.target.value;
         setName(value)
+    }
+
+    const handleDaoContractIdChange = (event) => {
+      let value = event.target.value;
+      setDaoContractId(value)
     }
 
     const handleCategoryChange = (event) => {
@@ -342,43 +380,56 @@ export default function EditGuildProfileForm(props) {
     const handlePurposeChange = (editorState) => {
       setPurpose(editorState)
     }
+
     const handleDiscordActivation = () => {
       setDiscordActivated(!discordActivated) 
     }
+
     const handleProposalActivation = () => {
       setProposalsActivated(!proposalsActivated)
     }
+
     const handlePassedProposalActivation = () => {
       setPassedProposalsActivated(!passedProposalsActivated)
     }
+
     const handleSponsorActivation = () => {
       setSponsorActivated(!sponsorActivated)
     }
+
     const handleTwitterChange = (event) =>{
       let value = event.target.value;
       setTwitter(value); 
     }
+
     const handleEmailChange = (event) =>{
       let value = event.target.value;
       setEmail(value); 
     }
+
     const handleTelegramChange = (event) =>{
       let value = event.target.value;
       setTelegram(value); 
     }
+
     const handleWebsiteChange = (event) =>{
       let value = event.target.value;
       setWebsite(value); 
     }
 
+    const handleNftContractChange = (event) => {
+      let value = event.target.value
+      setNftContract(value)
+    }
+
+    const handleNftTokenIdChange = (event) => {
+      let value = event.target.value
+      setNftTokenId(value)
+    }
+
     const handlePlatformChange = (event) => {
       let value = event.target.value
       setPlatform(value)
-    }
-
-    const handleContractIdChange = (event) => {
-        let value = event.target.value
-        setContractId(value)
     }
 
     const handleDiscordChange = (event) =>{
@@ -403,12 +454,11 @@ export default function EditGuildProfileForm(props) {
         let updateDate = formatDate(now)
     
         let record = {
-            contractId: contractId,
             summoner: state.accountId,
             date: foundingDate,
             category: category,
             name: name,
-            logo: logo,
+            logo: pfpLogo != logoName ? '' : logo,
             purpose: draftToHtml(convertToRaw(purpose.getCurrentContent())),
             discordActivation: discordActivated,
             proposalActivation: proposalsActivated,
@@ -430,10 +480,15 @@ export default function EditGuildProfileForm(props) {
             website: website, 
             reddit: reddit,
             platform: platform,
+            contractId: daoContractId,
             likes: currentLikes,
             dislikes: currentDisLikes,
             neutrals: currentNeutrals,
-            lastUpdated: updateDate
+            lastUpdated: updateDate,
+            nftContract: nftContract,
+            nftTokenId: nftTokenId,
+            profileNft: logo != logoName ? '' : pfpLogo,
+            validators: personaValidators
         }
 
          //ADD WEBHOOK HERE
@@ -480,34 +535,87 @@ export default function EditGuildProfileForm(props) {
                   <DialogContentText style={{marginBottom: 10}}>
                   Provide as much detail as you'd like.
                   </DialogContentText>
-                  <Paper style={{padding: '5px', marginBottom: '15px'}}>
-                    <Grid container spacing={1} style={{marginBottom: '5px'}}>
-                        <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
-                        <div style={{width: '100%', 
+                  <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1bh-content"
+                        id="panel1bh-header"
+                      >
+                        <Typography variant="h6">Upload a Logo</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Grid container spacing={2} style={{marginBottom: '5px'}}>
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                          <div style={{width: '100%', 
                             height: '50px',
                             backgroundImage: `url(${logo})`, 
                             backgroundSize: 'contain',
                             backgroundPosition: 'center', 
                             backgroundRepeat: 'no-repeat',
                             backgroundOrigin: 'content-box'
-                        }}></div>
-                        <Avatar
-                        alt={accountId}
-                        src={logo}
-                        style={{display:'none'}}
-                        imgProps={{
-                          onLoad:(e) => { handleAvatarLoaded(true) }
-                        }}  
-                      />
-                            {progress ?
-                            <CircularProgress />
-                            : null }
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={10} lg={10} xl={10}>
+                          }}></div>
+                          </Grid>
+                          <Grid item xs={10} sm={10} md={10} lg={10} xl={10}>
                             <FileUpload handleFileHash={handleFileHash} handleAvatarLoaded={handleAvatarLoaded}/>
+                          </Grid>
                         </Grid>
-                    </Grid>
-                </Paper>
+                      </AccordionDetails>
+                  </Accordion>
+                  <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel2bh-content"
+                        id="panel2bh-header"
+                      >
+                        <Typography variant="h6">Specify NFT Avatar</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Grid container spacing={2} style={{marginBottom: '5px'}}>
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                          <div style={{width: '100%', 
+                            height: '50px',
+                            backgroundImage: `url(${pfpLogo})`, 
+                            backgroundSize: 'contain',
+                            backgroundPosition: 'center', 
+                            backgroundRepeat: 'no-repeat',
+                            backgroundOrigin: 'content-box'
+                          }}></div>
+                           
+                          </Grid>
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <TextField
+                              autoFocus
+                              margin="dense"
+                              id="profile-nftcontract"
+                              variant="outlined"
+                              name="nftContract"
+                              label="NFT Contract"
+                              placeholder="x.paras.near"
+                              value={nftContract}
+                              onChange={handleNftContractChange}
+                              inputRef={register({
+                                  required: false                              
+                              })}
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            <TextField
+                              autoFocus
+                              margin="dense"
+                              id="profile-nftcontract"
+                              variant="outlined"
+                              name="nftTokenId"
+                              label="Token Id"
+                              value={nftTokenId}
+                              onChange={handleNftTokenIdChange}
+                              inputRef={register({
+                                  required: false                              
+                              })}
+                            />
+                          </Grid>
+                        </Grid>
+                      </AccordionDetails>
+                  </Accordion>
                 <Grid container spacing={1} style={{marginBottom: '5px'}}>
                     <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                       <TextField
@@ -621,7 +729,6 @@ export default function EditGuildProfileForm(props) {
                     <TextField
                     
                     margin="dense"
-                    id="input-with-icon-grid"
                     id="profile-email"
                     variant="outlined"
                     name="email"
@@ -756,40 +863,35 @@ export default function EditGuildProfileForm(props) {
                     />
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                    <TextField
-                    
-                    margin="dense"
-                    id="guildprofile-platform"
-                    variant="outlined"
-                    name="dao"
-                    label="DAO"
-                    placeholder="link to DAO"
-                    value={platform}
-                    onChange={handlePlatformChange}
-                    InputProps={{
-                        startAdornment: (
-                        <InputAdornment position="start">
-                            https://
-                        </InputAdornment>
-                        ),
-                    }}
-                    inputRef={register({
-                        required: false                              
-                    })}
-                    />
+                <FormControl>
+                <InputLabel id="language-label">DAO/Community Platform</InputLabel>
+                  <Select
+                      className={classes.input}
+                      label = "DAO Platform"
+                      id = "profile-platform"
+                      value = {platform}
+                      onChange = {handlePlatformChange}
+                      input={<Input />}
+                      >
+                      {daoPlatforms.map((platform) => (
+                          <MenuItem key={platform} value={platform}>
+                          {platform}
+                          </MenuItem>
+                      ))}
+                      </Select>
+                      <FormHelperText>Select the DAO/Community platform your guild works with.</FormHelperText>
+                  </FormControl>
                 </Grid>
-
                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                     <TextField
-                    
                     margin="dense"
-                    id="guildprofile-contract"
+                    id="guildprofile-daoContractId"
                     variant="outlined"
-                    name="contract"
-                    label="NEAR Contract Account"
-                    placeholder="somecontract.near"
-                    value={contractId}
-                    onChange={handleContractIdChange}
+                    name="daoContractId"
+                    label="DAO/Community Contract Name"
+                    placeholder="yourcommunity.cdao.near"
+                    value={daoContractId}
+                    onChange={handleDaoContractIdChange}
                     inputRef={register({
                         required: false                              
                     })}
@@ -1246,6 +1348,72 @@ export default function EditGuildProfileForm(props) {
                 </AccordionDetails>
                 </Accordion>
                 : null }
+                <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel5bh-content"
+                  id="panel5bh-header"
+                >
+                <Typography variant="h6">Staking Validators</Typography>
+                </AccordionSummary>
+                  <AccordionDetails>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                  
+                      
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Grid container justifyContent="space-between" alignItems="flex-end" spacing={1}>
+                        <Typography variant="body1" style={{fontSize: 'large', fontWeight:'400', marginTop: '10px', marginBottom:'10px'}}>Validators</Typography>
+                        {
+                          personaValidatorFields.map((field, index) => {
+                          
+                          return(
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} key={field.id}>
+                            <TextField
+                              
+                              margin="dense"
+                              id={`personaValidators[${index}].name`}
+                              variant="outlined"
+                              name={`personaValidators[${index}].name`}
+                              defaultValue={field.name}
+                              label="Validators:"
+                              InputProps={{
+                                endAdornment: <div>
+                                <Tooltip TransitionComponent={Zoom} title="Validator contract Id -eg. epic.poolv1.near">
+                                    <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
+                                </Tooltip>
+                                </div>
+                              }}
+                              inputRef={register({
+                                  required: true                              
+                              })}
+                            />
+                            {errors[`personaValidators${index}.name`] && <p style={{color: 'red', fontSize:'80%'}}>You must provide a validator contract name.</p>}
+                            
+                            <Button type="button" onClick={() => personaValidatorRemove(index)} style={{float: 'right', marginLeft:'10px'}}>
+                              <DeleteForeverIcon />
+                            </Button>
+                            </Grid>
+                            
+                          )
+                        }) 
+                        }
+                        {!personaValidatorFields || personaValidatorFields.length == 0 ?
+                          <Typography variant="body1" style={{marginLeft: '5px'}}>No validators defined yet.</Typography>
+                        : null }
+                          <Button
+                            type="button"
+                            onClick={() => personaValidatorAppend({name: ''})}
+                            startIcon={<AddBoxIcon />}
+                          >
+                            Add Validator
+                          </Button>
+                        </Grid>
+                      </Grid>
+                      </Grid>
+                   </Grid>
+                </AccordionDetails>
+            </Accordion>
               </DialogContent>
                
               {!finished ? <LinearProgress className={classes.progress} style={{marginBottom: '25px' }}/> : (

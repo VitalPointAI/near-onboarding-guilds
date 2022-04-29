@@ -1,4 +1,4 @@
-export const guildProfileSchema = {
+export const daoProfileSchema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     title: 'Profile',
     type: 'object',
@@ -26,10 +26,10 @@ export const guildProfileSchema = {
         "title": "text",
         "maxLength": 4000,
       },
-      "country": {
+      country: {
         type: 'string'
       },
-      "language": {
+      language: {
         type: 'array'
       },
       "email":{
@@ -50,9 +50,6 @@ export const guildProfileSchema = {
       "twitter": {
         type: "string"
       },
-      "values": {
-        type: "array"
-      },
       "skills": {
         type: "array"
       },
@@ -64,48 +61,6 @@ export const guildProfileSchema = {
       },
       "did": {
         type: 'string'
-      },
-      "nftContract": {
-        type: 'string'
-      },
-      "profileNft": {
-        type: 'string'
-      },
-      "nftTokenId": {
-        type: 'string'
-      },
-      "likes": {
-        type: 'array'
-      },
-      "dislikes": {
-        type: 'array'
-      },
-      "neutrals": {
-        type: 'array'
-      },
-      "lastUpdated": {
-        type: 'string'
-      },
-      "tier": {
-        type: 'string'
-      },
-      "notifications": {
-        type: 'array'
-      },
-      "teach": {
-        type: 'array'
-      },
-      "focus": {
-        type: 'array'
-      },
-      "projects": {
-        type: 'array'
-      },
-      "services": {
-        type: 'array'
-      },
-      "validators": {
-        type: 'array'
-      },
+      }
    },
   }

@@ -21,6 +21,7 @@ import DisplayIndivProfile from './components/mainPages/displayIndivProfile'
 import Admin from './components/mainPages/admin'
 import Pledge from './components/mainPages/pledge'
 import Announcements from './components/mainPages/announcements'
+import Dashboard from './components/mainPages/dashboard'
 import { Home } from './components/mainPages/home'
 
 
@@ -55,9 +56,6 @@ const useStyles = makeStyles((theme) => ({
       marginTop: '-100px',
       marginLeft: '-100px'
     },
-    content: {
-        maxWidth: '40%'
-    },
     centeredPhrase: {
         maxWidth: '450px',
         height: '100px',
@@ -69,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: '-100px'
       },
     container: {
-        maxWidth: '40%'
+        maxWidth: '60%'
     },
     containerFull: {
         maxWidth: '100%'
@@ -233,6 +231,13 @@ const App = () => {
                     >
                     { children }
                 </GuildProfile>
+            </Route>
+            <Route exact path="/dashboard">
+            <Dashboard
+                state={state}
+                >
+                { children }
+            </Dashboard>
             </Route>
             <Route path="/guild-profiles/:guildDid">
                 <DisplayGuildProfile />

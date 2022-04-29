@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { appStore, onAppMount } from '../../../state/app'
-import { ceramic } from '../../../utils/ceramic'
+import React, { useState } from 'react'
+
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -20,55 +19,30 @@ const useStyles = makeStyles((theme) => ({
   },
   }));
 
-export default function Purpose(props) {
+export default function GoToPersonas(props) {
   const [open, setOpen] = useState(true)
-  const [purpose, setPurpose] = useState('')
   const classes = useStyles()
- 
-  const { state, dispatch, update } = useContext(appStore)
   
   const { 
-    handlePurposeClickState, 
-    contractId,
+    handleEditGuildClickState
   } = props
   
-  const {
-    factoryContract,
-    didRegistryContract,
-    appIdx
-  } = state
-
-    useEffect(
-      () => {
-
-        async function fetchData(){
-          if(contractId){
-            let contractDid = await ceramic.getDid(contractId, factoryContract, didRegistryContract)
-            let community = await appIdx.get('guildProfile', contractDid)
-            community ? setPurpose(community.purpose) : setPurpose('Not set yet!')
-          }
-        }
-        fetchData()
-      }, []
-      )
-
   const handleClickOpen = () => {
     setOpen(true)
   };
 
   const handleClose = () => {
-    handlePurposeClickState(false)
+    handleEditGuildClickState(false)
   }
-
 
   return (
     <div>
       <Dialog open={open} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Guild Purpose</DialogTitle>
+        <DialogTitle id="form-dialog-title">Oops</DialogTitle>
         <DialogContent className={classes.rootForm}>
               <Card>
               <CardContent>
-                <div dangerouslySetInnerHTML={{ __html: purpose}}></div>
+                <Typography variant="body1">Looks like this is a registered Persona. Please head on over to <a href="https://nearpersonas.live">NEAR Personas</a> to manage it.</Typography>
               </CardContent>
           </Card>
           </DialogContent>

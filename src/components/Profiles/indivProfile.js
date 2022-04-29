@@ -29,41 +29,12 @@ import { Divider } from '@mui/material'
 // CSS Styles
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      maxWidth: 800,
-      minWidth: 325,
-      minHeight: 325,
-      
-    },
-    card: {
-      margin: 'auto',
-    },
     progress: {
         display: 'flex',
         justifyContent: 'center',
         height: '200px',
         width: '200px',
         alignItems: 'center',
-    },
-    actionsContainer: {
-      marginBottom: '20px',
-    },
-    large: {
-        width: '100px',
-        height: 'auto',
-        textAlign: 'center',
-        marginRight: '15px',
-    },
-    centered: {
-        textAlign: 'center'
-    },
-    accHeading: {
-      fontSize: '18px',
-      fontWeight: 'bold',
-    },
-    heading: {
-      fontSize: 18,
-      marginLeft: '10px'
     },
     }));
 

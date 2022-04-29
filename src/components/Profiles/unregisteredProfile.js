@@ -29,15 +29,6 @@ import { Button } from '@mui/material'
 // CSS Styles
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      maxWidth: 800,
-      minWidth: 325,
-      minHeight: 325,
-      
-    },
-    card: {
-      margin: 'auto',
-    },
     centered: {
         position: 'fixed',
         top: '40%',
@@ -47,23 +38,6 @@ const useStyles = makeStyles((theme) => ({
         position: 'fixed',
         top: '40%',
         left: 'calc(50% - 105px)',
-    },
-    actionsContainer: {
-      marginBottom: '20px',
-    },
-    large: {
-        width: '100px',
-        height: 'auto',
-        textAlign: 'center',
-        marginRight: '15px',
-    },
-    accHeading: {
-      fontSize: '18px',
-      fontWeight: 'bold',
-    },
-    heading: {
-      fontSize: 18,
-      marginLeft: '10px'
     },
     }));
 

@@ -10,7 +10,6 @@ import { signal, nameSuffix } from '../../../state/near'
 
 
 // Material UI Components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import { LinearProgress } from '@mui/material'
 import { Grid } from '@mui/material'
@@ -24,29 +23,6 @@ import Chip from '@mui/material/Chip'
 import StarsIcon from '@mui/icons-material/Stars'
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount'
 
-const useStyles = makeStyles((theme) => ({
-    pos: {
-        marginTop: 0,
-    },
-    card: {
-      minWidth: '200px',
-      maxWidth: '200px',
-      verticalAlign: 'middle',
-      margin: '10px 10px 10px 10px',
-      padding: '2px'
-    },
-    cardMobile: {
-      minWidth: '100%',
-      verticalAlign: 'middle',
-      margin: '10px 10px 10px 10px',
-      padding: '2px'
-    },
-    square: {
-      float: 'left',
-      marginRight: '10px',
-      marginTop: '5px',
-    }
-  }));
 
 const imageName = require('../../../img/default-profile.png') // default no-image avatar
 const sortDown = require('../../../img/sortdown.png')
@@ -82,7 +58,6 @@ export default function AdminCard(props) {
 
     const { register, handleSubmit, watch, errors, control, reset, setValue, getValues } = useForm()
 
-    const classes = useStyles();
 
     const { 
       personId
@@ -122,7 +97,7 @@ export default function AdminCard(props) {
             let thisCurUserIdx
             try{
               let personAccount = new nearAPI.Account(near.connection, personId)
-              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, near, didRegistryContract)
+              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, factoryContract, didRegistryContract)
               setCurUserIdx(thisCurUserIdx)
               } catch (err) {
                 console.log('problem getting curuseridx', err)

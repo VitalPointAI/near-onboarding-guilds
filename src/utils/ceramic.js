@@ -21,6 +21,9 @@ import { notificationSchema } from '../schemas/notifications'
 import { metadataSchema } from '../schemas/metadata'
 import { apiKeysSchema } from '../schemas/apiKeys'
 import { announcementSchema } from '../schemas/announcements'
+import { opportunitiesSchema } from '../schemas/opportunities'
+import { daoProfileSchema } from '../schemas/daoProfile'
+import { nearPriceHistorySchema } from '../schemas/nearPriceHistory'
 
 import { config } from '../state/config'
 
@@ -388,7 +391,7 @@ console.log('TOKENCALL', TOKEN_CALL)
   }
 
 
-  async associateAppDID(accountId, contract, ceramic, publicKey) {
+  async associateAppDID(accountId, contract, ceramic) {
     /** Try and retrieve did from  contract if it exists */
       let did
         let didPresent = await contract.hasDID({accountId: accountId})
@@ -482,13 +485,13 @@ console.log('TOKENCALL', TOKEN_CALL)
 
 
   // application IDX - maintains most up to date schemas and definitions ensuring chain always has the most recent commit
-  async getAppIdx(contract, account, publicKey){
+  async getAppIdx(contract, account){
   
     const appClient = await this.getAppCeramic(account.accountId)
 
     const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
 
-    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient, publicKey)
+    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient)
   
     // Retrieve cached aliases
     // let rootAliases = get(ALIASES, [])
@@ -512,6 +515,9 @@ console.log('TOKENCALL', TOKEN_CALL)
       const guildProfile = this.getAlias(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
       const apiKeys = this.getAlias(APP_OWNER_ACCOUNT, 'apiKeys', appClient, apiKeysSchema, 'guild api keys', contract)
       const announcements = this.getAlias(APP_OWNER_ACCOUNT, 'announcements', appClient, announcementSchema, 'guild announcements', contract)
+      const opportunities = this.getAlias(APP_OWNER_ACCOUNT, 'opportunities', appClient, opportunitiesSchema, 'opportunities to complete', contract)
+      const daoProfile = this.getAlias(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'dao profiles', contract)
+      const nearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, 'nearPriceHistory', appClient, nearPriceHistorySchema, 'near price history', contract)
      
       const done = await Promise.all([
         appDid, 
@@ -523,7 +529,10 @@ console.log('TOKENCALL', TOKEN_CALL)
         notifications,
         guildProfile,
         apiKeys,
-        announcements
+        announcements,
+        opportunities,
+        daoProfile,
+        nearPriceHistory
       ])
       
       let rootAliases = {
@@ -535,7 +544,10 @@ console.log('TOKENCALL', TOKEN_CALL)
         notifications: done[6],
         guildProfile: done[7],
         apiKeys: done[8],
-        announcements: done[9]
+        announcements: done[9],
+        opportunities: done[10],
+        daoProfile: done[11],
+        nearPriceHistory: done[12]
       }
 
       // cache aliases
@@ -582,7 +594,7 @@ console.log('TOKENCALL', TOKEN_CALL)
 
 
   // retrieve user identity
-  async getUserIdx(account, appIdx, near, factoryContract, registryContract){
+  async getUserIdx(account, appIdx, factoryContract, registryContract){
       let seed = false
       set(KEY_REDIRECT, {action: false, link: ''})
 
@@ -691,14 +703,14 @@ console.log('TOKENCALL', TOKEN_CALL)
     
     try{
       did = await registryContract.getDID({accountId: accountId})
-      if(did){
+      if(did != 'none'){
         return did
       }
     } catch (err) {
       console.log('error retrieving did from legacy', err)
     }
     
-    if (!did){
+    if (did == 'none'){
      try {
       dao = await factoryContract.getDaoByAccount({accountId: accountId})
       did = dao.did

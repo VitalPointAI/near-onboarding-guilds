@@ -91,7 +91,7 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
             //Initiate App Ceramic Components
     
             const appIdx = await ceramic.getAppIdx(didRegistryContract, account, near)
-            let curUserIdx = await ceramic.getUserIdx(account, appIdx, near, factoryContract, didRegistryContract)
+            let curUserIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
             update('accountData', { curUserIdx })
            
         }

@@ -1,0 +1,8 @@
+.line {
+    stroke: steelblue;
+    stroke-width: 2px;
+}
+
+.MuiPagination-ul{
+    justify-content: center;
+}

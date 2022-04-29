@@ -93,21 +93,24 @@ const Header = ({ state, handleUpdate }) => {
     }
     
     return (
-        <div>
-        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '10px', paddingLeft: '10px', backgroundColor: 'black'}}>
+        
+        <Grid container justifyContent="space-between" alignItems="center" spacing={1} style={{paddingRight: '10px', paddingLeft: '10px', paddingBottom: '5px', backgroundColor: 'black'}}>
             
             {wallet && wallet.signedIn ? 
                 !matches ? (
                     <>
                     <Grid item >
+                    <div style={{float:'left', marginTop: '15px'}}>
                         <LeftSideDrawer
-                        state={state}                        
+                        state={state}    
                         />
+                    </div>
                         <Link to="/"> 
                             <ImageLoader image={nearLogo} style={logoStyle}/>
                         </Link>
                     </Grid>
-                    <Grid item style={{minWidth: '100px'}} >
+                    <Grid item style={{minWidth: '100px'}}>
+        
                         {wallet && !wallet.signedIn ? <LoginButton /> :  
                             <Stack direction="row" spacing={1} justifyContent="center">
                                 <Typography variant="overline" style={{color:'#FFFFFF'}}>
@@ -122,14 +125,16 @@ const Header = ({ state, handleUpdate }) => {
                 : (
                     <>
                     <Grid item >
-                        <LeftSideDrawer
-                        state={state}                        
-                        />
+                        <div style={{float:'left', marginTop: '15px'}}>
+                            <LeftSideDrawer
+                            state={state}                        
+                            />
+                        </div>
                         <Link to="/"> 
                             <ImageLoader image={nearLogo} style={logoStyle}/>
                         </Link>
                     </Grid>
-                    <Grid item style={{minWidth: '100px'}} >
+                    <Grid item  style={{minWidth: '100px'}}>
                         {wallet && !wallet.signedIn ? <LoginButton /> :  
                             <Stack spacing={1} justifyContent="center">
                                 <Typography variant="overline" style={{color:'#FFFFFF'}}>
@@ -145,10 +150,15 @@ const Header = ({ state, handleUpdate }) => {
             wallet && !wallet.signedIn ? 
                 !matches ? (
                     <>
-                    <Grid item>
-                    <Link to="/"> 
-                        <ImageLoader image={nearLogo} style={logoStyle}/>
-                    </Link>
+                    <Grid item >
+                        <div style={{float:'left', marginTop: '15px'}}>
+                            <LeftSideDrawer
+                                state={state}                        
+                            />
+                        </div>
+                        <Link to="/"> 
+                            <ImageLoader image={nearLogo} style={logoStyle}/>
+                        </Link>
                     </Grid>
                     <Grid item style={{minWidth: '100px'}}>
                         {wallet && !wallet.signedIn ? <LoginButton /> :   
@@ -163,11 +173,13 @@ const Header = ({ state, handleUpdate }) => {
                     </>
                 ) : (
                     <>
-                    <Grid item>
-                        <LeftSideDrawer
-                            state={state}
-                        
-                        />
+                    <Grid item >
+                        <div style={{float:'left', marginTop: '15px'}}>
+                            <LeftSideDrawer
+                                state={state}
+                            
+                            />
+                        </div>
                         <Link to="/"> 
                             <ImageLoader image={nearLogo} style={logoStyle}/>
                         </Link>
@@ -188,7 +200,8 @@ const Header = ({ state, handleUpdate }) => {
         }
             
         </Grid>
-        </div>
+        
+      
     )
 }
 

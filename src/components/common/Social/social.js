@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
+import { daoRootName } from '../../../state/near'
 
 // Material-UI Components
 import { Grid } from '@mui/material'
@@ -10,7 +11,7 @@ import TelegramIcon from '@mui/icons-material/Telegram'
 import LanguageIcon from '@mui/icons-material/Language'
 
 const discordIcon = require('../../../img/discord-icon.png')
-const catalystIcon = require('../../../img/catalyst.png')
+const catalystIcon = require('../../../img/catalyst-logo-mobile.png')
 const astroIcon = require('../../../img/astro.png')
 
 export default function Social(props){
@@ -21,13 +22,14 @@ export default function Social(props){
     const [telegramLink, setTelegramLink] = useState('')
     const [discordLink, setDiscordLink] = useState('')
     const [websiteLink, setWebsiteLink] = useState('')
+    const [platform, setPlatform] = useState('')
+    const [contractId, setContractId] = useState('')
 
     const {
         did,
         type,
-        platform,
-        platformLink,
-        appIdx
+        appIdx,
+        summoner
     } = props
 
     useEffect(
@@ -42,6 +44,8 @@ export default function Social(props){
                         result.telegram ? setTelegramLink(`https://t.me/${result.telegram}`) : null
                         result.discord ? setDiscordLink(result.discord) : null
                         result.website ? setWebsiteLink(`https://${result.website}`) : null
+                        result.platform ? setPlatform(result.platform) : null
+                        result.contractId ? setContractId(result.contractId) : null
                     }
                 }
             }
@@ -97,11 +101,17 @@ export default function Social(props){
             </a>
         </Grid>
         : null }
-        {platform && platformLink != '' ?
+        {platform == 'Catalyst' ?
         <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
-            <a href={platformLink}>
-                <img src={platform == 'Catalyst' ? catalystIcon :
-            platform== 'Astro' ? astroIcon : null} alt="Catalyst" style={{width: '24px', height: 'auto'}}/>
+            <a href={`${daoRootName}/projects/${summoner}`}>
+                <img src={catalystIcon} alt="Catalyst Projects" style={{width: '24px', height: 'auto'}}/>
+            </a>
+        </Grid>
+        : null }
+        {platform == 'Astro' ?
+        <Grid item xs={1} sm={1} md={1} lg={1} xl={1}>
+            <a href={`https://app.astrodao.com/dao/${contractId}`}>
+                <img src={astroIcon} alt="Astro" style={{width: '24px', height: 'auto'}}/>
             </a>
         </Grid>
         : null }

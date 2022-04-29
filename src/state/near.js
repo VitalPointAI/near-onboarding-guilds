@@ -1,12 +1,15 @@
 import * as nearAPI from 'near-api-js'
 import { get, set, del } from '../utils/storage'
 import { APP_OWNER_ACCOUNT, ceramic } from '../utils/ceramic'
+import { IDX } from '@ceramicstudio/idx'
 import { registry } from '../utils/registry'
 import { config } from './config'
 import { factory } from '../utils/factory'
 import { nft } from '../utils/nft'
 import { funding } from '../utils/funding'
 import { queries } from '../utils/graphQueries'
+import { catalystDao } from '../utils/catalystDao'
+import { yearPriceHistorySchema } from '../schemas/yearPriceHistory'
 const axios = require('axios').default
 
 export const {
@@ -62,11 +65,13 @@ export const {
     REGISTRY_API_URL, 
     FIRST_TIME,
     NO_GAS,
-    rootName,
+    personaRootName,
+    guildRootName,
     MAIL_URL,
     AUTH_TOKEN,
     SENDY_API_KEY_CALL,
-    FUNDING_SEED_CALL
+    FUNDING_SEED_CALL,
+    daoRootName
 } = config
 
 export const {
@@ -115,10 +120,11 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         })
         window.location.assign('/')
     }
-
+   
     wallet.signedIn = wallet.isSignedIn()
     if (wallet.signedIn) {
         wallet.balance = formatNearAmount((await wallet.account().getAccountBalance()).available, 2)
+        update('',{balance: wallet.balance})
     }
 
     wallet.isAccountTaken = async (accountId) => {
@@ -163,10 +169,6 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
         const account = wallet.account()
         const accountId = account.accountId
-
-        let keyPair = await near.connection.signer.keyStore.getKey(networkId, accountId)
-        let pKey = keyPair.getPublicKey().toString().split(':')[1]
-        update('', {pKey: pKey})
 
         // ********* Initialize Registry/Funding Contract****************
         // let thisAllowance = parseNearAmount('2')
@@ -214,10 +216,10 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
         //Initiate App Ceramic Components
 
-        const appIdx = await ceramic.getAppIdx(didRegistryContract, account, pKey)
+        const appIdx = await ceramic.getAppIdx(didRegistryContract, account)
         console.log('appidx', appIdx)
 
-        let curUserIdx = await ceramic.getUserIdx(account, appIdx, near, factoryContract, didRegistryContract)
+        let curUserIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
         console.log('curuseridx', curUserIdx)
 
         // ********* All Announcements ****************
@@ -233,12 +235,12 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         if (curUserIdx) {
             did = curUserIdx.id
         }
-
+        console.log('near did', did)
         let accountType
         try{
             accountType = await didRegistryContract.getType({accountId: accountId})
         } catch (err) {
-            accountType = 'not registered'
+            accountType = 'none'
             console.log('account not registered, not type avail', err)
         }
         console.log('accounttype', accountType)
@@ -250,13 +252,9 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             console.log('problem getting verification status', err)
         }
 
+        
+
         // graphQL queries
-
-        // let allMints = await queries.getAllMints()
-        // console.log('allMints', allMints)
-        // let allTransfers = await queries.getAllTransfers()
-        // console.log('allTransfers', allTransfers)
-
         
         // determine list of current guilds (take into account those that have been deleted)
         let currentGuildsList = await queries.getGuilds()
@@ -264,44 +262,13 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         let deletedGuildsList = await queries.getDeletedGuilds()
         console.log('deletedguildslist', deletedGuildsList)
 
-        let currentGuilds = []
-        let guildExists = false
-        let mostRecent = false
-        let lastIndexAdd
-        let lastIndexDelete
+        let currentActiveDaos = await updateCurrentCommunities()
+        console.log('active daos', currentActiveDaos)
 
-    // first - start the loop to look through every one of the guild entries
-    for(let k = 0; k < currentGuildsList.data.putDIDs.length; k++){
-        console.log('account', currentGuildsList.data.putDIDs[k].accountId)
-        // make sure it hasn't already been added to the current guilds list
-        if(currentGuilds.filter(e => e.accountId == currentGuildsList.data.putDIDs[k].accountId).length == 0){
-                for(let n = 0; n < currentGuildsList.data.putDIDs.length; n++){
-                    if(currentGuildsList.data.putDIDs[k].accountId == currentGuildsList.data.putDIDs[n].accountId){
-                        lastIndexAdd = n
-                    }
-                }
-       
-            // step 2 - get index of the last time the accountId was deleted
-            for(let x = 0; x < deletedGuildsList.data.deleteDIDs.length; x++){
-                if(currentGuildsList.data.putDIDs[lastIndexAdd].accountId == deletedGuildsList.data.deleteDIDs[x].accountId){
-                    lastIndexDelete = x
-                }
-            }
-
-            //  step 3 - if there is a last index added, compare last added with 
-            //  last deleted to see if it is still an active guild.  Push it to the
-            //  list of current guilds.
-            if(lastIndexAdd > 0 ){
-                if(parseFloat(currentGuildsList.data.putDIDs[lastIndexAdd].registered) > parseFloat(deletedGuildsList.data.deleteDIDs[lastIndexDelete].time)) {
-                     currentGuilds.push(currentGuildsList.data.putDIDs[lastIndexAdd])
-                }
-            }
-        }
-    }
-    
-    console.log('currentGuilds', currentGuilds)
+        let currentGuilds = await updateCurrentGuilds()
+        update('',{currentGuilds, currentActiveDaos})
         
-        // for(let ii = 0; ii < currentGuildsList.data.putDIDs.length; ii++){
+        // for(let ii = 0; ii < sortedGuilds.length; ii++){
         //     for(let jj = 0; jj < deletedGuildsList.data.deleteDIDs.length; jj++){
         //         if(currentGuildsList.data.putDIDs[ii].accountId == deletedGuildsList.data.deleteDIDs[jj].accountId){
         //             guildExists = true
@@ -455,86 +422,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             accountId,
             curUserIdx })
         
-        if(curUserIdx){
-            // check localLinks, see if they're still valid
-            let state = getState()
-
-            //synch local links with what's stored for the account in ceramic
-            let allAccounts = await ceramic.downloadKeysSecret(curUserIdx, 'accountsKeys')
-        
-            let storageLinks = get(ACCOUNT_LINKS, [])
-            
-            let k = 0
-            let didMakeChange = false
-            while(k < allAccounts.length){
-                // ensure all the existing online accounts and offline accounts match
-                let j = 0
-                while (j < storageLinks.length){
-                    if(allAccounts[k].accountId == storageLinks[j].accountId){
-                        if(allAccounts[k].key != storageLinks[j].key){
-                            allAccounts[k].key = storageLinks[j].key
-                            didMakeChange = true
-                        }
-                        if(allAccounts[k].owner != storageLinks[j].owner){
-                            allAccounts[k].owner = storageLinks[j].owner
-                            didMakeChange = true
-                        }
-                        if(allAccounts[k].keyStored != storageLinks[j].keyStored){
-                            allAccounts[k].keyStored = storageLinks[j].keyStored
-                            didMakeChange = true
-                        }
-                        if(allAccounts[k].publicKey != storageLinks[j].publicKey){
-                            allAccounts[k].publicKey = storageLinks[j].publicKey
-                            didMakeChange = true
-                        }
-                    }
-                    j++
-                }
-            k++
-            }
-                    
-            // add any accounts that are missing
-            let p = 0
-            let wasMissing = false
-            while(p < storageLinks.length){
-                let q = 0
-                let exists = false
-                while (q < allAccounts.length){
-                    if(storageLinks[p].accountId == allAccounts[q].accountId){
-                        exists = true
-                    } 
-                q++
-                }
-                if(!exists){
-                    allAccounts.push(storageLinks[p])
-                    wasMissing = true
-                }
-                p++
-            }
-            
-            // remove duplicates
-            let copyArray = allAccounts
-            let z = 0
-            let wasDuplicate = false
-            while(z < allAccounts.length){
-                let r = 0
-                let count = 0
-                while(r < copyArray.length){
-                    if(copyArray[r].accountId == allAccounts[z].accountId){
-                        count++
-                        if(count > 1) copyArray.splice(r,1)
-                        wasDuplicate = true
-                    }
-                    r++
-                }
-                z++
-            }
-
-            if(didMakeChange || wasMissing || wasDuplicate){
-                await ceramic.storeKeysSecret(curUserIdx, allAccounts, 'accountsKeys')
-                set(ACCOUNT_LINKS, allAccounts)
-            }
-        }
+        curUserIdx ? await synchAccountLinks(curUserIdx) : null
 
         finished = true
 
@@ -552,7 +440,7 @@ export async function login() {
         networkId, nodeUrl, walletUrl, deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
     })
     const connection = new nearAPI.WalletConnection(near)
-    connection.requestSignIn(contractName, 'Space Gem', rootName)
+    connection.requestSignIn(contractName, 'Near Guilds', guildRootName)
 }
 
 
@@ -749,13 +637,13 @@ export function formatDateString(timestamp){
     } 
 }
 
-export async function signalCounter(signalType, contractId, accountId, proposalType, near, appIdx, didRegistryContract, guildDid){
+export async function signalCounter(signalType, contractId, accountId, proposalType, near, appIdx, didRegistryContract, guildDid, factoryContract){
     let currentProperties
     let stream
     console.log('contractId here', contractId)
       console.log('guild did here', guildDid)
     let guildAccount = new nearAPI.Account(near.connection, contractId)
-    let curDaoIdx = await ceramic.getUserIdx(guildAccount, appIdx, near, didRegistryContract)
+    let curDaoIdx = await ceramic.getUserIdx(guildAccount, appIdx, factoryContract, didRegistryContract)
     console.log('this curdaoidx here', curDaoIdx)
     switch(proposalType){
         case 'guild':
@@ -923,6 +811,54 @@ export async function spaceMint(metadata, owner) {
         }, GAS)
 }
 
+export async function updateCurrentGuilds() {
+    let currentGuildsList = await queries.getGuilds()
+    let sortedGuilds = _.sortBy(currentGuildsList.data.putDIDs, 'registered')
+    let deletedGuildsList = await queries.getDeletedGuilds()
+    let sortedDeletedGuilds = _.sortBy(deletedGuildsList.data.deleteDIDs, 'time')
+
+    let currentGuilds = []
+    let lastIndexAdd
+    let lastIndexDelete
+
+    // first - start the loop to look through every one of the guild entries
+    for(let k = 0; k < sortedGuilds.length; k++){
+      
+        // make sure it hasn't already been added to the current guilds list
+        if(currentGuilds.filter(e => e.accountId == sortedGuilds[k].accountId).length == 0){
+                for(let n = 0; n < sortedGuilds.length; n++){
+                    if(sortedGuilds[k].accountId == sortedGuilds[n].accountId){
+                        lastIndexAdd = n
+                    }
+                }
+         
+            // step 2 - get index of the last time the accountId was deleted
+            for(let x = 0; x < sortedDeletedGuilds.length; x++){
+                if(sortedGuilds[lastIndexAdd].accountId == sortedDeletedGuilds[x].accountId){
+                    lastIndexDelete = x
+                }
+            }
+          
+            //  step 3 - if there is a last index added, compare last added with 
+            //  last deleted to see if it is still an active guild.  Push it to the
+            //  list of current guilds.
+            if(lastIndexAdd >= 0 ){
+                if(!lastIndexDelete){
+                    currentGuilds.push(sortedGuilds[lastIndexAdd])
+                }
+                if(lastIndexDelete){
+                    if(parseFloat(sortedGuilds[lastIndexAdd].registered) > parseFloat(sortedDeletedGuilds[lastIndexDelete].time)) {
+                        currentGuilds.push(sortedGuilds[lastIndexAdd])
+                    }
+                }
+            }
+        }
+    }
+
+console.log('currentGuilds', currentGuilds)
+return currentGuilds
+}
+
 export async function getSendyAPI(){
     let token = get(AUTH_TOKEN, [])
 
@@ -935,3 +871,533 @@ export async function getSendyAPI(){
       })
     return retrieveSeed
 }
+
+export async function synchAccountLinks(curUserIdx){
+
+    //synch local links with what's stored for the account in ceramic
+    let allAccounts = await ceramic.downloadKeysSecret(curUserIdx, 'accountsKeys')
+
+    let storageLinks = get(ACCOUNT_LINKS, [])
+    
+    let k = 0
+    let didMakeChange = false
+    while(k < allAccounts.length){
+        // ensure all the existing online accounts and offline accounts match
+        let j = 0
+        while (j < storageLinks.length){
+            if(allAccounts[k].accountId == storageLinks[j].accountId){
+                if(allAccounts[k].key != storageLinks[j].key){
+                    allAccounts[k].key = storageLinks[j].key
+                    didMakeChange = true
+                }
+                if(allAccounts[k].owner != storageLinks[j].owner){
+                    allAccounts[k].owner = storageLinks[j].owner
+                    didMakeChange = true
+                }
+                if(allAccounts[k].keyStored != storageLinks[j].keyStored){
+                    allAccounts[k].keyStored = storageLinks[j].keyStored
+                    didMakeChange = true
+                }
+                if(allAccounts[k].publicKey != storageLinks[j].publicKey){
+                    allAccounts[k].publicKey = storageLinks[j].publicKey
+                    didMakeChange = true
+                }
+            }
+            j++
+        }
+    k++
+    }
+            
+    // add any accounts that are missing
+    let p = 0
+    let wasMissing = false
+    while(p < storageLinks.length){
+        let q = 0
+        let exists = false
+        while (q < allAccounts.length){
+            if(storageLinks[p].accountId == allAccounts[q].accountId){
+                exists = true
+            } 
+        q++
+        }
+        if(!exists){
+            allAccounts.push(storageLinks[p])
+            wasMissing = true
+        }
+        p++
+    }
+    
+    // remove duplicates
+    let copyArray = allAccounts
+    let z = 0
+    let wasDuplicate = false
+    while(z < allAccounts.length){
+        let r = 0
+        let count = 0
+        while(r < copyArray.length){
+            if(copyArray[r].accountId == allAccounts[z].accountId){
+                count++
+                console.log('count', count)
+                if(count > 1) {
+                    copyArray.splice(r,1)
+                    wasDuplicate = true
+                }
+            }
+            r++
+        }
+        z++
+    }
+    allAccounts = copyArray
+    console.log('copy array', copyArray)
+    console.log('didMakeChange', didMakeChange)
+    console.log('wasMissing', wasMissing)
+    console.log('wasDuplicate', wasDuplicate)
+    console.log('all accounts', allAccounts)
+
+    if(didMakeChange || wasMissing || wasDuplicate){
+        await ceramic.storeKeysSecret(curUserIdx, allAccounts, 'accountsKeys')
+        set(ACCOUNT_LINKS, allAccounts)
+    }
+}
+
+export async function getCommunityMemberStatus(platform, contractId, account){
+    if(platform == 'Catalyst'){
+        try{
+            let contract = await catalystDao.initDaoContract(account, contractId)
+            let thisMemberStatus = await contract.getMemberStatus({member: account.accountId})
+            return thisMemberStatus
+        } catch (err) {
+            console.log('error retrieving community member status', err)
+        }
+    }
+}
+
+export async function updateCurrentCommunities() {
+    let currentCommunitiesList = await queries.getAllCommunities()
+    let sortedCommunities = _.sortBy(currentCommunitiesList.data.createDAOs, 'created')
+    console.log('currentCommunitieslist', currentCommunitiesList)
+    console.log('sortedCommunities', sortedCommunities)
+    let inactivatedCommunitiesList = await queries.getAllInactivatedCommunities()
+    let sortedInactivatedCommunities = _.sortBy(inactivatedCommunitiesList.data.inactivateDAOs, 'deactivated')
+    console.log('inactivatedCommunitieslist', inactivatedCommunitiesList)
+    console.log('sorted inactivatedCommunities', sortedInactivatedCommunities)
+
+    let currentCommunities = []
+    let lastIndexAdd
+    let lastIndexDelete
+
+    // first - start the loop to look through every one of the community entries
+    for(let k = 0; k < sortedCommunities.length; k++){
+        console.log('account', sortedCommunities[k].contractId)
+        // make sure it hasn't already been added to the current communities list
+        if(currentCommunities.filter(e => e.contractId == sortedCommunities[k].contractId).length == 0){
+                for(let n = 0; n < sortedCommunities.length; n++){
+                    if(sortedCommunities[k].contractId == sortedCommunities[n].contractId){
+                        lastIndexAdd = n
+                    }
+                }
+            console.log('lastIndexAdd', lastIndexAdd)
+            // step 2 - get index of the last time the contractId was deleted
+            for(let x = 0; x < sortedInactivatedCommunities.length; x++){
+                if(sortedCommunities[lastIndexAdd].contractId == sortedInactivatedCommunities[x].contractId){
+                    lastIndexDelete = x
+                }
+            }
+            console.log('lastIndexDelete', lastIndexDelete)
+            //  step 3 - if there is a last index added, compare last added with 
+            //  last deleted to see if it is still an active guild.  Push it to the
+            //  list of current guilds.
+            if(lastIndexAdd > 0 ){
+                console.log('comparison', parseFloat(sortedCommunities[lastIndexAdd].created) > parseFloat(sortedInactivatedCommunities[lastIndexDelete].deactivated))
+                if(parseFloat(sortedCommunities[lastIndexAdd].created) > parseFloat(sortedInactivatedCommunities[lastIndexDelete].deactivated)) {
+                    currentCommunities.push(sortedCommunities[lastIndexAdd])
+                }
+            }
+        }
+    }
+
+console.log('currentCommunities', currentCommunities)
+return currentCommunities
+}
+
+export function getStatus(flags) {
+    console.log('flags', flags)
+    
+   /* flags [
+        0: sponsored, 
+        1: processed, 
+        2: didPass, 
+        3: cancelled,
+    ]
+    */
+    let sponsored = flags[0]
+    console.log('sponsored', sponsored)
+    let processed = flags[1]
+    console.log('processed', processed)
+    let passed = flags[2]
+    console.log('passed', passed)
+    let cancelled = flags[3]
+    console.log('cancelled', cancelled)
+
+    if(cancelled){
+        return 'Cancelled'
+    }
+    if(!sponsored && !processed && !passed && !cancelled){
+        return 'Submitted'
+    }
+    if(sponsored && !processed && !passed && !cancelled){
+         return 'Sponsored'
+    }
+    if(sponsored && processed && passed){
+        return 'Passed'
+    }
+    if(sponsored && processed && !passed){
+        return 'Not Passed'
+    }    
+}
+
+export function getCombinedSkills(accountType, persona){
+     let combinedPersonaSkills = []
+     if(accountType != 'guild'){
+    //    if(persona && Object.keys(persona).length > 0){
+    //        for (const [key, value] of Object.entries(persona.developerSkillSet)){
+    //        if(value){
+    //            combinedPersonaSkills.push(value)
+    //        }
+    //        }
+    //        for (const [key, value] of Object.entries(persona.skillSet)){
+    //        if(value){
+    //            combinedPersonaSkills.push(value)
+    //        }
+    //        }
+    //    }
+
+       if (persona && persona.personaSkills.length > 0){
+         persona.personaSkills.map((values, index) => {
+           if(values.name){
+             combinedPersonaSkills.push(values.name)
+           }
+         })
+       }
+
+       if (persona && persona.personaSpecificSkills.length > 0){
+         persona.personaSpecificSkills.map((values, index) => {
+           if(values.name){
+             combinedPersonaSkills.push(values.name)
+           }
+         })
+       }
+       console.log('combinedpersonaskills', combinedPersonaSkills)
+       return combinedPersonaSkills
+     } else {
+        // if(persona && Object.keys(persona).length > 0){
+        //     console.log('here0')
+        //     for (const [key, value] of Object.entries(persona.skills)){
+        //         console.log('key', key)
+        //         console.log('value', value)
+        //     if(value){
+        //         combinedPersonaSkills.push(value)
+        //     }
+        //     }
+        //     for (const [key, value] of Object.entries(persona.specificSkills)){
+        //     if(value){
+        //         combinedPersonaSkills.push(value)
+        //     }
+        //     }
+        // }
+ 
+        if (persona && persona.skills.length > 0){
+            console.log('here1')
+          persona.skills.map((values, index) => {
+            if(values.name){
+              combinedPersonaSkills.push(values.name)
+            }
+          })
+        }
+ 
+        if (persona && persona.specificSkills.length > 0){
+            console.log('here2')
+          persona.specificSkills.map((values, index) => {
+            if(values.name){
+              combinedPersonaSkills.push(values.name)
+            }
+          })
+        }
+        console.log('combinedpersonaskills guild', combinedPersonaSkills)
+        return combinedPersonaSkills
+     }
+
+}
+
+
+export function getPrice(priceArray, date, currency){
+    console.log('passed in date', date)
+    console.log('passed in pricearray', priceArray)
+    if(priceArray && priceArray.length > 0){
+        console.log('stake here0')
+        for(let a = 0; a < priceArray.length; a++){
+            if(priceArray[a].date == date){
+                console.log('price Array date', priceArray[a].date)
+                console.log('stake here 1')
+                let obj = priceArray[a].currentPrice
+                console.log('stake obj', obj)
+                let asArray = Object.entries(obj)
+                let price = asArray.filter(([key, value]) => key == currency)
+                console.log('price here', price)
+                if(price){
+                    return price[0][1]
+                }
+            }
+        }
+    }
+    return false
+}
+
+export async function buildPriceTable(from, to, accountId){
+    let appClient = await ceramic.getAppCeramic(accountId)
+    let allAliases = await queries.getAliases()
+    const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+
+    let everyDayAlias = []
+    for (let day = new Date(from); day <= new Date(to); day.setDate(day.getDate() + 1)) {
+        let dayYear = new Date(day).getFullYear()
+        let dayD = new Date(day).getMonth()
+        let dayMonth = uniqueMonthArray[dayD]
+        everyDayAlias.push(dayYear+dayMonth+'NearPriceHistory')
+    }
+
+    let aliasList = everyDayAlias.filter((x, i, a) => a.indexOf(x) === i)
+    console.log('aliasList', aliasList)
+
+    let aliases = {}
+    for(let y = 0; y < aliasList.length; y++){
+        for(let x = 0; x < allAliases.data.storeAliases.length; x++){
+            if(aliasList[y] == allAliases.data.storeAliases[x].alias){
+                aliases = {...aliases, [aliasList[y]]: allAliases.data.storeAliases[x].definition}
+            }
+        }
+    }
+    console.log('aliases', aliases)
+
+    let thisIdx = new IDX({ ceramic: appClient, aliases: aliases})
+    console.log('thisidx', thisIdx)
+
+    let pricingArray = []
+    for(let z = 0; z < aliasList.length; z++){
+        let priceObject = await thisIdx.get(aliasList[z], thisIdx.id)
+        console.log('priceobject', priceObject)
+        if(priceObject != null){
+            pricingArray = pricingArray.concat(priceObject.history)
+        }
+    }
+
+    console.log('pricingArray', pricingArray)
+    return pricingArray
+}
+
+export async function getAPrice(date, currency, accountId, appIdx){
+    let appClient = await ceramic.getAppCeramic(accountId)
+    let allAliases = await queries.getAliases()
+    const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    let year = (new Date(date)).getFullYear()
+    let d = new Date(date).getMonth()
+    let month = uniqueMonthArray[d]
+    let yearMonthAlias
+    for(let x = 0; x < allAliases.data.storeAliases.length; x++){
+        if(allAliases.data.storeAliases[x].alias == year+month+'NearPriceHistory'){
+            yearMonthAlias = allAliases.data.storeAliases[x].definition
+            console.log('get price yearMonthAlias', yearMonthAlias)
+            break
+        }
+    }
+    if(!yearMonthAlias){
+        return false
+    } else {
+        let yearMonthData = await appClient.loadStream(yearMonthAlias)
+        console.log('yearmonthdata', yearMonthData)
+        if(yearMonthData && yearMonthData.history.length > 0){
+            for(let x = 0; x < yearMonthData.history.length; x++){
+                if(yearMonthData.history[x].date == date){
+                    let obj = yearMonthData.history[x].currentPrice
+                    let price = Object.keys(obj).forEach((key) => {
+                        if(key == currency){
+                            console.log('yearMonthdata x key', key)
+                            console.log('it is', obj[key])
+                        return obj[key]
+                        }
+                    })
+                    return price
+                }
+            }
+        }
+    }
+    // if(!yearMonthAlias){
+    //     return false
+    // } else {
+    //     let key = year+month+'NearPriceHistory'
+    //     let alias = {[key]: yearMonthAlias}
+    //     console.log('alias', alias)
+    //     let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
+    //     console.log('thisidx getprice idx', thisIdx)
+    //     let yearMonthData = await thisIdx.get(key, thisIdx.id)
+    //     console.log('yearmonthdata', yearMonthData)
+      
+    //     if(yearMonthData && yearMonthData.history.length > 0){
+    //         for(let x = 0; x < yearMonthData.history.length; x++){
+    //             if(yearMonthData.history[x].date == date){
+    //                 let obj = yearMonthData.history[x].currentPrice
+    //                 let price = Object.keys(obj).forEach((key) => {
+    //                     if(key == currency){
+    //                         console.log('yearMonthdata x key', key)
+    //                         console.log('it is', obj[key])
+    //                     return obj[key]
+    //                     }
+    //                 })
+    //                 return price
+    //             }
+    //         }
+    //     }
+    // return false
+    // }
+}
+
+export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract){
+    let allData = []
+    let allAliases = await queries.getAliases()
+    let count = 0
+
+    for (let day = from; day <= to; day.setDate(day.getDate() + 1)) {
+        if(count < 35){
+            let interimDate = Date.parse(day)
+            console.log('interimDate', interimDate)
+            let date = formatGeckoDate(interimDate)
+            let formattedDate = formatDate(interimDate)
+            console.log('formattedDate', formattedDate)
+            console.log('here0')
+
+            let getNearData = await axios.get(`https://api.coingecko.com/api/v3/coins/near/history?date=${date}`)
+            console.log('getneardata', getNearData)
+            if(getNearData.data.market_data){
+                console.log('in here')
+                let record = {
+                    date: formattedDate,
+                    currentPrice: getNearData.data.market_data.current_price
+                }
+                allData.push(record)
+            }
+        count++
+        } else {
+            console.log('allData', allData)
+            await new Promise(resolve => setTimeout(resolve, 65000))
+            count = 0
+            day.setDate(day.getDate() - 1)
+        }
+    }
+
+    // find all the unique years
+    let uniqueArray = []
+    const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+    for(let i = 0; i< allData.length; i++){
+        let obj = allData[i]
+        console.log('obj', obj)
+        let year = (new Date(obj.date)).getFullYear()
+        if(year){
+            if(!(uniqueArray.indexOf(year) > -1)){
+                uniqueArray.push(year)
+            }
+        }
+    }
+    console.log('unique array', uniqueArray)
+
+    // filter all Data by year and month and store
+    for(let x = 0; x < uniqueArray.length; x++){
+        let currentYearArray = []
+        let year
+        for(let y = 0; y < allData.length; y++){
+            year = (new Date(allData[y].date)).getFullYear()
+            if(uniqueArray[x] == year){
+                currentYearArray.push(allData[y])
+            }
+        }
+        console.log('current year array', currentYearArray)
+
+        // split year data into month arrays
+        for(let y = 0; y < uniqueMonthArray.length; y++){
+            let currentMonthArray = []
+            let month
+            let z = 0
+            while(z < currentYearArray.length){
+                let d = new Date(currentYearArray[z].date).getMonth()
+                console.log('d', d)
+                month = uniqueMonthArray[d]
+                console.log('month', month)
+                if(uniqueMonthArray[y] == month){
+                    currentMonthArray.push(currentYearArray[z])
+                }
+                z++
+            }
+            if(currentMonthArray && currentMonthArray.length > 0){
+                console.log('currentmontharray', currentMonthArray)
+                let appClient = await ceramic.getAppCeramic(accountId)
+                let yearMonthAlias
+                console.log('month', month)
+                console.log('month unique array', uniqueMonthArray[y])
+                month = uniqueMonthArray[y]
+                console.log('all aliases', allAliases)
+                console.log('check it', uniqueArray[x]+month+'NearPriceHistory')
+                for(let q = 0; q < allAliases.data.storeAliases.length; q++){
+                    if(allAliases.data.storeAliases[q].alias == uniqueArray[x]+month+'NearPriceHistory'){
+                        yearMonthAlias = allAliases.data.storeAliases[q].definition
+                        console.log('inside alias', yearMonthAlias)
+                        break
+                    }
+                }
+                if(!yearMonthAlias){
+                    console.log('why here')
+                    yearMonthAlias = await ceramic.getAlias(APP_OWNER_ACCOUNT, uniqueArray[x]+month+'NearPriceHistory', appClient, yearPriceHistorySchema, uniqueArray[x]+month+' near year price history', didRegistryContract)
+                }
+                console.log('yearMonthAlias', yearMonthAlias)
+
+                let existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
+                console.log('existingAliases', existingAliases)
+                
+                if(existingAliases == null){
+                    let record = {
+                        history: []
+                    }
+                    await appIdx.set('nearPriceHistory', record)
+                    existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
+                    console.log('existing aliases', existingAliases)
+                }
+
+                let exists = false
+                if(existingAliases.history.length > 0){
+                    for(let z = 0; z < existingAliases.history.length; z++){
+                        if(existingAliases.history[z][1] == yearMonthAlias){
+                            exists = true
+                        }
+                    }
+                }
+                console.log('exists', exists)
+                if(!exists){
+                    existingAliases.history.push([uniqueArray[x]+month+'NearPriceHistory', yearMonthAlias])
+                    let first = await appIdx.set('nearPriceHistory', existingAliases)
+                    console.log('history', existingAliases.history)
+                }
+        
+                let entry = {
+                    history: currentMonthArray
+                }
+                let key = uniqueArray[x]+month+'NearPriceHistory'
+                let alias = {[key]: yearMonthAlias}
+                console.log('alias', alias)
+                let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
+                console.log('thisidx', thisIdx)
+                let second = await thisIdx.set(key, entry)
+                let getit = await thisIdx.get(key, thisIdx.id)
+                console.log('get it', getit)
+            }
+        }           
+    }
+    }

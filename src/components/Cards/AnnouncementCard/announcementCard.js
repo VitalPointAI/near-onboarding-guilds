@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../../state/app'
 
 // Material UI Components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import { LinearProgress } from '@mui/material'
 import { Grid } from '@mui/material'
@@ -21,30 +20,6 @@ import AccordionDetails from '@mui/material/AccordionDetails'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import TodayIcon from '@mui/icons-material/Today'
 
-const useStyles = makeStyles((theme) => ({
-    pos: {
-        marginTop: 0,
-    },
-    card: {
-      minWidth: '200px',
-      maxWidth: '200px',
-      verticalAlign: 'middle',
-      margin: '10px 10px 10px 10px',
-      padding: '2px'
-    },
-    cardMobile: {
-      minWidth: '100%',
-      verticalAlign: 'middle',
-      margin: '10px 10px 10px 10px',
-      padding: '2px'
-    },
-    square: {
-      float: 'left',
-      marginRight: '10px',
-      marginTop: '5px',
-    }
-  }));
-
 const imageName = require('../../../img/default-profile.png') // default no-image avatar
 
 export default function AnnouncementCard(props) {
@@ -55,8 +30,6 @@ export default function AnnouncementCard(props) {
 
     const [anchorEl, setAnchorEl] = useState(null)
     const [finished, setFinished] = useState(false)
-
-    const classes = useStyles();
 
     const { 
       adminId,
