@@ -140,7 +140,6 @@ query{
 }
 `
 
-
 const DAO_CREATIONS = `
 query {
     createDAOs(first: 1000)
@@ -191,27 +190,6 @@ query{
     }
 }
 `
-
-// const VALIDATOR_ACTIVITY = `
-// query GetActivity($accountId: String!){
-//     depositAndStakes(first: 1000, where: {accountIdStaking_contains: $accountId}) {
-//         id
-//         blockTime
-//         blockHeight
-//         totalRewardsFee
-//         accountIdDepositing
-//         deposit
-//         newUnstakedBalance
-//         accountIdStaking
-//         staking
-//         receivedStakingShares
-//         unstakedBalance
-//         stakingShares
-//         contractTotalStakedBalance
-//         contractTotalShares
-//     }
-// }
-// `
 
 const VALIDATOR_ACTIVITY = `
 query{
@@ -390,35 +368,8 @@ query account_activity($accountId: String!){
         contractTotalStakedBalance
         contractTotalShares
     }
-    
 }
 `
-
-// const ALL_MINTS = `
-// query GetMints($lastId: String!){
-//     ftmints(first: 1000, where: { id_gt: $lastID}){
-//         id
-//         blockTime
-//         action
-//         amount
-//         token
-//         to
-//     }
-// }
-// `
-
-// const ALL_TRANSFERS = `
-// query{
-//     transfers{
-//         id
-//         blockTime
-//         action
-//         amount
-//         transferFrom
-//         transferTo
-//     }
-// }
-// `
 
 const defaultOptions = {
     watchQuery: {
@@ -547,19 +498,6 @@ export default class Queries {
         }
         return activity
     }
-
-    // async getAllMints(lastId){
-    //     const allMints = await cheddarClient.query({query: ALL_MINTS, variables: {
-    //         lastId: lastId
-    //     }})
-    //     return allMints
-    // }
-
-    // async getAllTransfers(){
-    //     const allTransfers = await cheddarClient.query({query: gql(ALL_TRANSFERS)})
-    //     return allTransfers
-    // }
-
 }
 
 export const queries = new Queries();

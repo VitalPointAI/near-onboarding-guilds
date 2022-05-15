@@ -15,6 +15,7 @@ import AccountInfo from '../common/AccountInfo/accountInfo'
 import { catalystDao } from '../../utils/catalystDao'
 import OpportunityCard from '../Cards/OpportunityCard/OpportunityCard'
 import StakingActivity from '../common/StakingActivity/stakingActivity'
+import AccountTransactionActivity from '../common/AccountTransactionActivity/accountTransactionActivity'
 
 // Material UI
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -558,6 +559,22 @@ export default function Dashboard(props) {
              </Grid>
              </AccordionDetails>
            </Accordion>
+           <Accordion>
+           <AccordionSummary
+             expandIcon={<ExpandMoreIcon />}
+             aria-controls="panel2a-content"
+             id="panel2a-header"
+           >
+           <Typography style={{marginRight: '5px'}}>Account Activity</Typography>
+           </AccordionSummary>
+           <AccordionDetails>
+           <Grid container justifyContent="center" alignItems="center" spacing={1}>
+             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>                      
+              <AccountTransactionActivity />
+             </Grid>
+           </Grid>
+           </AccordionDetails>
+         </Accordion>
             </Grid>       
         </Grid>
         

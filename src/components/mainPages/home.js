@@ -8,6 +8,7 @@ import GuildProfile from '../Profiles/guildProfile'
 import UnregisteredProfile from '../Profiles/unregisteredProfile'
 import RandomPhrase from '../../components/common/RandomPhrase/randomPhrase'
 import Landing from './landing'
+import Dashboard from '../../components/mainPages/dashboard'
 import { KEY_REDIRECT } from '../../utils/ceramic'
 
 // Material UI & styling
@@ -65,8 +66,8 @@ export const Home = ({ children }) => {
         {finished ? 
             wallet && wallet.signedIn ?  
                 key ? (<SeedSetup />) : 
-                    accountType == 'individual' ? (<IndivProfile />) :
-                        accountType == 'guild' ? (<GuildProfile/>) : (<UnregisteredProfile />)
+                    accountType == 'individual' ? (<Dashboard />) :
+                        accountType == 'guild' ? (<Dashboard />) : (<UnregisteredProfile />)
             :  (<Landing state={state} />)
             : state.accountData ? ({children}) 
             : (<>

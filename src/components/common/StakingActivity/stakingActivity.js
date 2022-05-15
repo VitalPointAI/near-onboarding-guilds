@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore } from '../../../state/app'
 import { queries } from '../../../utils/graphQueries'
-import { generateId, formatDate, formatGeckoDate, getPrice, buildPriceTable, formatNearAmount } from '../../../state/near'
+import { 
+  generateId, 
+  formatDate, 
+  formatGeckoDate, 
+  getPrice, 
+  buildPriceTable,
+  populateNearPriceAPI, 
+  formatNearAmount, 
+  updateNearPriceAPI } from '../../../state/near'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { CSVLink, CSVDownload } from 'react-csv'
 import Decimal from 'decimal.js'
@@ -22,6 +30,9 @@ import Input from '@mui/material/Input'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
 import Button from '@mui/material/Button'
+import Zoom from '@mui/material/Zoom'
+import Tooltip from '@mui/material/Tooltip'
+import InfoIcon from '@mui/icons-material/Info'
 
 import qbIcon from '../../../img/qb-icon.png'
 import csvIcon from '../../../img/csv-icon.png'
@@ -130,8 +141,25 @@ export default function StakingActivity(props) {
       accountId,
       account,
       appIdx,
-      did
+      did,
+      didRegistryContract
     } = state
+
+    useEffect(() => {
+      async function update(){
+        if(appIdx){
+          // let from = new Date(2022,03,01)
+          // let to = new Date(2022,03,15)
+          // await populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract)
+          await updateNearPriceAPI(accountId, appIdx, didRegistryContract)
+        }
+      }
+
+      update()
+      .then(() => {
+
+      })
+    },[appIdx])
 
     useEffect(() => {
       async function fetchPersona(){
@@ -204,6 +232,11 @@ export default function StakingActivity(props) {
     const handleCreditAccountNameChange = (event) => {
       let value = event.target.value
       setCreditAccountName(value)
+    }
+
+    const handleReset = (event) => {
+      setClicked(false)
+      setDownloadReady(false)
     }
 
     async function fetchPriceTable(fromDate, toDate, accountId){
@@ -325,9 +358,7 @@ export default function StakingActivity(props) {
           let to = new Date(toDate).getTime()
           console.log('to', to)
 
-          let datedArray = tempArray.filter(function(record) {
-            console.log('record', record)
-            console.log('blocktime', BigInt(record.blockTime))
+          let datedArray = tempArray.filter(function(record) {          
             let result = BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
             if(result){
               return record
@@ -359,6 +390,9 @@ export default function StakingActivity(props) {
             if(!price){
               price = 0
             }
+
+            console.log('blocktime', sortedTempArray[x].blockTime)
+
             
             console.log('currentreward', parseFloat(sortedTempArray[x].currentReward).toLocaleString('fullwide', {useGrouping: false}))
 
@@ -367,7 +401,8 @@ export default function StakingActivity(props) {
             let thisReward =  x > 0 ? currentReward.minus(lastReward) : new Decimal(0)
             let fixedOne = parseFloat(thisReward).toLocaleString('fullwide', {useGrouping: false})
             console.log('this reward 0', fixedOne)
-            let thisRewardFormatted = formatNearAmount(fixedOne, 5)
+            let thisRewardFormatted
+            fixedOne != "NaN" ? thisRewardFormatted = formatNearAmount(fixedOne, 5) : thisRewardFormatted = '0'
             console.log('this reward formatted 1', thisRewardFormatted)
             console.log('this reward formatted', parseFloat(thisRewardFormatted))
             totalRewards = totalRewards + parseFloat(thisRewardFormatted)
@@ -407,7 +442,7 @@ export default function StakingActivity(props) {
               Location: '',
               Class: ''
             })
-            
+            console.log('blocktime here', sortedTempArray[x].blockTime)
             csvSingle.push({
               Date: date,
               Currency: currency,
@@ -416,7 +451,7 @@ export default function StakingActivity(props) {
               Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
               Block: sortedTempArray[x].blockHeight,
               Epoch: sortedTempArray[x].epoch,
-              BlockTime: parseFloat(sortedTempArray[x].blockTime).toLocaleString('fullwide', {useGrouping: false}),
+              BlockTime: sortedTempArray[x].blockTime,
               Validator: sortedTempArray[x].validator
             })
 
@@ -447,8 +482,11 @@ export default function StakingActivity(props) {
             
               <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center" style={{marginBottom: '20px'}}>
                 <Card>
-                  <Typography variant="h6" align="center">Value</Typography>
-                  <Typography variant="caption" align="center">(at acquisition)</Typography>
+                  <Typography variant="h6" align="center">Value
+                    <Tooltip TransitionComponent={Zoom} title="The accumulated acquisition cost (adjusted cost basis) of the rewards.  This is the accumulated value of the rewards on the day they are received.">
+                      <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
+                    </Tooltip>
+                  </Typography>
                   <Typography variant="body1" align="center">{cardTotalValue}</Typography>
                 </Card>
               </Grid>
@@ -565,29 +603,38 @@ export default function StakingActivity(props) {
                   <Typography variant="body1">Preparing Data</Typography>
                   <LinearProgress />
                   </>
-                : 
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop:'20px'}} align="center">
-                  <Typography variant="h6">
-                    Downloads
-                  </Typography>
-                  <Grid item xs={6} sm={6} md={6} lg={6} xl={6} style={{marginRight: '5px', float:'left'}}>
-                    <CSVLink data={csvExport} filename={"near-staking-quickbooks.csv"} headers={headers}>
-                      <img src={qbIcon} style={{width:'30px', height:'auto'}}/>
-                      <Typography variant="body1" style={{marginTop: '-5px'}}>
-                        Quickbooks
-                      </Typography>
-                    </CSVLink>
+                  : <Grid container spacing={0} justifyContent="space-between" alignItems="center">
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop:'20px'}} align="center">
+                    <Typography variant="h6">
+                      Downloads
+                    </Typography>
                   </Grid>
-                  <Grid item xs={6} sm={6} md={6} lg={6} xl={6} style={{float: 'right'}}>
-                    <CSVLink data={csvSingleExport} filename={"near-staking.csv"} headers={stakingDataHeaders}>
-                      <img src={csvIcon} style={{width:'30px', height:'auto'}}/>
-                      <Typography variant="body1" style={{marginTop: '-5px'}}>
-                        CSV
-                      </Typography>
-                    </CSVLink>
+                    <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
+                      <CSVLink data={csvExport} filename={`${accountId.split('.')[0]}-staking-quickbooks.csv`} headers={headers}>
+                        <img src={qbIcon} style={{width:'30px', height:'auto'}}/>
+                        <Typography variant="body1" style={{marginTop: '-5px'}}>
+                          Quickbooks
+                        </Typography>
+                      </CSVLink>
+                    </Grid>
+                    <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
+                      <Button 
+                        variant="outlined"
+                        onClick={handleReset}
+                      >
+                      Reset
+                      </Button>
+                    </Grid>
+                    <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
+                      <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-staking.csv`} headers={stakingDataHeaders}>
+                        <img src={csvIcon} style={{width:'30px', height:'auto'}}/>
+                        <Typography variant="body1" style={{marginTop: '-5px'}}>
+                          CSV
+                        </Typography>
+                      </CSVLink>
+                    </Grid>
                   </Grid>
-                </Grid>
-              }
+                }
               </Grid>
             </Grid>
         : <Grid container alignItems="center" justifyContent="center" spacing={0} >

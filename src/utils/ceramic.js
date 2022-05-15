@@ -24,6 +24,10 @@ import { announcementSchema } from '../schemas/announcements'
 import { opportunitiesSchema } from '../schemas/opportunities'
 import { daoProfileSchema } from '../schemas/daoProfile'
 import { nearPriceHistorySchema } from '../schemas/nearPriceHistory'
+import { nearTransactionHistorySchema } from '../schemas/nearTransactionHistory'
+import { yearPriceHistorySchema } from '../schemas/yearPriceHistory'
+import { yearTransactionHistorySchema } from '../schemas/yearTransactionHistory'
+
 
 import { config } from '../state/config'
 
@@ -518,7 +522,65 @@ console.log('TOKENCALL', TOKEN_CALL)
       const opportunities = this.getAlias(APP_OWNER_ACCOUNT, 'opportunities', appClient, opportunitiesSchema, 'opportunities to complete', contract)
       const daoProfile = this.getAlias(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'dao profiles', contract)
       const nearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, 'nearPriceHistory', appClient, nearPriceHistorySchema, 'near price history', contract)
-     
+      const nearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, 'nearTransactionHistory', appClient, nearTransactionHistorySchema, 'near transaction history', contract)
+      
+      const November2020NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const December2020NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const January2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JanuaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const February2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021FebruaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const March2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MarchNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const April2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AprilNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const May2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MayNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const June2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JuneNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const July2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JulyNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const August2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AugustNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const September2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021SeptemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const October2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021OctoberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const November2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const December2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+
+      const January2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JanuaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const February2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022FebruaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const March2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MarchNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const April2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AprilNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const May2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MayNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const June2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JuneNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const July2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JulyNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const August2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AugustNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const September2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022SeptemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const October2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022OctoberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const November2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      const December2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      
+
+      const November2020NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020NovemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const December2020NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020DecemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const January2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JanuaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const February2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021FebruaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const March2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MarchNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const April2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AprilNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const May2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MayNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const June2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JuneNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const July2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JulyNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const August2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AugustNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const September2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021SeptemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const October2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021OctoberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const November2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021NovemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const December2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021DecemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+
+      const January2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JanuaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const February2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022FebruaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const March2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MarchNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const April2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AprilNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const May2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MayNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const June2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JuneNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const July2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JulyNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const August2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AugustNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const September2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022SeptemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const October2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022OctoberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const November2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022NovemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+      const December2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022DecemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+    
       const done = await Promise.all([
         appDid, 
         definitions, 
@@ -532,7 +594,8 @@ console.log('TOKENCALL', TOKEN_CALL)
         announcements,
         opportunities,
         daoProfile,
-        nearPriceHistory
+        nearPriceHistory,
+        nearTransactionHistory
       ])
       
       let rootAliases = {
@@ -547,7 +610,8 @@ console.log('TOKENCALL', TOKEN_CALL)
         announcements: done[9],
         opportunities: done[10],
         daoProfile: done[11],
-        nearPriceHistory: done[12]
+        nearPriceHistory: done[12],
+        nearTransactionHistory: done[13]
       }
 
       // cache aliases
@@ -594,7 +658,20 @@ console.log('TOKENCALL', TOKEN_CALL)
 
 
   // retrieve user identity
-  async getUserIdx(account, appIdx, factoryContract, registryContract){
+  async getUserIdx(account, appIdx, factoryContract, registryContract, alias){
+      let theseAliases
+      if(alias){
+        for (const al in alias) {
+          theseAliases = {...theseAliases, [al]: alias[al]}
+          console.log('thesealiases', theseAliases)
+        }
+        for (const alapp in appIdx._aliases) {
+          theseAliases = {...theseAliases, [alapp]: appIdx._aliases[alapp]}
+        }
+      } else {
+        theseAliases = appIdx._aliases
+      }
+      
       let seed = false
       set(KEY_REDIRECT, {action: false, link: ''})
 
@@ -627,7 +704,7 @@ console.log('TOKENCALL', TOKEN_CALL)
           } else {
             oldAccountUserCeramicClient = await this.getCeramic(account, seed)
           }
-          let curUserIdx = new IDX({ ceramic: oldAccountUserCeramicClient, aliases: appIdx._aliases})
+          let curUserIdx = new IDX({ ceramic: oldAccountUserCeramicClient, aliases: theseAliases})
           return curUserIdx
         } catch (err) {
           console.log('no did from oldaccounts', err)
@@ -655,7 +732,7 @@ console.log('TOKENCALL', TOKEN_CALL)
           } else {
             currentUserCeramicClient = await this.getCeramic(account, seed)
           }
-          let curUserIdx = new IDX({ ceramic: currentUserCeramicClient, aliases: appIdx._aliases})
+          let curUserIdx = new IDX({ ceramic: currentUserCeramicClient, aliases: theseAliases})
           return curUserIdx
         } catch (err) {
           console.log('no did from newaccounts', err)
@@ -683,7 +760,7 @@ console.log('TOKENCALL', TOKEN_CALL)
           } else {
             localAccountUserCeramicClient = await this.getCeramic(account, seed)
           }
-          let curUserIdx = new IDX({ ceramic: localAccountUserCeramicClient, aliases: appIdx._aliases})
+          let curUserIdx = new IDX({ ceramic: localAccountUserCeramicClient, aliases: theseAliases})
           return curUserIdx
         } catch (err) {
           console.log('no did from localaccount', err)
@@ -695,6 +772,7 @@ console.log('TOKENCALL', TOKEN_CALL)
         return false
       }
   }
+
 
   
   async getDid(accountId, factoryContract, registryContract) {
