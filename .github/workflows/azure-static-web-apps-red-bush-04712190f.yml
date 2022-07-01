@@ -31,7 +31,16 @@ jobs:
           api_location: "api" # Api source code path - optional
           output_location: "dist" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
-
+        env:
+          ENV: prod
+          NP_SENDY_LIST_ID: BY8892H4x7639GsJzX892ju9cwTQ
+          NP_BRAND_ID: 5
+          NG_SENDY_LIST_ID: hE2V0TyYWmcEKb5kGwNo1w
+          NG_BRAND_ID: 4
+          FROM_EMAIL: a.luhning@vitalpoint.ai
+          REPLY_EMAIL: a.luhning@vitalpoint.ai
+          SENDY_LIST_ID: BY8892H4x7639GsJzX892ju9cwTQ
+          BRAND_ID: 5
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
