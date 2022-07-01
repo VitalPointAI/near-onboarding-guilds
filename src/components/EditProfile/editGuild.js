@@ -119,7 +119,8 @@ export default function EditGuildProfileForm(props) {
     const [progress, setProgress] = useState(false)
 
     const { register, handleSubmit, watch, errors, control, reset, setValue, getValues } = useForm()
-   
+    const categories = ["Production","Social","Educational","Community","Research","Gaming","Other"];
+    
     const { 
         fields: guildValuesFields,
         append: guildValuesAppend,
@@ -636,20 +637,25 @@ export default function EditGuildProfileForm(props) {
                     </Grid>
 
                     <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                        <TextField
-                        margin="dense"
-                        id="profile-category"
-                        variant="outlined"
-                        name="category"
-                        label="Category"
-                        placeholder="Social Cause"
-                        value={category}
-                        onChange={handleCategoryChange}
-                        inputRef={register({
-                            required: false                              
-                        })}
-                        />
-                        {errors.name && <p style={{color: 'red'}}>You must categorize your guild so others can find it.</p>}
+                      <FormControl className={classes.input}>
+                          <InputLabel id="country-label">Classification</InputLabel>
+                          <Select
+                          className={classes.input}
+                          required
+                          label = "Classification"
+                          id = "profile-classification"
+                          value = {category}
+                          onChange = {handleCategoryChange}
+                          input={<Input />}
+                          >
+                          {categories.map((category) => (
+                              <MenuItem key={category} value={category}>
+                              {category}
+                              </MenuItem>
+                          ))}
+                          </Select>
+                      </FormControl>
+                      {errors.name && <p style={{color: 'red'}}>You must classify your guild so others can find it.</p>}
                     </Grid>
 
                     <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
