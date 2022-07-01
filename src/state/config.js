@@ -115,7 +115,7 @@ if (process.env.ENV === 'prod') {
         guildRootName: 'https://mainnet.nearguilds.live',
         personaRootName: 'https://mainnet.nearpersonas.live',
         daoRootName: 'https://mainnet.cdao.app',
-        guildRootName: 'https://nearguilds.live',
+        guildRootName: 'https://mainnet.nearguilds.live',
         nearblocksAPIURL: 'https://nearblocks.io/api/account/txns?address=',
         PLATFORM_SUPPORT_ACCOUNT: 'catalystsp.near',
         TOKEN_CALL: 'https://vp-guilds.azurewebsites.net/api/token-mainnet',
