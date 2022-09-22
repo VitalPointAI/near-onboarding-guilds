@@ -59,6 +59,7 @@ const matches = useMediaQuery('(max-width:500px)')
 
 const [anchorEl, setAnchorEl] = useState(null);
 const [editProfileClicked, setEditProfileClicked] = useState(false)
+const [editGuildClicked, setEditGuildClicked] = useState(false)
 const [editGuildProfileClicked, setEditGuildProfileClicked] = useState(false)
 const [notificationsClicked, setNotificationsClicked] = useState(false)
 const [newNotifications, setNewNotifications] = useState(0)
@@ -152,6 +153,11 @@ const editProfileClick = (event) => {
     handleClick(event)
 }
 
+const editGuildClick = (event) => {
+  setEditGuildClicked(true)
+  handleClick(event)
+}
+
 function handleEditGuildClickState(property){
   setEditGuildProfileClicked(property)
 }
@@ -201,7 +207,7 @@ const list = (anchor) => (
 
   <Typography variant='h6'>Account</Typography>
   <List>
-  <ListItem button key={2} onClick={accountType == 'individual' ? (e) => editProfileClick(e) : (e) => editGuildClick(e)}>
+  <ListItem button key={2} onClick={accountType == 'individual' ? (e) => editProfileClick(e) : (e) => editGuildProfileClick(e)}>
         <ListItemIcon><EditIcon /></ListItemIcon>
         <ListItemText primary='Edit Profile'/>
     </ListItem>
