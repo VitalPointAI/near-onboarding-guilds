@@ -7,7 +7,7 @@ import { createDefinition, publishSchema } from '@ceramicstudio/idx-tools'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
 import KeyDidResolver from 'key-did-resolver'
 import ThreeIdResolver from '@ceramicnetwork/3id-did-resolver'
-import ThreeIdProvider from '3id-did-provider'
+import ThreeIdProvider from '@3id/did-provider'
 import { DID } from 'dids'
 
 // schemas

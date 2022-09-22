@@ -10,6 +10,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
 
 const useStyles = makeStyles((theme) => ({
   rootForm: {
