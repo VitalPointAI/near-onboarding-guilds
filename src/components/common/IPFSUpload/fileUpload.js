@@ -11,7 +11,7 @@ export default function FileUpload(props) {
         register
     } = props
 
-    const ipfsApi = create('https://gateway-ipfs.io:5001')
+    const ipfsApi = create('https://ipfs.infura.io:5001')
   
     const captureFile = (event) => {
         event.stopPropagation()
