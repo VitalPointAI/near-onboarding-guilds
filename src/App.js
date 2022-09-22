@@ -23,6 +23,8 @@ import Pledge from './components/mainPages/pledge'
 import Announcements from './components/mainPages/announcements'
 import Dashboard from './components/mainPages/dashboard'
 import { Home } from './components/mainPages/home'
+import Leaderboards from './components/mainPages/leaderboards'
+import Rewards from './components/mainPages/rewards'
 
 
 // Material-UI Components
@@ -241,6 +243,12 @@ const App = () => {
             </Route>
             <Route path="/guild-profiles/:guildDid">
                 <DisplayGuildProfile />
+            </Route>
+            <Route path="/leaderboards">
+                <Leaderboards />
+            </Route>
+            <Route path="/rewards">
+                <Rewards />
             </Route>
             <Route path="/indiv-profiles/:indivDid">
                 <DisplayIndivProfile />
