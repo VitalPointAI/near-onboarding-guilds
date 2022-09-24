@@ -248,6 +248,7 @@ console.log('TOKENCALL', TOKEN_CALL)
         'Authorization': `Basic ${authToken}`
       }
     })
+    console.log('ceramic api', CERAMIC_API_URL)
  
     const ceramic = new CeramicClient(CERAMIC_API_URL)
   
