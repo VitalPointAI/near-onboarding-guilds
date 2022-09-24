@@ -91,7 +91,7 @@ console.log('memberDaos', daos)
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Card>
                   <CardContent>
-                    <Typography variant="body1">What? This persona has not joined any guilds yet! <br></br><a href='/explore'>Time to explore some.</a></Typography>
+                    <Typography variant="body1">What? This persona has not joined any guilds yet! <br></br><a href='/guilds'>Time to explore some.</a></Typography>
                   </CardContent>
                 </Card>
               </Grid>
