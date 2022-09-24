@@ -959,11 +959,6 @@ export async function synchAccountLinks(curUserIdx){
         z++
     }
     allAccounts = copyArray
-    console.log('copy array', copyArray)
-    console.log('didMakeChange', didMakeChange)
-    console.log('wasMissing', wasMissing)
-    console.log('wasDuplicate', wasDuplicate)
-    console.log('all accounts', allAccounts)
 
     if(didMakeChange || wasMissing || wasDuplicate){
         await ceramic.storeKeysSecret(curUserIdx, allAccounts, 'accountsKeys')
