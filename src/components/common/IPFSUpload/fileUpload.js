@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 const { create } = require('ipfs-http-client')
+import { IPFS_PROVIDER } from '../../../utils/ceramic'
 
 export default function FileUpload(props) {
 
@@ -11,7 +12,7 @@ export default function FileUpload(props) {
         register
     } = props
 
-    const ipfsApi = create('https://ipfs.infura.io:5001')
+    const ipfsApi = create(IPFS_PROVIDER)
   
     const captureFile = (event) => {
         event.stopPropagation()
