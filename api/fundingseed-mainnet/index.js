@@ -26,9 +26,8 @@ module.exports = async function (context, req) {
       let verified = jwt.verify(token, process.env["GUILDS_MAINNET_SECRET_KEY"])
       if(verified){
         const appSeed = process.env["GUILDS_MAINNET_FUNDINGSEED"];
-        const seed = appSeed.slice(0, 32)
         context.res.json({
-          seed: seed
+          seed: appSeed
         });
       } else {
         context.res.sendStatus(403);
