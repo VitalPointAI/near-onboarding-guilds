@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 const ipfsClient = require('ipfs-http-client')
 import { IPFS_CALL, TOKEN_CALL } from '../../../utils/ceramic'
 
