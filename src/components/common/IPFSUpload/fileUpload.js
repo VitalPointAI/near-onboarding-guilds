@@ -46,8 +46,7 @@ export default function FileUpload(props) {
               'Authorization': `Basic ${authToken}`
             }
           })
-          console.log('projectid', projectId)
-          console.log('retrievekey', retrieveKey)
+       
         const auth =
         'Basic ' + Buffer.from(projectId + ':' + retrieveKey.data.seed).toString('base64');
     
@@ -78,9 +77,7 @@ export default function FileUpload(props) {
       
         ipfsApi.add(buffer)
         .then((response) => {
-            console.log('ipfs response', response)
         ipfsId = (response.path).toString('base32')
-        console.log('ipfsid', ipfsId)
         setAddedFileHash(ipfsId)
         handleFileHash(ipfsId)
         }).catch((err) => {
