@@ -77,8 +77,7 @@ export default function FileUpload(props) {
       
         ipfsApi.add(buffer)
         .then((response) => {
-        ipfsId = response.path
-      
+        ipfsId = (response.path).toString('base32')
         setAddedFileHash(ipfsId)
         handleFileHash(ipfsId)
         }).catch((err) => {
