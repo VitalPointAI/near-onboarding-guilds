@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 const ipfsClient = require('ipfs-http-client')
-import { IPFS_PROVIDER, IPFS_CALL, TOKEN_CALL } from '../../../utils/ceramic'
+import { IPFS_CALL, TOKEN_CALL } from '../../../utils/ceramic'
 
 const axios = require('axios').default
 
@@ -51,7 +51,7 @@ export default function FileUpload(props) {
         'Basic ' + Buffer.from(projectId + ':' + retrieveKey.data.seed).toString('base64');
     
         const client = ipfsClient.create({
-            host: IPFS_PROVIDER,
+            host: 'ipfs.infura.io',
             port: 5001,
             protocol: 'https',
             headers: {
