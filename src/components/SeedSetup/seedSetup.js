@@ -139,14 +139,14 @@ export default function Import(props) {
                 <>
                     <Typography variant="h6">What's a Seed Phrase?</Typography>
 
-                    <Typography variant="body2">NEAR Personas is an open web application that gives
+                    <Typography variant="body2">NEAR Guilds is an open web application that gives
                     you complete control of your guild's data.</Typography>
                     <br></br>
                     <Typography variant="body2">Seed phrases are common in crypto. They are like a long password. It
                     allows you to access your data to add, update, or delete at will.
                     </Typography>
                     <br></br>
-                    <Typography variant="body2">You need to keep it safe. Nobody else, including NEAR Personas,
+                    <Typography variant="body2">You need to keep it safe. Nobody else, including NEAR Guilds,
                     can change your guild's data without control of your seed phrase.
                     </Typography>
                     <br></br>
@@ -261,14 +261,14 @@ export default function Import(props) {
             <>
                 <Typography variant="h6">What's a Seed Phrase?</Typography>
 
-                <Typography variant="body2">NEAR Personas is an open web application that gives
+                <Typography variant="body2">NEAR Guilds is an open web application that gives
                 you complete control of your guild's data.</Typography>
                 <br></br>
                 <Typography variant="body2">Seed phrases are common in crypto. They are like a long password. It
                 allows you to access your data to add, update, or delete at will.
                 </Typography>
                 <br></br>
-                <Typography variant="body2">You need to keep it safe. Nobody else, including NEAR Personas,
+                <Typography variant="body2">You need to keep it safe. Nobody else, including NEAR Guilds,
                 can change your guild's data without control of your seed phrase.
                 </Typography>
                 <br></br>
