@@ -14,7 +14,8 @@ export default function FileUpload(props) {
     const {
         handleFileHash,
         handleAvatarLoaded,
-        register
+        register,
+        accountId
     } = props
 
     useEffect(() => {
