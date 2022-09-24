@@ -132,18 +132,6 @@ async function unregister(){
                    Manage Registration
                 </Typography>
             </Grid>
-
-            <Button
-                        variant="contained"
-                        color="primary"
-                        className={classes.button}
-                        onClick={unregister}
-                        disabled={isAdmin}
-                    >
-                        <Typography variant="body1" style={{fontSize: '40px'}}>
-                            Unregister
-                        </Typography>
-                    </Button>
     
             {accountType != 'none' ? <>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginBottom:'20px'}}>
