@@ -1274,7 +1274,7 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
             } catch (err) {
                 console.log('problem retrieving price data', err)
             }
-            if(getNearData.data.market_data){
+            if(getNearData && getNearData.data.market_data){
                 console.log('in here')
                 let record = {
                     date: formattedDate,
