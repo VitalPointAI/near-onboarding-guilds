@@ -415,47 +415,50 @@ export default function StakingActivity(props) {
             let readyForCardValue = totalValue.toFixed(2)
             setCardTotalValue(readyForCardValue)
 
-            csvDownload.push({
-              JournalNo: journalNo,
-              JournalDate: date,
-              Currency: currency,
-              Memo: '',
-              AccountName: debitAccountName,
-              Debits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-              Credits: '',
-              Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
-              Name: sortedTempArray[x].validator,
-              Location: '',
-              Class: ''
-            })
+            // ensure no zero value quantities/prices
+            if(thisRewardFormatted != '0'){
+              csvDownload.push({
+                JournalNo: journalNo,
+                JournalDate: date,
+                Currency: currency,
+                Memo: '',
+                AccountName: debitAccountName,
+                Debits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+                Credits: '',
+                Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
+                Name: sortedTempArray[x].validator,
+                Location: '',
+                Class: ''
+              })
 
-            csvDownload.push({
-              JournalNo: journalNo,
-              JournalDate: date,
-              Currency: currency,
-              Memo: '',
-              AccountName: creditAccountName,
-              Debits: '',
-              Credits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-              Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
-              Name: sortedTempArray[x].validator,
-              Location: '',
-              Class: ''
-            })
-            console.log('blocktime here', sortedTempArray[x].blockTime)
-            csvSingle.push({
-              Date: date,
-              Currency: currency,
-              Reward: thisRewardFormatted,
-              Price: price,
-              Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-              Block: sortedTempArray[x].blockHeight,
-              Epoch: sortedTempArray[x].epoch,
-              BlockTime: sortedTempArray[x].blockTime,
-              Validator: sortedTempArray[x].validator
-            })
+              csvDownload.push({
+                JournalNo: journalNo,
+                JournalDate: date,
+                Currency: currency,
+                Memo: '',
+                AccountName: creditAccountName,
+                Debits: '',
+                Credits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+                Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
+                Name: sortedTempArray[x].validator,
+                Location: '',
+                Class: ''
+              })
+              console.log('blocktime here', sortedTempArray[x].blockTime)
+              csvSingle.push({
+                Date: date,
+                Currency: currency,
+                Reward: thisRewardFormatted,
+                Price: price,
+                Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+                Block: sortedTempArray[x].blockHeight,
+                Epoch: sortedTempArray[x].epoch,
+                BlockTime: sortedTempArray[x].blockTime,
+                Validator: sortedTempArray[x].validator
+              })
 
-            journalNo ++
+              journalNo ++
+            }
           }
           validators.push(ultimateArray)
           setValidatorData(validators)
