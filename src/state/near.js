@@ -1258,7 +1258,7 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
     let count = 0
 
     for (let day = from; day <= to; day.setDate(day.getDate() + 1)) {
-        if(count < 25){
+        if(count < 20){
             let interimDate = Date.parse(day)
             console.log('interimDate', interimDate)
             let date
