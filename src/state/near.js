@@ -1272,9 +1272,13 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
             }
             console.log('formattedDate', formattedDate)
             console.log('here0')
-
-            let getNearData = await axios.get(`https://api.coingecko.com/api/v3/coins/near/history?date=${date}`)
-            console.log('getneardata', getNearData)
+            let getNearData
+            try{
+                getNearData = await axios.get(`https://api.coingecko.com/api/v3/coins/near/history?date=${date}`)
+                console.log('getneardata', getNearData)
+            } catch (err) {
+                console.log('problem retrieving price data', err)
+            }
             if(getNearData.data.market_data){
                 console.log('in here')
                 let record = {
