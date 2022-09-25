@@ -94,9 +94,11 @@ export default function Dashboard(props) {
               if(currentGuilds && appIdx && account){
                 for(let x = 0; x < currentGuilds.length; x++){
                   let guildInfo = await appIdx.get('guildProfile', currentGuilds[x].did)
-                  let thisMemberStatus = await getCommunityMemberStatus(guildInfo.platform, guildInfo.contractId, account)
-                  if(thisMemberStatus){
-                    memberDaos.push(currentGuilds[x])
+                  if(guildInfo){
+                    let thisMemberStatus = await getCommunityMemberStatus(guildInfo.platform, guildInfo.contractId, account)
+                    if(thisMemberStatus){
+                      memberDaos.push(currentGuilds[x])
+                    }
                   }
                   if(currentGuilds[x].owner == accountId){
                     let name = currentGuilds[x].accountId.split('.')
