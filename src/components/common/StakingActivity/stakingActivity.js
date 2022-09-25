@@ -148,9 +148,9 @@ export default function StakingActivity(props) {
     useEffect(() => {
       async function update(){
         if(appIdx){
-          let from = new Date(2022,05,01)
-          let to = new Date(2022,09,25)
-          await populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract)
+          // let from = new Date(2022,05,01)
+          // let to = new Date(2022,09,25)
+          // await populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract)
           await updateNearPriceAPI(accountId, appIdx, didRegistryContract)
         }
       }
