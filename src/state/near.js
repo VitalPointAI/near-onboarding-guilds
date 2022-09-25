@@ -1290,7 +1290,7 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
     // find all the unique years
     let uniqueArray = []
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
+    console.log('all data here', allData)
     for(let i = 0; i< allData.length; i++){
         let obj = allData[i]
         console.log('obj', obj)
