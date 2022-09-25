@@ -1253,7 +1253,7 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
     let count = 0
 
     for (let day = from; day <= to; day.setDate(day.getDate() + 1)) {
-        if(count < 25){
+        if(count < 35){
             let interimDate = Date.parse(day)
             console.log('interimDate', interimDate)
             let date
@@ -1268,6 +1268,7 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
             console.log('formattedDate', formattedDate)
             console.log('here0')
             let getNearData
+            await new Promise(resolve => setTimeout(resolve, 1000))
             try{
                 getNearData = await axios.get(`https://api.coingecko.com/api/v3/coins/near/history?date=${date}`)
                 console.log('getneardata', getNearData)
