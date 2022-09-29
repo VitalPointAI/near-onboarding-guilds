@@ -345,6 +345,7 @@ export default function StakingActivity(props) {
           setActivity(finalArray)                  
         }
         let count = 0
+        let journalNo = journalStartNo
         for(let y = 0; y < accountValidators.length; y++){
           let tempArray = finalArray.filter(function(validator) {
             return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
@@ -372,7 +373,7 @@ export default function StakingActivity(props) {
 
           let ultimateArray = []
           
-          let journalNo = journalStartNo
+          
           for(let x = 0; x < sortedTempArray.length; x++){
             ultimateArray.push({
               validator: sortedTempArray[x].validator,
