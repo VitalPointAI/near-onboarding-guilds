@@ -345,6 +345,7 @@ export default function StakingActivity(props) {
           setActivity(finalArray)                  
         }
         let count = 0
+        let journalNo = journalStartNo
         for(let y = 0; y < accountValidators.length; y++){
           let tempArray = finalArray.filter(function(validator) {
             return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
@@ -357,7 +358,7 @@ export default function StakingActivity(props) {
           console.log('from', from)
           let to = new Date(toDate).getTime()
           console.log('to', to)
-
+      
           let datedArray = tempArray.filter(function(record) {          
             let result = BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
             if(result){
@@ -372,7 +373,7 @@ export default function StakingActivity(props) {
 
           let ultimateArray = []
           
-          let journalNo = journalStartNo
+          
           for(let x = 0; x < sortedTempArray.length; x++){
             ultimateArray.push({
               validator: sortedTempArray[x].validator,
