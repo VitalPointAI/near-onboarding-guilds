@@ -1239,6 +1239,15 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
     let key = lastYear+lastMonth+'NearPriceHistory'
     console.log('key', key)
 
+    let yearMonthAlias
+    for(let q = 0; q < allAliases.data.storeAliases.length; q++){
+        if(allAliases.data.storeAliases[q].alias == key){
+            yearMonthAlias = allAliases.data.storeAliases[q].definition
+            console.log('inside alias', yearMonthAlias)
+            break
+        }
+    }
+
     let alias = {[key]: yearMonthAlias}
     console.log('alias', alias)
 
