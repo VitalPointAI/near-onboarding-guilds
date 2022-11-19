@@ -1318,7 +1318,10 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
 export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract){
     let allData = []
     let allAliases = await queries.getAliases()
-   
+    console.log('allAliases nearprice', allAliases)
+    console.log('fromprice', from)
+    console.log('toprice', to)
+    console.log('appidx price', appIdx)
     let count = 0
 
     for (let day = from; day <= to; day.setDate(day.getDate() + 1)) {
