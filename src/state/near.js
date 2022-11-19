@@ -1259,11 +1259,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
     let getit = await thisIdx.get(lastKey, thisIdx.id)
     console.log('get it', getit)
 
-    // let interimAliases
-    // for (alias in existingAliases.history){
-    //     let todayKey = todayYear+todayMonth+'NearPriceHistory'
-    //     interimAliases = {...interimAliases, alias}
-    // }
+    
    
     // console.log('interimAliases', interimAliases)
 
@@ -1290,9 +1286,13 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
 
         // get this month's price data stream so we can look at the last entry
         let key = todayYear+todayMonth+'NearPriceHistory'
-        let alias = {[key]: yearMonthAlias}
-        console.log('alias', alias)
-        let updatedAliases = {...existingAliases, alias}
+        console.log('newkey', key)
+
+        let interimAliases
+        for (alias in existingAliases.history){
+            interimAliases = {...interimAliases, alias }
+        }
+        let updatedAliases = {...interimAliases, [key]: yearMonthAlias}
         console.log('updatedAliases', updatedAliases)
         
         let newIdx = new IDX({ ceramic: appClient, aliases: updatedAliases})
