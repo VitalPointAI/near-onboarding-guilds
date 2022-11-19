@@ -58,7 +58,7 @@ export default function PersonaInfo(props) {
             setFinished(false)
             if(did && accountType != 'guild') {
                 let result = await appIdx.get('profile', did)
-                console.log('indiv result', result)
+                
                 if(result){
                     result.avatar ? setAvatar(result.avatar) : setAvatar(imageName)
                     result.name ? setName(result.name) : setName('')
@@ -67,7 +67,7 @@ export default function PersonaInfo(props) {
             } else {
                 if(did && accountType == 'guild'){
                     let result = await appIdx.get('guildProfile', did)
-                    console.log('guild result', result)
+                  
                     if(result){
                         result.logo ? setLogo(result.logo) : setLogo(logoName)
                         result.name ? setName(result.name) : setName('')

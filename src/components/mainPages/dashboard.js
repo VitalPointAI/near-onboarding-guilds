@@ -147,7 +147,7 @@ export default function Dashboard(props) {
                                   'content-type': 'application/x-www-form-urlencoded'
                               }
                           })
-                      console.log('emailstatus', emailStatus)
+                  
                       if(emailStatus.data == 'Subscribed') {
                           setEmailNotifications(true)
                       }
@@ -174,7 +174,7 @@ export default function Dashboard(props) {
             if(isUpdated){}
             if(did && appIdx){
                 let result = await appIdx.get('guildProfile', did)
-                console.log('result', result)
+                
                     if(result) {
                         setGuild(true)
                         result.email? setEmail(result.email): setEmail('')
@@ -209,10 +209,10 @@ export default function Dashboard(props) {
                         //   console.log('problem initializing catalyst dao contract', err)
                         // }
                         let singleDaoOpportunity
-                        console.log('currentActiveDaos', currentActiveDaos)
+                     
                         try{
                           singleDaoOpportunity = await appIdx.get('opportunities', currentActiveDaos[x].did)
-                          console.log('singledaoopp', singleDaoOpportunity)
+                        
                           if(singleDaoOpportunity && Object.keys(singleDaoOpportunity).length > 0){
                             let j = 0
                             while (j < singleDaoOpportunity.opportunities.length){
@@ -225,19 +225,17 @@ export default function Dashboard(props) {
                         }
 
                       }
-                      console.log('all opportunities', allOpportunities)
+                      
                     }
                    
                     // 2. Retrieve current persona data
                     let currentPersona
-                    console.log('accounttypedash', accountType)
-                    console.log('dashdid', did)
+                  
                     if(accountType != 'guild' && did) {
                       currentPersona = await appIdx.get('profile', did)
-                      console.log('indiv persona', currentPersona)
+                   
                     } else {
                       currentPersona = await appIdx.get('guildProfile', did)
-                      console.log('guild persona', currentPersona)
                     }
           
 
@@ -276,7 +274,7 @@ export default function Dashboard(props) {
                             }
                           })
                         }
-                        console.log('combinedopportunityskills', combinedOpportunitySkills)
+                       
 
                         let k = 0
                         while (k < combinedOpportunitySkills.length){
@@ -295,7 +293,7 @@ export default function Dashboard(props) {
                             asuitabilityScore = 0
                         }
                         setSuitabilityScore(asuitabilityScore)
-                        console.log('suitability score', asuitabilityScore)
+                    
                         let thisContract = await catalystDao.initDaoContract(account, allOpportunities[j].contractId)
                         let propFlags
                         // confirm proposal exists
@@ -307,32 +305,32 @@ export default function Dashboard(props) {
                             } else {
                                 exists = false
                             }
-                            console.log('opp exists', exists)
+                        
                         } catch (err) {
                             console.log('error getting proposal', err)
                             exists = false
                         }
                         if(exists){
-                            console.log('here all ops', allOpportunities[j])
+                          
                            
                             propFlags = await thisContract.getProposalFlags({proposalId: parseInt(allOpportunities[j].opportunityId)})
                             
                             let status = getStatus(propFlags)
-                            console.log('status', status)
+                         
                             let contractDid
                             for(let x = 0; x < currentActiveDaos.length;x++){
                               if(currentActiveDaos[x].contractId == allOpportunities[j].contractId){
                                 contractDid = currentActiveDaos[x].did
                               }
                             }
-                            console.log('contractDid', contractDid)
+                         
                             let result
                             if(contractDid){
                                 result = await appIdx.get('daoProfile', contractDid)
-                                console.log('this here result', result)
+                          
                             }
                             if(result && status == 'Passed' && allOpportunities[j].budget > 0 && Date.now() <= new Date(allOpportunities[j].deadline)){
-                              console.log('made it')  
+                         
                               currentRecommendations.push({
                                     opportunity: allOpportunities[j],
                                     status: status,
@@ -351,7 +349,7 @@ export default function Dashboard(props) {
                     
                     setRecommendations(currentRecommendations)
                     setRecommendationsLoaded(true)
-                    console.log('recommendations', currentRecommendations)
+                 
                   }
             }
             let mounted = true
@@ -403,7 +401,7 @@ export default function Dashboard(props) {
                       'content-type': 'application/x-www-form-urlencoded'
                   }
               })
-      console.log('axioscall', axiosCall)
+
       setEmailNotifications(true)
       setEmailFinished(true)
      
@@ -438,7 +436,7 @@ export default function Dashboard(props) {
                       'content-type': 'application/x-www-form-urlencoded'
                   }
               })
-      console.log('axiosCalldelete', axiosCall)
+   
       setEmailNotifications(false)
       setEmailFinished(true)
       } catch (err) {
@@ -514,8 +512,7 @@ export default function Dashboard(props) {
                                        
                     {recommendations && recommendations.length > 0 ?
                         recommendations.map((row, index) => {
-                          console.log('recommendations', recommendations)
-                          console.log('row', row)
+                        
                             return (<OpportunityCard
                             creator={row.opportunity.proposer}
                             created={row.opportunity.submitDate}

@@ -58,7 +58,7 @@ export default function MemberCommunities(props) {
        }
       }, [memberDaos]
     )
-console.log('memberDaos', daos)
+
     return (
         <>
       

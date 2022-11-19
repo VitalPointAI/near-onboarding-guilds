@@ -104,7 +104,7 @@ export default function IndivCard(props) {
               }
 
             let result = await appIdx.get('profile', did)
-            console.log('personInfo', result)
+           
             if(result){
                   result.name != '' ? setName(result.name) : setName('')
                   result.date ? setDate(result.date) : setDate('')

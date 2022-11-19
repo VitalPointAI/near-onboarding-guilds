@@ -98,7 +98,7 @@ export default function GuildCard(props) {
         if(isUpdated){}
 
         let guildInfo = await appIdx.get('guildProfile', did)
-        console.log('guildInfo', guildInfo)
+
         let thisDaoPlatform
         if(guildInfo && guildInfo.contractId){
           if(guildInfo.contractId.split('.')[1].substr(0,4)=='cdao'){
@@ -130,7 +130,7 @@ export default function GuildCard(props) {
         if(didRegistryContract){
           try{
             let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: contractId})
-            console.log('verification status', verificationStatus)
+         
             if(verificationStatus != 'null'){
               setVerified(verificationStatus)
             }
@@ -143,7 +143,7 @@ export default function GuildCard(props) {
         if(didRegistryContract){
           try{
             let tierStatus = await didRegistryContract.getTier({accountId: contractId})
-            console.log('tierstatus', tierStatus)
+         
             if(tierStatus != 'null'){
               setTier(tierStatus)
             }
@@ -163,12 +163,12 @@ export default function GuildCard(props) {
             console.log('problem getting curdaoidx', err)
             return false
           }
-          console.log('thiscurdaoidx', thisCurDaoIdx)
+         
 
           let thisGuildDid = await ceramic.getDid(contractId, factoryContract, didRegistryContract)
           setDaoDid(thisGuildDid)
           let result = await appIdx.get('guildProfile', thisGuildDid)
-          console.log('result', result)
+        
           if(result){
                 result.name != '' ? setName(result.name) : setName('')
                 result.date ? setDate(result.date) : setDate('')

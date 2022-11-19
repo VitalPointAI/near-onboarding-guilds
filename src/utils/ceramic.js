@@ -230,7 +230,7 @@ class Ceramic {
 
 
   async getAppCeramic(accountId) {
-console.log('TOKENCALL', TOKEN_CALL)
+
     let token = await axios.post(TOKEN_CALL, 
       {
       accountId: accountId
@@ -357,7 +357,7 @@ console.log('TOKENCALL', TOKEN_CALL)
     let contract = new nearApiJs.Contract(account, didRegistryContractName, {
       changeMethods: ['putDID', 'deleteDID', 'adjustKeyAllowance']
     })
-    console.log('contract', contract)
+
     return {
       contract: contract,
       pubKey: keyPair.getPublicKey().toString().split(':')[1]
@@ -387,7 +387,7 @@ console.log('TOKENCALL', TOKEN_CALL)
     let contract = new nearApiJs.Contract(account, registryContract, {
       changeMethods: ['register', 'unregister']
     })
-    console.log('contract', contract)
+
     return {
         contract: contract,
         pubKey: keyPair.getPublicKey().toString().split(':')[1]
@@ -663,7 +663,7 @@ console.log('TOKENCALL', TOKEN_CALL)
       if(alias){
         for (const al in alias) {
           theseAliases = {...theseAliases, [al]: alias[al]}
-          console.log('thesealiases', theseAliases)
+         
         }
         for (const alapp in appIdx._aliases) {
           theseAliases = {...theseAliases, [alapp]: appIdx._aliases[alapp]}

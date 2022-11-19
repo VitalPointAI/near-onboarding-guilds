@@ -40,7 +40,7 @@ export default function GuildRegister(props) {
       did,
       accountType
     } = state
-    console.log('guild accounttype', accountType)
+   
     useEffect(
         () => {
           if(accountType){

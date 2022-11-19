@@ -147,7 +147,7 @@ export default function AccountTransactionActivity(props) {
 
       })
     },[appIdx])
-console.log('accountId', accountId)
+
     const transactionDataHeaders = [
       {label: "Date", key: "Date"},
       {label: "TransactionType", key: "TransactionType"},
@@ -186,7 +186,7 @@ console.log('accountId', accountId)
     async function fetchPriceTable(fromDate, toDate, accountId){
       if(fromDate && toDate){
         let prices = await buildPriceTable(fromDate, toDate, accountId)
-        console.log('prices', prices)
+       
         setPriceTable(prices)
         return prices
       }
@@ -205,7 +205,6 @@ console.log('accountId', accountId)
 
       let priceArray = await fetchPriceTable(fromDate, toDate, accountId)
       let transactionArray = await fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract)
-      console.log('transaction array', transactionArray)
       
       let csvSingle = [] 
 

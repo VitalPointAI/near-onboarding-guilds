@@ -106,7 +106,7 @@ export default function Admin(props) {
         let accessKey
         let thisFreeContract = await ceramic.useFundingAccount(accountId)
         setFreeContract(thisFreeContract)
-        console.log('thisfreecontract', thisFreeContract)
+      
         let publicKey = "ed25519:" + thisFreeContract.pubKey
         try {
           accessKey = await near.connection.provider.query({
@@ -118,7 +118,7 @@ export default function Admin(props) {
           keyAmount = formatNearAmount(accessKey.permission.FunctionCall.allowance, 7)
           setKeyBalance(keyAmount)
           
-          console.log('accesskey', accessKey)
+      
          
         } catch (err) {
             console.log('problem retrieving access key', err)
@@ -132,12 +132,12 @@ export default function Admin(props) {
               account_id: fundingContractName,
           })
           let amount = formatNearAmount(fundingAccount.amount,3)
-          console.log('amount', amount)
+       
           setFundingAccountBalance(amount)
         } catch (err) {
             console.log('problem retrieving account', err)
         }
-        console.log('funding account', fundingAccount)
+       
       }
     }
    
@@ -292,7 +292,7 @@ export default function Admin(props) {
                     'content-type': 'application/x-www-form-urlencoded'
                 }
             })
-    console.log('axioscall', axiosCall)
+  
     if(axiosCall.data == 'Campaign created and now sending'){
       let record = {
         adminId: accountId,

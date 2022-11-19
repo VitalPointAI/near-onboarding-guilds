@@ -117,8 +117,7 @@ export default function GuildProfile(props) {
             if(isUpdated){}
             if(guildDid && appIdx){
                 let result = await appIdx.get('guildProfile', guildDid)
-                console.log('guild did', guildDid)
-                console.log('result', result)
+               
                 if(result) {
                     setGuild(true)
                     result.summoner ? setSummoner(result.summoner) : setSummoner('')
@@ -157,8 +156,7 @@ export default function GuildProfile(props) {
             } else {
                 if(did && appIdx){
                     let result = await appIdx.get('guildProfile', did)
-                    console.log('did', did)
-                    console.log('result', result)
+                
                         if(result) {
                             setGuild(true)
                             result.summoner ? setSummoner(result.summoner) : setSummoner('')

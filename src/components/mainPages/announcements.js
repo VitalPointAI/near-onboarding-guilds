@@ -54,7 +54,7 @@ export default function Announcements(props) {
             (<>
                 
             {announcements.reverse().map(({adminId, subject, message, date}, i) => {
-                console.log('announcements', announcements)
+               
                 return ( 
                     <AnnouncementCard
                         key={i}
@@ -71,7 +71,7 @@ export default function Announcements(props) {
             : announces.length > 0 ?
                 (<>
                 {announces.map(({adminId, subject, message, date}, i) => {
-                    console.log('announcements', announcements)
+                  
                     return ( 
                         <AnnouncementCard
                             key={i}

@@ -84,14 +84,14 @@ export default function ExploreGuilds(props) {
                     let theseGuilds = await updateCurrentGuilds()
                     update('', {currentGuilds: theseGuilds})
                 }
-                console.log('currentGuilds', currentGuilds)
+               
                 if(currentGuilds && appIdx){
                     setGuildCount(currentGuilds.length)
                     sortedGuilds = _.sortBy(currentGuilds, 'registered').reverse()
-                    console.log('sortedGuilds', sortedGuilds)
+                  
                     for(let x = 0; x < sortedGuilds.length; x++){
                         let result = await appIdx.get('guildProfile', sortedGuilds[x].did)
-                        console.log('result', result)
+                      
                         if(result){
                             let category
                             result.category ? category = result.category : category = ''
@@ -99,7 +99,7 @@ export default function ExploreGuilds(props) {
                             sortedGuilds[x] = newObject
                         }
                     }
-                    console.log('sortedguilds2', sortedGuilds)
+                  
                     setGuilds(sortedGuilds)                
                 }
 
@@ -234,7 +234,7 @@ export default function ExploreGuilds(props) {
             (<>
               
             {guilds.map(({accountId, blockTime, did, owner, category}, i) => {
-                console.log('guilds', guilds)
+              
                 return ( 
                     <GuildCard
                         key={i}

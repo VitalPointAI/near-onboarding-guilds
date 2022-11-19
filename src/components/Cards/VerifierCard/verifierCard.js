@@ -103,7 +103,7 @@ export default function VerifierCard(props) {
               }
 
             let result = await appIdx.get('profile', did)
-            console.log('personInfo', result)
+       
             if(result){
                   result.name != '' ? setName(result.name) : setName('')
                   result.date ? setDate(result.date) : setDate('')
@@ -175,7 +175,7 @@ export default function VerifierCard(props) {
         console.log('error removing verifier', err)
       }
   }
-console.log('personid verify', personId.accountId)
+
     return(
         <>
         {!display ? <LinearProgress /> : 

@@ -41,7 +41,7 @@ export default function Pledge(props) {
     const {
         wallet
     } = state
-   console.log('pledge wallet', wallet)
+  
     return(
     <>
       

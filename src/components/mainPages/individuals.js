@@ -78,7 +78,7 @@ export default function ExploreIndividuals(props) {
     useEffect(
         () => {
             if(isUpdated){}
-            console.log('currentIndividualsList', currentIndividualsList)
+          
             async function fetchData() {
                 if(currentIndividualsList && near){
                     setIndividualCount(currentIndividualsList.data.putDIDs.length)
@@ -196,7 +196,7 @@ export default function ExploreIndividuals(props) {
             (<>
               
             {individuals.map(({accountId, blockTime, did, owner}, i) => {
-                console.log('individuals', individuals)
+               
                 return ( 
                     <IndivCard
                         key={i}

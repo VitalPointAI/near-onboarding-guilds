@@ -49,13 +49,12 @@ export default function NotificationCard(props){
                 
                 //retrieve all notifications for all accounts from ceramic
                 let result = await ceramic.downloadKeysSecret(appIdx, 'notifications')
-                console.log('result', result)
+              
                 if(result && result.length > 0){
                         //send the object holding notifications to map for easy access
                         //to specific values
                         let notificationMap = new Map(Object.entries(result[0])) 
                         
-                        console.log("Pre-processed map", notificationMap.get(accountId))
 
                         //set the 'read' flag for all notifications to true
                         for(let i = 0; i < notificationMap.get(accountId).length; i++){
@@ -107,12 +106,11 @@ export default function NotificationCard(props){
             }
         }
      
-        console.log("NOTIFICATION", notification)
+     
     }
 
     let notifs 
-    console.log('notifications', notifications)
-
+ 
     if (notifications && notifications.length > 0) {
         let replyFlag; 
         notifs = notifications.slice().reverse().map(notification => {
@@ -122,7 +120,7 @@ export default function NotificationCard(props){
             else{
                 replyFlag = false; 
             }
-            console.log("avatar", notification.avatar)
+          
             return(
                 <Button href={notification.link} onClick={()=>{handleClick(notification)}} style={{minWidth: '100%'}}>
                 <Card style={{minWidth: '100%', marginTop: 10}}>

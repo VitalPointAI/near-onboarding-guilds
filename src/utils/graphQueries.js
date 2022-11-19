@@ -469,7 +469,7 @@ export default class Queries {
           
             try{
                 let validatorActivity = await validatorClient.query({query: gql(VALIDATOR_ACTIVITY)})
-                console.log('validatorActivity', validatorActivity)
+               
                 activity.push([validatorUris[x], validatorActivity])
             } catch (err) {
                 console.log('error retrieving validator data: ', err)
@@ -490,7 +490,7 @@ export default class Queries {
                 let validatorActivity = await validatorClient.query({query: ACCOUNT_VALIDATOR_ACTIVITY, variables: {
                     accountId: account
                 }})
-                console.log('accountvalidatorActivity', validatorActivity)
+              
                 activity.push([validatorUris[x], validatorActivity])
             } catch (err) {
                 console.log('error retrieving validator data: ', err)

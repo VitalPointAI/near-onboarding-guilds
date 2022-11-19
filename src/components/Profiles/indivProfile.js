@@ -96,7 +96,7 @@ export default function IndivProfile(props) {
             if(isUpdated){}
             if(indivDid && appIdx){
               let result = await appIdx.get('profile', indivDid)
-              console.log('result', result)
+            
               if(result) {
                   setIndividual(true)
                   result.avatar ? setAvatar(result.avatar) : setAvatar(imageName)
@@ -122,7 +122,7 @@ export default function IndivProfile(props) {
             } else {
               if(did && appIdx){
                   let result = await appIdx.get('profile', did)
-                  console.log('result', result)
+              
                       if(result) {
                         result.avatar ? setAvatar(result.avatar) : setAvatar(imageName)
                         result.name ? setName(result.name) : setName('')

@@ -184,7 +184,7 @@ export default function AddSpace(props) {
           try{
             curNFTIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
             setCurNFTIdx(curNFTIdx)
-            console.log('curNFTIdx', curNFTIdx)
+           
           } catch (err) {
             console.log('problem getting curNFTIdx', err)
             return false
@@ -213,12 +213,12 @@ export default function AddSpace(props) {
       () => {
         async function processTriggers(){
           if(curNFTIdx){
-            console.log('trigger curNFTIdx', curNFTIdx)
+           
             let urlVariables = window.location.search
             const urlParameters = new URLSearchParams(urlVariables)
             let transactionHash = urlParameters.get('transactionHashes')
             let errorCode = urlParameters.get('errorCode')
-            console.log('errorCode', errorCode)
+         
 
             // check for first init to log token summon events
             let didCreateSpace = get(SPACE_CREATED, [])
@@ -236,7 +236,7 @@ export default function AddSpace(props) {
                   didCreateSpace[cc].maxSupply,
                   didCreateSpace[cc].creationTime,
                   transactionHash)
-                console.log('logged', logged)
+            
                 if (logged) {
                   del(FT_FIRST_INIT)
                   window.location.assign('/fts')
@@ -308,8 +308,6 @@ export default function AddSpace(props) {
           setTokenIconUrl(reader.result);
         }, false);
         // reader.readAsDataURL(event.target.files[0])
-        // console.log('reader', reader)
-        // console.log('readerresult', reader.result)
         // setTokenIconUrl(reader.result)
       }
   
@@ -337,7 +335,7 @@ export default function AddSpace(props) {
       }
     
       const captureImageFile = (i) => {
-        console.log('here', i)
+      
           event.stopPropagation()
           event.preventDefault()
           //const file = event.target.files[0]
@@ -354,7 +352,7 @@ export default function AddSpace(props) {
           ipfsApi.add(buffer)
           .then((response) => {
           ipfsId = response.path
-          console.log('ipfsId', ipfsId)
+       
           setAddedImageFileHash(ipfsId)
           handleImageFileHash(ipfsId, name)
           }).catch((err) => {
@@ -372,7 +370,7 @@ export default function AddSpace(props) {
       }
     
       const captureMediaFile = (i) => {
-        console.log('here', i)
+     
           event.stopPropagation()
           event.preventDefault()
           //const file = event.target.files[0]
@@ -389,7 +387,7 @@ export default function AddSpace(props) {
           ipfsApi.add(buffer)
           .then((response) => {
           ipfsId = response.path
-          console.log('ipfsId', ipfsId)
+         
           setAddedMediaFileHash(ipfsId)
           handleMediaFileHash(ipfsId, name)
           }).catch((err) => {

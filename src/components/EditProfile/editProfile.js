@@ -194,7 +194,7 @@ export default function EditProfileForm(props) {
            if(accountId && did){
           
               let result = await appIdx.get('profile', did)   
-            console.log('result', result)
+           
               if(result) {
                 if(result.intro){
                   let contentBlock = htmlToDraft(result.intro)

@@ -115,8 +115,7 @@ export default function GuildCard(props) {
         if(isUpdated){await updateCurrentGuilds()}
 
         let guildInfo = await appIdx.get('guildProfile', guildDid)
-        console.log('guildInfo', guildInfo)
-        console.log('guild did', guildDid)
+      
         let thisDaoPlatform
         if(guildInfo && guildInfo.contractId){
           if(guildInfo.contractId.split('.')[1].substr(0,4)=='cdao'){
@@ -148,7 +147,7 @@ export default function GuildCard(props) {
         if(didRegistryContract){
           try{
             let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: contractId})
-            console.log('verification status', verificationStatus)
+         
             if(verificationStatus != 'null'){
               setVerified(verificationStatus)
             }
@@ -161,7 +160,7 @@ export default function GuildCard(props) {
         if(didRegistryContract){
           try{
             let tierStatus = await didRegistryContract.getTier({accountId: contractId})
-            console.log('tierstatus', tierStatus)
+      
             if(tierStatus != 'null'){
               setTier(tierStatus)
             }
@@ -218,20 +217,17 @@ export default function GuildCard(props) {
   useEffect(()=> {
     async function determineMatch(){
       let profile = await appIdx.get('profile', state.did)
-      console.log('profile', profile)
+     
       if(profile && values){
         let valueMatch = 0
 
         let valueTotal = profile.values ? profile.values.length : 0
-        console.log('valueTotal', valueTotal)
+  
         for(let x = 0; x < profile.values.length; x++){
           for(let i = 0; i < values.length; i++){
 
-            console.log('profile value', profile.values[x].name.toLowerCase())
-            console.log('value value', values[i].name.toLowerCase())
             if(profile.values[x].name.toLowerCase() == values[i].name.toLowerCase()){
               valueMatch ++
-              console.log('valueMatch here', valueMatch)
             }
           }
         }

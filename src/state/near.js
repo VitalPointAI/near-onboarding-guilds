@@ -114,7 +114,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
     // resume wallet / contract flow
     const wallet = new nearAPI.WalletAccount(near)
-    console.log('wallet', wallet)
+ 
     wallet.signIn = () => {
         wallet.requestSignIn({
             contractId: contractName,
@@ -145,7 +145,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     const fundingContract = await funding.initFundingContract(wallet.account())
     
     if(wallet.signedIn){
-        console.log('here')
+     
         // ********* Check and action redirects after DAO and proposal creation *************
         let urlVariables = window.location.search
         const urlParameters = new URLSearchParams(urlVariables)
@@ -183,7 +183,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         // ********* Get Registry Admin ****************
         try{
         let superAdmin = await didRegistryContract.getSuperAdmin()
-        console.log('super admin', superAdmin)
+      
         update('', superAdmin)
         } catch (err) {
             console.log('problem getting super admin', err)
@@ -192,7 +192,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         // ********* Account Admin Status ****************
         try{
             let admins = await didRegistryContract.getAdmins()
-            console.log('admins', admins)
+          
             if(admins.includes(accountId)){
                 update('', {isAdmin: true, admins: admins})
             } else {
@@ -219,16 +219,14 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         //Initiate App Ceramic Components
 
         const appIdx = await ceramic.getAppIdx(didRegistryContract, account)
-        console.log('appidx', appIdx)
 
         let curUserIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
-        console.log('curuseridx', curUserIdx)
 
         // ********* All Announcements ****************
         try{
             let announcements = await appIdx.get('announcements', appIdx.id)
             update('', {announcements: announcements})
-            console.log('announcements', announcements)
+        
         } catch (err) {
             console.log('problem getting all announcements', err)
         }
@@ -237,7 +235,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         if (curUserIdx) {
             did = curUserIdx.id
         }
-        console.log('near did', did)
+       
         let accountType
         try{
             accountType = await didRegistryContract.getType({accountId: accountId})
@@ -245,7 +243,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
             accountType = 'none'
             console.log('account not registered, not type avail', err)
         }
-        console.log('accounttype', accountType)
+       
         let verificationStatus
         try{
             verificationStatus = await didRegistryContract.getVerificationStatus({accountId: accountId})
@@ -260,12 +258,12 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         
         // determine list of current guilds (take into account those that have been deleted)
         let currentGuildsList = await queries.getGuilds()
-        console.log('currentguildslist', currentGuildsList)
+       
         let deletedGuildsList = await queries.getDeletedGuilds()
-        console.log('deletedguildslist', deletedGuildsList)
+ 
 
         let currentActiveDaos = await updateCurrentCommunities()
-        console.log('active daos', currentActiveDaos)
+     
 
         let currentGuilds = await updateCurrentGuilds()
         update('',{currentGuilds, currentActiveDaos})
@@ -295,9 +293,9 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
         // determine list of current individuals (take into account those that have been deleted)
         let currentIndividualsList = await queries.getIndividuals()
-        console.log('currentIndividualsList', currentIndividualsList)
+        
         let deletedIndividualsList = await queries.getDeletedIndividuals()
-        console.log('deletedIndiviudalslist', deletedIndividualsList)
+      
 
         let currentIndividuals = []
         let individualExists = false
@@ -320,9 +318,9 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
         // determine list of current verifiers (take into account those that have been removed)
         let addedVerifiers = await queries.getAddedVerifiers()
-        console.log('addedVerifiers', addedVerifiers)
+       
         let removedVerifiers = await queries.getRemovedVerifiers()
-        console.log('removedVerifiers', removedVerifiers)
+       
 
         let currentVerifiers = []
         let verifierExists = false
@@ -337,33 +335,30 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
                 for(let n = 0; n < addedVerifiers.data.addVerifiers.length; n++){
                     if(addedVerifiers.data.addVerifiers[m].accountId == addedVerifiers.data.addVerifiers[n].accountId){
                         lastIndexAddVerifier = n
-                        console.log('lastindexaddverifier', lastIndexAddVerifier)
+                      
                     }
                 }
                 for(let x = 0; x < removedVerifiers.data.removeVerifiers.length; x++){
                     if(addedVerifiers.data.addVerifiers[lastIndexAddVerifier].accountId == removedVerifiers.data.removeVerifiers[x].accountId){
                         lastIndexDeleteVerifier = x
-                        console.log('lastindexdeleteverifier', lastIndexDeleteVerifier)
+                     
                     }
                 }
-                console.log('at this point')
+
                 if(lastIndexAddVerifier >= 0 && lastIndexDeleteVerifier >= 0){
-                    console.log('in here')
+                 
                     if(parseFloat(addedVerifiers.data.addVerifiers[lastIndexAddVerifier].time) > parseFloat(removedVerifiers.data.removeVerifiers[lastIndexDeleteVerifier].time)) {
                         currentVerifiers.push(addedVerifiers.data.addVerifiers[lastIndexAddVerifier])
                     }
                 } else {
-                    console.log('or here')
-                    console.log('last index add verifier', lastIndexAddVerifier)
+                  
                     if(lastIndexAddVerifier >= 0){
-                        console.log('here is')
-                        console.log('record', addedVerifiers.data.addVerifiers[lastIndexAddVerifier] )
                         currentVerifiers.push(addedVerifiers.data.addVerifiers[lastIndexAddVerifier])
                     }
                 }
             }
         }
-        console.log('currentVerifiers', currentVerifiers)
+     
 
         // let currentVerifiers = []
         // let verifierExists = false
@@ -386,7 +381,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
         // determine list of guilds awaiting verification
         let verifiedGuilds = await queries.getVerifiedGuilds()
-        console.log('verifiedguilds', verifiedGuilds)
+       
         let guildsAwaitingVerification = []
         let guildInList = false
         let verified = false
@@ -651,16 +646,15 @@ export function formatDateString(timestamp){
 export async function signalCounter(signalType, contractId, accountId, proposalType, near, appIdx, didRegistryContract, guildDid, factoryContract){
     let currentProperties
     let stream
-    console.log('contractId here', contractId)
-      console.log('guild did here', guildDid)
+   
     let guildAccount = new nearAPI.Account(near.connection, contractId)
     let curDaoIdx = await ceramic.getUserIdx(guildAccount, appIdx, factoryContract, didRegistryContract)
-    console.log('this curdaoidx here', curDaoIdx)
+  
     switch(proposalType){
         case 'guild':
             try{
                 currentProperties = await curDaoIdx.get('guildProfile', guildDid)
-                console.log('currentproperties', currentProperties)
+             
                 stream = 'guildProfile'
                 break
             } catch (err) {
@@ -698,14 +692,14 @@ export async function signalCounter(signalType, contractId, accountId, proposalT
 }
 
 export async function signal(signalType, curDaoIdx, accountId, proposalType){
-  console.log('proposalType', proposalType)
+ 
     let currentProperties
     let stream
     switch(proposalType){
         case 'guild':
             try{
                 currentProperties = await curDaoIdx.get('guildProfile', curDaoIdx.id)
-                console.log('currentproperties', currentProperties)
+             
                 stream = 'guildProfile'
                 break
             } catch (err) {
@@ -866,7 +860,6 @@ export async function updateCurrentGuilds() {
         }
     }
 
-console.log('currentGuilds', currentGuilds)
 return currentGuilds
 }
 
@@ -948,7 +941,7 @@ export async function synchAccountLinks(curUserIdx){
         while(r < copyArray.length){
             if(copyArray[r].accountId == allAccounts[z].accountId){
                 count++
-                console.log('count', count)
+               
                 if(count > 1) {
                     copyArray.splice(r,1)
                     wasDuplicate = true
@@ -981,12 +974,10 @@ export async function getCommunityMemberStatus(platform, contractId, account){
 export async function updateCurrentCommunities() {
     let currentCommunitiesList = await queries.getAllCommunities()
     let sortedCommunities = _.sortBy(currentCommunitiesList.data.createDAOs, 'created')
-    console.log('currentCommunitieslist', currentCommunitiesList)
-    console.log('sortedCommunities', sortedCommunities)
+ 
     let inactivatedCommunitiesList = await queries.getAllInactivatedCommunities()
     let sortedInactivatedCommunities = _.sortBy(inactivatedCommunitiesList.data.inactivateDAOs, 'deactivated')
-    console.log('inactivatedCommunitieslist', inactivatedCommunitiesList)
-    console.log('sorted inactivatedCommunities', sortedInactivatedCommunities)
+ 
 
     let currentCommunities = []
     let lastIndexAdd
@@ -994,7 +985,7 @@ export async function updateCurrentCommunities() {
 
     // first - start the loop to look through every one of the community entries
     for(let k = 0; k < sortedCommunities.length; k++){
-        console.log('account', sortedCommunities[k].contractId)
+      
         // make sure it hasn't already been added to the current communities list
         if(currentCommunities.filter(e => e.contractId == sortedCommunities[k].contractId).length == 0){
                 for(let n = 0; n < sortedCommunities.length; n++){
@@ -1002,19 +993,19 @@ export async function updateCurrentCommunities() {
                         lastIndexAdd = n
                     }
                 }
-            console.log('lastIndexAdd', lastIndexAdd)
+         
             // step 2 - get index of the last time the contractId was deleted
             for(let x = 0; x < sortedInactivatedCommunities.length; x++){
                 if(sortedCommunities[lastIndexAdd].contractId == sortedInactivatedCommunities[x].contractId){
                     lastIndexDelete = x
                 }
             }
-            console.log('lastIndexDelete', lastIndexDelete)
+      
             //  step 3 - if there is a last index added, compare last added with 
             //  last deleted to see if it is still an active guild.  Push it to the
             //  list of current guilds.
             if(lastIndexAdd > 0 ){
-                console.log('comparison', parseFloat(sortedCommunities[lastIndexAdd].created) > parseFloat(sortedInactivatedCommunities[lastIndexDelete].deactivated))
+             
                 if(parseFloat(sortedCommunities[lastIndexAdd].created) > parseFloat(sortedInactivatedCommunities[lastIndexDelete].deactivated)) {
                     currentCommunities.push(sortedCommunities[lastIndexAdd])
                 }
@@ -1022,12 +1013,12 @@ export async function updateCurrentCommunities() {
         }
     }
 
-console.log('currentCommunities', currentCommunities)
+
 return currentCommunities
 }
 
 export function getStatus(flags) {
-    console.log('flags', flags)
+    
     
    /* flags [
         0: sponsored, 
@@ -1037,13 +1028,13 @@ export function getStatus(flags) {
     ]
     */
     let sponsored = flags[0]
-    console.log('sponsored', sponsored)
+  
     let processed = flags[1]
-    console.log('processed', processed)
+
     let passed = flags[2]
-    console.log('passed', passed)
+
     let cancelled = flags[3]
-    console.log('cancelled', cancelled)
+
 
     if(cancelled){
         return 'Cancelled'
@@ -1093,14 +1084,11 @@ export function getCombinedSkills(accountType, persona){
            }
          })
        }
-       console.log('combinedpersonaskills', combinedPersonaSkills)
+      
        return combinedPersonaSkills
      } else {
         // if(persona && Object.keys(persona).length > 0){
-        //     console.log('here0')
         //     for (const [key, value] of Object.entries(persona.skills)){
-        //         console.log('key', key)
-        //         console.log('value', value)
         //     if(value){
         //         combinedPersonaSkills.push(value)
         //     }
@@ -1113,7 +1101,7 @@ export function getCombinedSkills(accountType, persona){
         // }
  
         if (persona && persona.skills.length > 0){
-            console.log('here1')
+        
           persona.skills.map((values, index) => {
             if(values.name){
               combinedPersonaSkills.push(values.name)
@@ -1122,14 +1110,14 @@ export function getCombinedSkills(accountType, persona){
         }
  
         if (persona && persona.specificSkills.length > 0){
-            console.log('here2')
+       
           persona.specificSkills.map((values, index) => {
             if(values.name){
               combinedPersonaSkills.push(values.name)
             }
           })
         }
-        console.log('combinedpersonaskills guild', combinedPersonaSkills)
+        
         return combinedPersonaSkills
      }
 
@@ -1208,6 +1196,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
     let today = new Date()
     let to = today
     console.log('to', to)
+
     let t = today.getMonth()
     let todayMonth = uniqueMonthArray[t]
     let todayYear = today.getFullYear()
@@ -1231,9 +1220,11 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
     let key = todayYear+todayMonth+'NearPriceHistory'
     let alias = {[key]: yearMonthAlias}
     console.log('alias', alias)
+
     let appClient = await ceramic.getAppCeramic(accountId)
     let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
     console.log('thisidx', thisIdx)
+
     let getit = await thisIdx.get(key, thisIdx.id)
     console.log('get it', getit)
     let from
