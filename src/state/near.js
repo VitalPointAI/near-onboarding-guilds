@@ -1229,6 +1229,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
 
     let lastMonth
     for (month in uniqueMonthArray){
+        console.log('month', month)
         if(lastKey.includes(month)){
             lastMonth = month
             break
