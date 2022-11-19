@@ -55,7 +55,8 @@ export const {
     NEW_CHANGE_PROPOSAL,
     SPACE_CREATED,
     networkId, 
-    nodeUrl, 
+    nodeUrl,
+    helperUrl,
     walletUrl, 
     nameSuffix, 
     nftFactorySuffix, 
@@ -80,6 +81,8 @@ export const {
     KeyPair,
     InMemorySigner,
     keyStores,
+    connect,
+    WalletConnection,
     transactions: {
         addKey, deleteKey, fullAccessKey
     },
@@ -95,9 +98,18 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
    
     let finished = false
 
-    const near = await nearAPI.connect({
-        networkId, nodeUrl, walletUrl, deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
-    })
+    const myKeyStore = new keyStores.BrowserLocalStorageKeyStore();
+
+    const connectionConfig = {
+        networkId: networkId,
+        keyStore: myKeyStore,
+        nodeUrl: nodeUrl,
+        walletUrl: walletUrl,
+        helperUrl: helperUrl,
+        explorerUrl: explorerUrl,
+      }
+
+      const near = await connect(connectionConfig)
  
     const isAccountTaken = async (accountId) => {
         const account = new nearAPI.Account(near.connection, accountId);
@@ -113,12 +125,12 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
     }
 
     // resume wallet / contract flow
-    const wallet = new nearAPI.WalletAccount(near)
+    const wallet = new WalletConnection(near)
  
     wallet.signIn = () => {
         wallet.requestSignIn({
             contractId: contractName,
-            title: 'My NEAR Journey',
+            title: 'Guilds',
         })
         window.location.assign('/')
     }
