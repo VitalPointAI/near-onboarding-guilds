@@ -238,7 +238,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
 
         // ********* Account Transactions Update ******
-        await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
+      //  await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
 
         // ********* All Announcements ****************
         try{
@@ -1274,6 +1274,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
 
     if(to >= from){
         for (let day = from; day <= to; day.setDate(day.getDate() + 1)) {
+            console.log('from in here', from)
             let thisDay = day.getMonth()
             let thisMonth = uniqueMonthArray[thisDay]
             let thisYear = day.getFullYear()
