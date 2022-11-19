@@ -1226,7 +1226,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
 
     let appClient = await ceramic.getAppCeramic(accountId)
     console.log('appClient', appClient)
-    let thisIdx = new IDX({ ceramic: appClient, aliases: existingAliases})
+    let thisIdx = new IDX({ ceramic: appClient, aliases: existingAliases.history})
     console.log('thisidx', thisIdx)
 
     let getit = await thisIdx.get(lastKey, thisIdx.id)
@@ -1239,6 +1239,21 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
     }
     if(to >= from){
         let yearMonthAlias
+        // get last month and year from existingaliases
+        let lastYear = lastKey.substring(0,4)
+        console.log('lastyear', lastYear)
+        let lastMonth
+        for (month in uniqueMonthArray){
+            if(lastKey.includes(month)){
+                lastMonth = month
+                break
+            }
+        }
+        console.log('last month', lastMonth)
+
+        // create missing aliases
+        
+
         // get all the aliases so we can create an idx with this month and year's alias
         for(let q = 0; q < allAliases.data.storeAliases.length; q++){
             if(allAliases.data.storeAliases[q].alias == todayYear+todayMonth+'NearPriceHistory'){
