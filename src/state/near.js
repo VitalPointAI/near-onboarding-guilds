@@ -1224,17 +1224,45 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
     console.log('last entry', existingAliases.history[existingAliases.history.length-1])
     console.log('lastKey', lastKey)
 
-    console.log('appIdx', appIdx)
-    let getithere = await appIdx.get(lastKey)
-    console.log('getithere', getithere)
+    let lastYear = lastKey.substring(0,4)
+    console.log('lastyear', lastYear)
+
+    let lastMonth
+    for (month in uniqueMonthArray){
+        if(lastKey.includes(month)){
+            lastMonth = month
+            break
+        }
+    }
+    console.log('last month', lastMonth)
+
+    let key = lastYear+lastMonth+'NearPriceHistory'
+    console.log('key', key)
+
+    let alias = {[key]: yearMonthAlias}
+    console.log('alias', alias)
 
     let appClient = await ceramic.getAppCeramic(accountId)
     console.log('appClient', appClient)
-    let thisIdx = new IDX({ ceramic: appClient, aliases: existingAliases.history})
+    let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
     console.log('thisidx', thisIdx)
 
     let getit = await thisIdx.get(lastKey, thisIdx.id)
     console.log('get it', getit)
+
+    // let interimAliases
+    // for (alias in existingAliases.history){
+    //     let todayKey = todayYear+todayMonth+'NearPriceHistory'
+    //     interimAliases = {...interimAliases, alias}
+    // }
+   
+    // console.log('interimAliases', interimAliases)
+
+    // console.log('appIdx', appIdx)
+    // let getithere = await appIdx.get(lastKey)
+    // console.log('getithere', getithere)
+
+   
     let from
     if(getit){
         let endDate = new Date(getit.history[getit.history.length-1].date)
@@ -1242,22 +1270,6 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
         console.log('from', from)
     }
     if(to >= from){
-        let yearMonthAlias
-        // get last month and year from existingaliases
-        let lastYear = lastKey.substring(0,4)
-        console.log('lastyear', lastYear)
-        let lastMonth
-        for (month in uniqueMonthArray){
-            if(lastKey.includes(month)){
-                lastMonth = month
-                break
-            }
-        }
-        console.log('last month', lastMonth)
-
-        // create missing aliases
-
-
         // get all the aliases so we can create an idx with this month and year's alias
         for(let q = 0; q < allAliases.data.storeAliases.length; q++){
             if(allAliases.data.storeAliases[q].alias == todayYear+todayMonth+'NearPriceHistory'){
