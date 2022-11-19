@@ -1265,7 +1265,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     let getit = await thisIdx.get(lastKey, thisIdx.id)
     console.log('get it', getit)
    
-    let from
+    let from = null
     if(getit){
         let endDate = new Date(getit.history[getit.history.length-1].date)
         from = new Date(endDate.setDate(endDate.getDate() + 1))
