@@ -1310,6 +1310,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
         appIdx = new IDX({ ceramic: appClient, aliases: interimAliases})
         console.log('newappIdx', appIdx)
         update('', {appIdx})
+        console.log('from here', from)
         await populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract)
     }
 
