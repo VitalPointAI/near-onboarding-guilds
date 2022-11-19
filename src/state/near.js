@@ -1273,8 +1273,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     }
 
     if(to >= from){
-        let day = from
-        for (day; day <= to; day.setDate(day.getDate() + 1)) {
+        for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
             console.log('from in here', from)
             let thisDay = day.getMonth()
             let thisMonth = uniqueMonthArray[thisDay]
