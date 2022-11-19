@@ -134,19 +134,19 @@ export default function AccountTransactionActivity(props) {
       didRegistryContract
     } = state
 
-    useEffect(() => {
-      async function update(){
-        if(appIdx){
-          await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
-          await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
-        }
-      }
+    // useEffect(() => {
+    //   async function update(){
+    //     if(appIdx){
+    //       await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
+    //       await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
+    //     }
+    //   }
 
-      update()
-      .then(() => {
+    //   update()
+    //   .then(() => {
 
-      })
-    },[appIdx])
+    //   })
+    // },[appIdx])
 
     const transactionDataHeaders = [
       {label: "Date", key: "Date"},

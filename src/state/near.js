@@ -234,6 +234,12 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
 
         let curUserIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
 
+        // ********* NEAR Price API Update ************
+        await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
+
+        // ********* Account Transactions Update ******
+        await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
+
         // ********* All Announcements ****************
         try{
             let announcements = await appIdx.get('announcements', appIdx.id)
