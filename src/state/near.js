@@ -1299,7 +1299,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
             interimAliases = {...interimAliases, [newAllAliases.data.storeAliases[a]['alias']]: newAllAliases.data.storeAliases[a]['definition'] }
         }
        // let updatedAliases = {...interimAliases, [key]: yearMonthAlias}
-        console.log('updatedAliases', updatedAliases)
+        //console.log('upAliases', updatedAliases)
         
         let newIdx = new IDX({ ceramic: appClient, aliases: updatedAliases})
         console.log('newidx', newIdx)
