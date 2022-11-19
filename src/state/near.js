@@ -1288,9 +1288,9 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
         let key = todayYear+todayMonth+'NearPriceHistory'
         console.log('newkey', key)
 
-        let interimAliases
-        for (alias in existingAliases.history){
-            interimAliases = {...interimAliases, alias }
+        let interimAliases = {}
+        for (let a = 0; a < existingAliases.history.length; a++){
+            interimAliases = {...interimAliases, [existingAliases.history[a][0]]: existingAliases.history[a][1] }
         }
         let updatedAliases = {...interimAliases, [key]: yearMonthAlias}
         console.log('updatedAliases', updatedAliases)
