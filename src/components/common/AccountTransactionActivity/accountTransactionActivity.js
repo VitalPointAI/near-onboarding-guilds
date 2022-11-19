@@ -5,9 +5,7 @@ import {
   getPrice,
   buildPriceTable,
   buildTransactionTable,
-  formatNearAmount,
-  updateNearPriceAPI,
-  updateNearTransactionAPI } from '../../../state/near'
+  formatNearAmount } from '../../../state/near'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { CSVLink, CSVDownload } from 'react-csv'
 import Decimal from 'decimal.js'
@@ -186,7 +184,6 @@ export default function AccountTransactionActivity(props) {
     async function fetchPriceTable(fromDate, toDate, accountId){
       if(fromDate && toDate){
         let prices = await buildPriceTable(fromDate, toDate, accountId)
-       
         setPriceTable(prices)
         return prices
       }

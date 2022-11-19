@@ -238,7 +238,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
 
         // ********* Account Transactions Update ******
-      //  await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
+        await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
 
         // ********* All Announcements ****************
         try{
@@ -1178,7 +1178,6 @@ export async function buildPriceTable(from, to, accountId){
     }
 
     let aliasList = everyDayAlias.filter((x, i, a) => a.indexOf(x) === i)
-    console.log('aliasList', aliasList)
 
     let aliases = {}
     for(let y = 0; y < aliasList.length; y++){
@@ -1188,21 +1187,17 @@ export async function buildPriceTable(from, to, accountId){
             }
         }
     }
-    console.log('aliases', aliases)
 
     let thisIdx = new IDX({ ceramic: appClient, aliases: aliases})
-    console.log('thisidx', thisIdx)
 
     let pricingArray = []
     for(let z = 0; z < aliasList.length; z++){
         let priceObject = await thisIdx.get(aliasList[z], thisIdx.id)
-        console.log('priceobject', priceObject)
         if(priceObject != null){
             pricingArray = pricingArray.concat(priceObject.history)
         }
     }
 
-    console.log('pricingArray', pricingArray)
     return pricingArray
 }
 
@@ -1211,27 +1206,13 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     let allAliases = await queries.getAliases()
 
-    let today = new Date()
-    let to = today
-    console.log('to', to)
-
-    let t = today.getMonth()
-    let todayMonth = uniqueMonthArray[t]
-    let todayYear = today.getFullYear()
-    let todayTimestamp = today.getTime()
-    let todayFormattedDate = formatDate(todayTimestamp)
-    console.log('today formatted date', todayFormattedDate)
+    let to = new Date()
 
     let existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
-    console.log('existingAliases', existingAliases)
 
     let lastKey = existingAliases.history[existingAliases.history.length-1][0]
-    console.log('history', existingAliases.history)
-    console.log('last entry', existingAliases.history[existingAliases.history.length-1])
-    console.log('lastKey', lastKey)
 
     let lastYear = lastKey.substring(0,4)
-    console.log('lastyear', lastYear)
 
     let lastMonth
     for (let x = 0; x < uniqueMonthArray.length; x++){
@@ -1240,97 +1221,59 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
             break
         }
     }
-    console.log('last month', lastMonth)
 
     let key = lastYear+lastMonth+'NearPriceHistory'
-    console.log('key', key)
 
     let yearMonthAlias
     for(let q = 0; q < allAliases.data.storeAliases.length; q++){
         if(allAliases.data.storeAliases[q].alias == key){
             yearMonthAlias = allAliases.data.storeAliases[q].definition
-            console.log('inside alias', yearMonthAlias)
             break
         }
     }
 
     let alias = {[key]: yearMonthAlias}
-    console.log('alias', alias)
-
     let appClient = await ceramic.getAppCeramic(accountId)
-    console.log('appClient', appClient)
     let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
-    console.log('thisidx', thisIdx)
-
     let getit = await thisIdx.get(lastKey, thisIdx.id)
-    console.log('get it', getit)
    
     let from = null
     if(getit){
         let endDate = new Date(getit.history[getit.history.length-1].date)
         from = new Date(endDate.setDate(endDate.getDate() + 1))
-        console.log('from', from)
     }
 
     if(to >= from){
         for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
-            console.log('from in here', from)
             let thisDay = day.getMonth()
             let thisMonth = uniqueMonthArray[thisDay]
             let thisYear = day.getFullYear()
             let thisKey = thisYear+thisMonth+'NearPriceHistory'
-            // get all the aliases so we can create an idx with this month and year's alias
-            // for(let q = 0; q < allAliases.data.storeAliases.length; q++){
-            //     if(allAliases.data.storeAliases[q].alias == thisKey){
-            //         yearMonthAlias = allAliases.data.storeAliases[q].definition
-            //         console.log('inside alias', yearMonthAlias)
-            //     } else {
             yearMonthAlias = await ceramic.getAlias(APP_OWNER_ACCOUNT, thisKey, appClient, yearPriceHistorySchema, thisMonth+thisYear+' near year price history', didRegistryContract)
-            console.log('yearmonthalias', yearMonthAlias)
-            //    }
         }
 
-        // setTimeout(function() {
-        //     console.log("waiting for graph query to catchup");
-        //   }, 10000);
-
         let newAllAliases = await queries.getAliases()
-        console.log('newAllAliases', newAllAliases)
-
-        // // get this month's price data stream so we can look at the last entry
-        // let key = todayYear+todayMonth+'NearPriceHistory'
-        // console.log('newkey', key)
-
+      
         let interimAliases = {}
         for (let a = 0; a < newAllAliases.data.storeAliases.length; a++){
             interimAliases = {...interimAliases, [newAllAliases.data.storeAliases[a]['alias']]: newAllAliases.data.storeAliases[a]['definition'] }
         }
-       // let updatedAliases = {...interimAliases, [key]: yearMonthAlias}
-        //console.log('upAliases', updatedAliases)
-        
+   
         appIdx = new IDX({ ceramic: appClient, aliases: interimAliases})
-        console.log('newappIdx', appIdx)
-        console.log('from here', from)
         update('', {appIdx})
-        
         await populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract)
     }
-
 }
 
 export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract){
     let allData = []
     let allAliases = await queries.getAliases()
-    console.log('allAliases nearprice', allAliases)
-    console.log('fromprice', from)
-    console.log('toprice', to)
-    console.log('appidx price', appIdx)
+   
     let count = 0
 
-    for (let day = from; day <= to; day.setDate(day.getDate() + 1)) {
+    for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
         if(count < 20){
             let interimDate = Date.parse(day)
-            console.log('interimDate', interimDate)
             let date
             let formattedDate
             if(interimDate){
@@ -1340,18 +1283,15 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
                 date = formatGeckoDate(day)
                 formattedDate = formatDate(day)
             }
-            console.log('formattedDate', formattedDate)
-            console.log('here0')
+         
             let getNearData
             await new Promise(resolve => setTimeout(resolve, 1000))
             try{
                 getNearData = await axios.get(`https://api.coingecko.com/api/v3/coins/near/history?date=${date}`)
-                console.log('getneardata', getNearData)
             } catch (err) {
                 console.log('problem retrieving price data', err)
             }
             if(getNearData && getNearData.data.market_data){
-                console.log('in here')
                 let record = {
                     date: formattedDate,
                     currentPrice: getNearData.data.market_data.current_price
@@ -1360,7 +1300,6 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
             }
         count++
         } else {
-            console.log('allData', allData)
             await new Promise(resolve => setTimeout(resolve, 65000))
             count = 0
             day.setDate(day.getDate() - 1)
@@ -1370,10 +1309,9 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
     // find all the unique years
     let uniqueArray = []
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    console.log('all data here', allData)
+   
     for(let i = 0; i< allData.length; i++){
         let obj = allData[i]
-        console.log('obj', obj)
         let year = (new Date(obj.date)).getFullYear()
         if(year){
             if(!(uniqueArray.indexOf(year) > -1)){
@@ -1381,7 +1319,6 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
             }
         }
     }
-    console.log('unique array', uniqueArray)
 
     // filter all Data by year and month and store
     for(let x = 0; x < uniqueArray.length; x++){
@@ -1393,7 +1330,6 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
                 currentYearArray.push(allData[y])
             }
         }
-        console.log('current year array', currentYearArray)
 
         // split year data into month arrays
         for(let y = 0; y < uniqueMonthArray.length; y++){
@@ -1411,29 +1347,22 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
                 z++
             }
             if(currentMonthArray && currentMonthArray.length > 0){
-                console.log('currentmontharray', currentMonthArray)
                 let appClient = await ceramic.getAppCeramic(accountId)
                 let yearMonthAlias
-                console.log('month', month)
-                console.log('month unique array', uniqueMonthArray[y])
                 month = uniqueMonthArray[y]
-                console.log('all aliases', allAliases)
-                console.log('check it', uniqueArray[x]+month+'NearPriceHistory')
+
                 for(let q = 0; q < allAliases.data.storeAliases.length; q++){
                     if(allAliases.data.storeAliases[q].alias == uniqueArray[x]+month+'NearPriceHistory'){
                         yearMonthAlias = allAliases.data.storeAliases[q].definition
-                        console.log('inside alias', yearMonthAlias)
                         break
                     }
                 }
+
                 if(!yearMonthAlias){
-                    console.log('why here')
                     yearMonthAlias = await ceramic.getAlias(APP_OWNER_ACCOUNT, uniqueArray[x]+month+'NearPriceHistory', appClient, yearPriceHistorySchema, uniqueArray[x]+month+' near year price history', didRegistryContract)
                 }
-                console.log('yearMonthAlias', yearMonthAlias)
 
                 let existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
-                console.log('existingAliases', existingAliases)
                 
                 if(existingAliases == null){
                     let record = {
@@ -1441,7 +1370,6 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
                     }
                     await appIdx.set('nearPriceHistory', record)
                     existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
-                    console.log('existing aliases', existingAliases)
                 }
 
                 let exists = false
@@ -1452,20 +1380,18 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
                         }
                     }
                 }
-                console.log('exists', exists)
+              
                 if(!exists){
                     existingAliases.history.push([uniqueArray[x]+month+'NearPriceHistory', yearMonthAlias])
                     let first = await appIdx.set('nearPriceHistory', existingAliases)
                     console.log('history', existingAliases.history)
                 }
         
-               
                 let key = uniqueArray[x]+month+'NearPriceHistory'
                 let alias = {[key]: yearMonthAlias}
-                console.log('alias', alias)
                 let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
-                console.log('thisidx', thisIdx)
                 let firstGetIt = await thisIdx.get(key, thisIdx.id)
+
                 let entry
                 if(firstGetIt && firstGetIt.history.length > 0){
                     let update = firstGetIt.history.concat(currentMonthArray)
@@ -1479,7 +1405,6 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
                 }
                 let second = await thisIdx.set(key, entry)
                 let getit = await thisIdx.get(key, thisIdx.id)
-                console.log('get it', getit)
             }
         }           
     }
@@ -1491,8 +1416,7 @@ export async function buildTransactionTable(from, to, accountId, account, factor
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
     let everyDayAlias = []
-    console.log('from build', from)
-    console.log('to build', to)
+   
     let adjustedFrom = new Date(from)
     adjustedFrom.setDate(adjustedFrom.getDate()+1)
     let adjustedTo = new Date(to)
@@ -1540,51 +1464,114 @@ export async function updateNearTransactionAPI(accountId, appIdx, factoryContrac
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     let allAliases = await queries.getAliases()
 
-    let today = new Date()
-    let to = today
-    console.log('to', to)
-    let t = today.getMonth()
-    let todayMonth = uniqueMonthArray[t]
-    let todayYear = today.getFullYear()
-    let todayTimestamp = today.getTime()
-    let todayFormattedDate = formatDate(todayTimestamp)
-    console.log('today formatted date', todayFormattedDate)
+    let to = new Date()
 
     let existingAliases = await appIdx.get('nearTransactionHistory', appIdx.id)
-    console.log('existingAliases', existingAliases)
 
-    // get all the aliases so we can create an idx with this month and year's alias
-    for(let q = 0; q < allAliases.data.storeAliases.length; q++){
-        if(allAliases.data.storeAliases[q].alias == todayYear+todayMonth+'NearTransactionHistory'){
-            yearMonthAlias = allAliases.data.storeAliases[q].definition
-            console.log('inside alias', yearMonthAlias)
+    let lastKey = existingAliases.history[existingAliases.history.length-1][0]
+
+    let lastYear = lastKey.substring(0,4)
+
+    let lastMonth
+    for (let x = 0; x < uniqueMonthArray.length; x++){
+        if(lastKey.includes(uniqueMonthArray[x])){
+            lastMonth = uniqueMonthArray[x]
             break
         }
     }
 
-    // get this month's transaction data stream so we can look at the last entry
-    let key = todayYear+todayMonth+'NearTransactionHistory'
+    let key = lastYear+lastMonth+'NearTransactionHistory'
+
+    let yearMonthAlias
+    for(let q = 0; q < allAliases.data.storeAliases.length; q++){
+        if(allAliases.data.storeAliases[q].alias == key){
+            yearMonthAlias = allAliases.data.storeAliases[q].definition
+            break
+        }
+    }
+
     let alias = {[key]: yearMonthAlias}
-    console.log('alias', alias)
-    //let appClient = await ceramic.getAppCeramic(accountId)
+    let appClient = await ceramic.getAppCeramic(accountId)
+
     let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
-    console.log('thisidx', thisIdx)
-    // let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
-    // console.log('thisidx', thisIdx)
     let getit = await thisIdx.get(key, thisIdx.id)
-    console.log('get it', getit)
-    let from
+
+    let from = null
     if(getit){
         let endDate = new Date(getit.history[getit.history.length-1].date)
         from = new Date(endDate.setDate(endDate.getDate() + 1))
-        console.log('from', from)
-    } 
+    }
+
     if(!from){
         from = new Date('October 1, 2020 00:00:01')
     }
-    if(to.getTime() >= from.getTime()){
+
+    if(to >= from){
+        for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
+            let thisDay = day.getMonth()
+            let thisMonth = uniqueMonthArray[thisDay]
+            let thisYear = day.getFullYear()
+            let thisKey = thisYear+thisMonth+'NearTransactionHistory'
+            yearMonthAlias = await ceramic.getAlias(APP_OWNER_ACCOUNT, thisKey, appClient, yearTransactionHistorySchema, thisMonth+thisYear+' near year transaction history', didRegistryContract)
+        }
+
+        let newAllAliases = await queries.getAliases()
+      
+        let interimAliases = {}
+        for (let a = 0; a < newAllAliases.data.storeAliases.length; a++){
+            interimAliases = {...interimAliases, [newAllAliases.data.storeAliases[a]['alias']]: newAllAliases.data.storeAliases[a]['definition'] }
+        }
+   
+        appIdx = new IDX({ ceramic: appClient, aliases: interimAliases})
+        update('', {appIdx})
+
         await populateNearTransactionAPI(from, to, accountId, appIdx, factoryContract, didRegistryContract, account)
+        
     }
+
+    // let today = new Date()
+    // let to = today
+    // let t = today.getMonth()
+    // let todayMonth = uniqueMonthArray[t]
+    // let todayYear = today.getFullYear()
+    // let todayTimestamp = today.getTime()
+    // let todayFormattedDate = formatDate(todayTimestamp)
+
+    // let existingAliases = await appIdx.get('nearTransactionHistory', appIdx.id)
+    // console.log('existingAliases', existingAliases)
+
+    // get all the aliases so we can create an idx with this month and year's alias
+    // for(let q = 0; q < allAliases.data.storeAliases.length; q++){
+    //     if(allAliases.data.storeAliases[q].alias == todayYear+todayMonth+'NearTransactionHistory'){
+    //         yearMonthAlias = allAliases.data.storeAliases[q].definition
+    //         console.log('inside alias', yearMonthAlias)
+    //         break
+    //     }
+    // }
+
+    // get this month's transaction data stream so we can look at the last entry
+    // let key = todayYear+todayMonth+'NearTransactionHistory'
+    // let alias = {[key]: yearMonthAlias}
+    // console.log('alias', alias)
+    //let appClient = await ceramic.getAppCeramic(accountId)
+    // let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
+    // console.log('thisidx', thisIdx)
+    // let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
+    // console.log('thisidx', thisIdx)
+    // let getit = await thisIdx.get(key, thisIdx.id)
+    // console.log('get it', getit)
+    // let from
+    // if(getit){
+    //     let endDate = new Date(getit.history[getit.history.length-1].date)
+    //     from = new Date(endDate.setDate(endDate.getDate() + 1))
+    //     console.log('from', from)
+    // } 
+    // if(!from){
+    //     from = new Date('October 1, 2020 00:00:01')
+    // }
+    // if(to.getTime() >= from.getTime()){
+    //     await populateNearTransactionAPI(from, to, accountId, appIdx, factoryContract, didRegistryContract, account)
+    // }
 }
 
 export async function populateNearTransactionAPI(from, to, accountId, appIdx, factoryContract, didRegistryContract, account){
