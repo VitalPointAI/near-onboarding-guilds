@@ -1278,7 +1278,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
             //         yearMonthAlias = allAliases.data.storeAliases[q].definition
             //         console.log('inside alias', yearMonthAlias)
             //     } else {
-            yearMonthAlias = await ceramic.getAlias(APP_OWNER_ACCOUNT, thisKey+'NearPriceHistory', appClient, yearPriceHistorySchema, thisMonth+thisYear+' near year price history', didRegistryContract)
+            yearMonthAlias = await ceramic.getAlias(APP_OWNER_ACCOUNT, thisKey, appClient, yearPriceHistorySchema, thisMonth+thisYear+' near year price history', didRegistryContract)
             console.log('yearmonthalias', yearMonthAlias)
             //    }
         }
