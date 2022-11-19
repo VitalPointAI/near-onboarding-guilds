@@ -1301,7 +1301,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
        // let updatedAliases = {...interimAliases, [key]: yearMonthAlias}
         //console.log('upAliases', updatedAliases)
         
-        let newIdx = new IDX({ ceramic: appClient, aliases: updatedAliases})
+        let newIdx = new IDX({ ceramic: appClient, aliases: interimAliases})
         console.log('newidx', newIdx)
         await populateNearPriceAPI(from, to, accountId, newIdx, didRegistryContract)
     }
