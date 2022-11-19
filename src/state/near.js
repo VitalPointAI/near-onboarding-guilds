@@ -1219,10 +1219,11 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
     let existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
     console.log('existingAliases', existingAliases)
 
-    let lastKey = existingAliases[-1][0]
+    let lastKey = existingAliases.history[-1][0]
     console.log('lastKey', lastKey)
 
     let appClient = await ceramic.getAppCeramic(accountId)
+    console.log('appClient', appClient)
     let thisIdx = new IDX({ ceramic: appClient, aliases: existingAliases})
     console.log('thisidx', thisIdx)
 
