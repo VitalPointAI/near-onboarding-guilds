@@ -1288,19 +1288,20 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
           }, 10000);
 
         let newAllAliases = await queries.getAliases()
+        console.log('newAllAliases', newAllAliases)
 
         // // get this month's price data stream so we can look at the last entry
         // let key = todayYear+todayMonth+'NearPriceHistory'
         // console.log('newkey', key)
 
-        // let interimAliases = {}
-        // for (let a = 0; a < existingAliases.history.length; a++){
-        //     interimAliases = {...interimAliases, [existingAliases.history[a][0]]: existingAliases.history[a][1] }
-        // }
-        // let updatedAliases = {...interimAliases, [key]: yearMonthAlias}
-        // console.log('updatedAliases', updatedAliases)
+        let interimAliases = {}
+        for (let a = 0; a < newAllAliases.data.storeAliases.length; a++){
+            interimAliases = {...interimAliases, [newAllAliases.data.storeAliases[a]['alias']]: newAllAliases.data.storeAliases[a]['definition'] }
+        }
+       // let updatedAliases = {...interimAliases, [key]: yearMonthAlias}
+        console.log('updatedAliases', updatedAliases)
         
-        let newIdx = new IDX({ ceramic: appClient, aliases: newAllAliases})
+        let newIdx = new IDX({ ceramic: appClient, aliases: updatedAliases})
         console.log('newidx', newIdx)
         await populateNearPriceAPI(from, to, accountId, newIdx, didRegistryContract)
     }

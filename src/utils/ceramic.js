@@ -36,14 +36,14 @@ const axios = require('axios').default
 export const {
     FUNDING_DATA, FUNDING_DATA_BACKUP, SEEDS, ACCOUNT_LINKS, DAO_LINKS, GAS, SEED_PHRASE_LOCAL_COPY, REDIRECT, 
     KEY_REDIRECT, APP_OWNER_ACCOUNT, IPFS_PROVIDER, IPFS_CALL, FACTORY_DEPOSIT, CERAMIC_API_URL, APPSEED_CALL, 
-    networkId, nodeUrl, walletUrl, nameSuffix,
+    networkId, nodeUrl, walletUrl, helperUrl, explorerUrl, nameSuffix,
     contractName, didRegistryContractName, factoryContractName,
     TOKEN_CALL, AUTH_TOKEN, ALIASES, FUNDING_SEED_CALL
 } = config
 
 export const {
   keyStores: { InMemoryKeyStore, BrowserLocalStorageKeyStore },
-  Near, Account, Contract, KeyPair, InMemorySigner,
+  Near, Account, Contract, KeyPair, InMemorySigner, connect,
   utils: {
     format: {
       parseNearAmount
@@ -346,16 +346,25 @@ class Ceramic {
     let signer = await InMemorySigner.fromKeyPair(networkId, didRegistryContractName, keyPair)
 
     // Step 3:  create a connection to the network using the signer's keystore and default config for testnet
-    const near = await nearApiJs.connect({
-      networkId, nodeUrl, walletUrl, deps: { keyStore: signer.keyStore },
-    })
+    const myKeyStore = new BrowserLocalStorageKeyStore();
+
+    const connectionConfig = {
+        networkId: networkId,
+        keyStore: myKeyStore,
+        nodeUrl: nodeUrl,
+        walletUrl: walletUrl,
+        helperUrl: helperUrl,
+        explorerUrl: explorerUrl,
+      }
+
+    const near = await connect(connectionConfig)
 
     // Step 4:  get the account object of the currentAccount.  At this point, we should have full control over the account.
-    let account = new nearApiJs.Account(near.connection, didRegistryContractName)
+    let account = new Account(near.connection, didRegistryContractName)
    
     // initiate the contract so its associated with this current account and exposing all the methods
-    let contract = new nearApiJs.Contract(account, didRegistryContractName, {
-      changeMethods: ['putDID', 'deleteDID', 'adjustKeyAllowance']
+    let contract = new Contract(account, didRegistryContractName, {
+      changeMethods: ['putDID', 'deleteDID', 'adjustKeyAllowance', 'storeAlias']
     })
 
     return {
@@ -477,8 +486,8 @@ class Ceramic {
           description: description,
           schema: schemaURL.commitId.toUrl()
         })
-     //   let didContract = await this.useDidContractFullAccessKey()
-        await contract.storeAlias({alias: accountId+':'+aliasName, definition: definition.id.toString(), description: description})
+        let didContract = await this.useFundingAccount(accountId)
+        await didContract.storeAlias({alias: accountId+':'+aliasName, definition: definition.id.toString(), description: description})
         return definition.id.toString()
       }
     } catch (err) {
