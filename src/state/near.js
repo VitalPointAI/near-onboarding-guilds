@@ -1200,7 +1200,7 @@ export async function buildPriceTable(from, to, accountId){
     return pricingArray
 }
 
-export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract){
+export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract, update){
     
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     let allAliases = await queries.getAliases()
@@ -1283,9 +1283,9 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
             //    }
         }
 
-        setTimeout(function() {
-            console.log("waiting for graph query to catchup");
-          }, 10000);
+        // setTimeout(function() {
+        //     console.log("waiting for graph query to catchup");
+        //   }, 10000);
 
         let newAllAliases = await queries.getAliases()
         console.log('newAllAliases', newAllAliases)
@@ -1301,9 +1301,10 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract)
        // let updatedAliases = {...interimAliases, [key]: yearMonthAlias}
         //console.log('upAliases', updatedAliases)
         
-        let newIdx = new IDX({ ceramic: appClient, aliases: interimAliases})
-        console.log('newidx', newIdx)
-        await populateNearPriceAPI(from, to, accountId, newIdx, didRegistryContract)
+        appIdx = new IDX({ ceramic: appClient, aliases: interimAliases})
+        console.log('newappIdx', appIdx)
+        update('', {appIdx})
+        await populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract)
     }
 
 }

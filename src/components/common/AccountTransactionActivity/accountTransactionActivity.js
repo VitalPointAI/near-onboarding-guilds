@@ -137,7 +137,7 @@ export default function AccountTransactionActivity(props) {
     useEffect(() => {
       async function update(){
         if(appIdx){
-          await updateNearPriceAPI(accountId, appIdx, didRegistryContract)
+          await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
           await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
         }
       }
