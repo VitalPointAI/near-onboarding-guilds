@@ -1421,7 +1421,7 @@ export async function buildTransactionTable(from, to, accountId, account, factor
     adjustedFrom.setDate(adjustedFrom.getDate()+1)
     let adjustedTo = new Date(to)
     adjustedTo.setDate(adjustedTo.getDate()+1)
-    for (let day = adjustedFrom; day <= adjustedTo; day.setDate(day.getDate() + 1)) {
+    for (let day = new Date(adjustedFrom); day <= adjustedTo; day.setDate(day.getDate() + 1)) {
         console.log('day build', day)
         let dayYear = new Date(day).getFullYear()
         let dayD = new Date(day).getMonth()
@@ -1441,10 +1441,9 @@ export async function buildTransactionTable(from, to, accountId, account, factor
         }
     }
     console.log('aliases', aliases)
+    
     let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, aliases)
     console.log('thisidx', thisIdx)
-    // let thisIdx = new IDX({ ceramic: appClient, aliases: aliases})
-    // console.log('thisidx', thisIdx)
 
     let transactionArray = []
     for(let z = 0; z < aliasList.length; z++){
