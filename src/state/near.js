@@ -238,7 +238,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
 
         // ********* Account Transactions Update ******
-        await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
+        await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account, update)
 
         // ********* All Announcements ****************
         try{
@@ -1441,7 +1441,7 @@ export async function buildTransactionTable(from, to, accountId, account, factor
         }
     }
     console.log('aliases', aliases)
-    
+
     let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, aliases)
     console.log('thisidx', thisIdx)
 
@@ -1458,7 +1458,7 @@ export async function buildTransactionTable(from, to, accountId, account, factor
     return transactionArray
 }
 
-export async function updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account){
+export async function updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account, update){
     
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     let allAliases = await queries.getAliases()
