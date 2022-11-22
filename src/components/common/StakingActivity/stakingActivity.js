@@ -306,6 +306,16 @@ export default function StakingActivity(props) {
           accountValidatorActivity = await queries.getAccountValidatorActivity(accountId)
           console.log('accountvalidatoractivity', accountValidatorActivity)
 
+          let accountValidators = []
+          for (const [key, value] of Object.entries(accountValidatorActivity[0])){
+            for(let y = 0; y < value.length; y++){
+              if(!accountValidators.includes(value[y].executorId)){
+                accountValidators.push(value[y].executorId)
+              }
+            }
+          }
+          console.log('accountvalidators', accountValidators)
+
           // let newAccountActivity = allAccountValidatorActivity.concat(
           //   accountValidatorActivity[0][1].data.depositAndStakes, 
           //   accountValidatorActivity[0][1].data.deposits, 
@@ -321,6 +331,9 @@ export default function StakingActivity(props) {
           for (const [key, value] of Object.entries(accountValidatorActivity[0])){
             newAccountActivity = newAccountActivity.concat(value)
           }
+
+         
+          
 
           console.log('newAccountActivity', newAccountActivity)
 
