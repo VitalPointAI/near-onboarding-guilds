@@ -263,7 +263,7 @@ export default function StakingActivity(props) {
       let totalRewards = 0
       let totalValue = 0
          
-      if(accountValidators && accountValidators.length > 0){
+    // if(accountValidators && accountValidators.length > 0){
         setDownloadReady(false)
         setClicked(true)
         //for(let y = 0; y < accountValidators.length;y++){
@@ -374,11 +374,11 @@ export default function StakingActivity(props) {
         //}
         let count = 0
         let journalNo = journalStartNo
-        for(let y = 0; y < accountValidators.length; y++){
-          let tempArray = finalArray.filter(function(validator) {
-            return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
-          })
-          console.log('temparray', tempArray)
+        // for(let y = 0; y < accountValidators.length; y++){
+        //   let tempArray = finalArray.filter(function(validator) {
+        //     return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
+        //   })
+        //  console.log('temparray', tempArray)
           // restrict return to from/to dates requested
           let from = new Date(fromDate).getTime()
           // let thisFromDate = new Date(fromDate)
@@ -387,7 +387,9 @@ export default function StakingActivity(props) {
           let to = new Date(toDate).getTime()
           console.log('to', to)
       
-          let datedArray = tempArray.filter(function(record) {          
+         // let datedArray = tempArray.filter(function(record) {  
+            
+          let datedArray = finalArray.filter(function(record) {          
             let result = BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
             if(result){
               return record
@@ -495,7 +497,7 @@ export default function StakingActivity(props) {
           setCsvSingleExport(csvSingle)
           count++
         }
-      }
+      //}
 
       setDownloadReady(true)
       return true

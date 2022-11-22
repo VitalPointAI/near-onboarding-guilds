@@ -501,7 +501,7 @@ export default class Queries {
                 }})
               
                 // activity.push([validatorUris[x], validatorActivity])
-                activity.push(validatorActivity)
+                activity.push(validatorActivity.data)
             } catch (err) {
                 console.log('error retrieving validator data: ', err)
             }
