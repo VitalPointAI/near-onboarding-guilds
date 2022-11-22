@@ -270,7 +270,7 @@ query{
 
 const VALIDATOR_ACTIVITY = gql`
 query executor_activity($executorId: String!){
-    pings(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    pings(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -279,7 +279,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    depositAndStakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    depositAndStakes(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -288,7 +288,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    deposits(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    deposits(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -297,7 +297,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    withdrawAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    withdrawAlls(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -306,7 +306,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    withdraws(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    withdraws(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -315,7 +315,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    unstakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    unstakes(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -324,7 +324,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    unstakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    unstakeAlls(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -333,7 +333,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    stakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    stakes(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -342,7 +342,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    stakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    stakeAlls(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch

@@ -342,8 +342,7 @@ export default function StakingActivity(props) {
           //   accountValidatorActivity[0][1].data.stakeAlls
           // )
 
-          // Step 4:  Get all the 
-
+          // Step 4:  Get all of this account's activity with its validators
           let newAccountActivity = []
           for (const [key, value] of Object.entries(accountValidatorActivity[0])){
             newAccountActivity = newAccountActivity.concat(value)
@@ -364,7 +363,7 @@ export default function StakingActivity(props) {
          // let mergedArray = newActivity.concat(newAccountActivity)
          // let sortedArray = _.sortBy(mergedArray, 'blockTime')
           let sortedArray = _.sortBy(newAccountActivity, 'blockTime')
-
+          console.log('sortedArray', sortedArray)
 
           
           let currentStakingShares = 0
