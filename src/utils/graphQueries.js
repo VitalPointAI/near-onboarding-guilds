@@ -554,8 +554,8 @@ export default class Queries {
     }
 
     async getValidatorActivity(validators){
-        let activity = []
-        let latestBlockTime = '0'
+        let activity = [] 
+        let latestBlockTime = '1604271586000' // Oct 1 2020 (around start of mainnet)
         let keepRunning = true
         for(let x = 0; x < validators.length; x++){
             // let validatorClient = new ApolloClient({
