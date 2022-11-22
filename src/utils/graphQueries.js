@@ -191,9 +191,86 @@ query{
 }
 `
 
-const VALIDATOR_ACTIVITY = `
-query{
-    pings(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+// const VALIDATOR_ACTIVITY = gql`
+// query executor_activity($executorId: String!){
+//     pings(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+//         blockHeight
+//         blockTime
+//         epoch
+//         rewardsReceived
+//         newContractStakedBalance
+//         newContractTotalShares
+//     }
+//     depositAndStakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+//         blockHeight
+//         blockTime
+//         epoch
+//         rewardsReceived
+//         newContractStakedBalance
+//         newContractTotalShares
+//     }
+//     deposits(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+//         blockHeight
+//         blockTime
+//         epoch
+//         rewardsReceived
+//         newContractStakedBalance
+//         newContractTotalShares
+//     }
+//     withdrawAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+//         blockHeight
+//         blockTime
+//         epoch
+//         rewardsReceived
+//         newContractStakedBalance
+//         newContractTotalShares
+//     }
+//     withdraws(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+//         blockHeight
+//         blockTime
+//         epoch
+//         rewardsReceived
+//         newContractStakedBalance
+//         newContractTotalShares
+//     }
+//     unstakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+//         blockHeight
+//         blockTime
+//         epoch
+//         rewardsReceived
+//         newContractStakedBalance
+//         newContractTotalShares
+//     }
+//     unstakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+//         blockHeight
+//         blockTime
+//         epoch
+//         rewardsReceived
+//         newContractStakedBalance
+//         newContractTotalShares
+//     }
+//     stakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+//         blockHeight
+//         blockTime
+//         epoch
+//         rewardsReceived
+//         newContractStakedBalance
+//         newContractTotalShares
+//     }
+//     stakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+//         blockHeight
+//         blockTime
+//         epoch
+//         rewardsReceived
+//         newContractStakedBalance
+//         newContractTotalShares
+//     }
+// }
+// `
+
+const VALIDATOR_ACTIVITY = gql`
+query executor_activity($executorId: String!){
+    pings(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -201,7 +278,7 @@ query{
         newContractStakedBalance
         newContractTotalShares
     }
-    depositAndStakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+    depositAndStakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -209,7 +286,7 @@ query{
         newContractStakedBalance
         newContractTotalShares
     }
-    deposits(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+    deposits(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -217,7 +294,7 @@ query{
         newContractStakedBalance
         newContractTotalShares
     }
-    withdrawAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+    withdrawAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -225,7 +302,7 @@ query{
         newContractStakedBalance
         newContractTotalShares
     }
-    withdraws(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+    withdraws(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -233,7 +310,7 @@ query{
         newContractStakedBalance
         newContractTotalShares
     }
-    unstakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+    unstakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -241,7 +318,7 @@ query{
         newContractStakedBalance
         newContractTotalShares
     }
-    unstakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+    unstakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -249,7 +326,7 @@ query{
         newContractStakedBalance
         newContractTotalShares
     }
-    stakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+    stakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -257,7 +334,7 @@ query{
         newContractStakedBalance
         newContractTotalShares
     }
-    stakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
+    stakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
         blockTime
         epoch
@@ -271,7 +348,7 @@ query{
 
 const ACCOUNT_VALIDATOR_ACTIVITY = gql`
 query account_activity($accountId: String!){
-    depositAndStakes(first: 1000, where: {accountIdStaking: $accountId}) {
+    depositAndStakes(first: 1000, where: {accountIdStaking: $accountId} ) {
         id
         blockTime
         blockHeight
@@ -467,18 +544,20 @@ export default class Queries {
         return validators
     }
 
-    async getValidatorActivity(validatorUris){
+    async getValidatorActivity(validators){
         let activity = []
-       for(let x = 0; x < validatorUris.length; x++){
-            let validatorClient = new ApolloClient({
-                uri: validatorUris[x],
-                cache: new InMemoryCache(),
-            })
+       for(let x = 0; x < validators.length; x++){
+            // let validatorClient = new ApolloClient({
+            //     uri: validators[x],
+            //     cache: new InMemoryCache(),
+            // })
           
             try{
-                let validatorActivity = await validatorClient.query({query: gql(VALIDATOR_ACTIVITY)})
+                let validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
+                    executorId: validators[x]
+                }})
                
-                activity.push([validatorUris[x], validatorActivity])
+                activity.push([validators[x], validatorActivity])
             } catch (err) {
                 console.log('error retrieving validator data: ', err)
             }
