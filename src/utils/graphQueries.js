@@ -277,6 +277,7 @@ query executor_activity($executorId: String!){
         rewardsReceived
         newContractStakedBalance
         newContractTotalShares
+        executorId
     }
     depositAndStakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
@@ -285,6 +286,7 @@ query executor_activity($executorId: String!){
         rewardsReceived
         newContractStakedBalance
         newContractTotalShares
+        executorId
     }
     deposits(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
@@ -293,6 +295,7 @@ query executor_activity($executorId: String!){
         rewardsReceived
         newContractStakedBalance
         newContractTotalShares
+        executorId
     }
     withdrawAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
@@ -301,6 +304,7 @@ query executor_activity($executorId: String!){
         rewardsReceived
         newContractStakedBalance
         newContractTotalShares
+        executorId
     }
     withdraws(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
@@ -309,6 +313,7 @@ query executor_activity($executorId: String!){
         rewardsReceived
         newContractStakedBalance
         newContractTotalShares
+        executorId
     }
     unstakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
@@ -317,6 +322,7 @@ query executor_activity($executorId: String!){
         rewardsReceived
         newContractStakedBalance
         newContractTotalShares
+        executorId
     }
     unstakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
@@ -325,6 +331,7 @@ query executor_activity($executorId: String!){
         rewardsReceived
         newContractStakedBalance
         newContractTotalShares
+        executorId
     }
     stakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
@@ -333,6 +340,7 @@ query executor_activity($executorId: String!){
         rewardsReceived
         newContractStakedBalance
         newContractTotalShares
+        executorId
     }
     stakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
         blockHeight
@@ -341,6 +349,7 @@ query executor_activity($executorId: String!){
         rewardsReceived
         newContractStakedBalance
         newContractTotalShares
+        executorId
     }
 }
 `
@@ -546,7 +555,7 @@ export default class Queries {
 
     async getValidatorActivity(validators){
         let activity = []
-       for(let x = 0; x < validators.length; x++){
+        for(let x = 0; x < validators.length; x++){
             // let validatorClient = new ApolloClient({
             //     uri: validators[x],
             //     cache: new InMemoryCache(),
