@@ -252,9 +252,9 @@ export default function StakingActivity(props) {
 
       let priceArray = await fetchPriceTable(fromDate, toDate, accountId)
 
-      let allValidators = []
-      let accountValidatorActivity = []
-      let allActivity = []
+      //let allValidators = []
+     
+     
       let finalArray = []
       let validators = []
       let csvDownload = []
@@ -303,9 +303,13 @@ export default function StakingActivity(props) {
           // get this account's validator activity
          // let allAccountValidatorActivity = []
           //accountValidatorActivity = await queries.getAccountValidatorActivity([apiUrl], accountId)
+          
+          // Step 1:  Get all the activity that this account has had with validator contracts
+          let accountValidatorActivity = []
           accountValidatorActivity = await queries.getAccountValidatorActivity(accountId)
           console.log('accountvalidatoractivity', accountValidatorActivity)
 
+          // Step 2:  Create an array of all the unique validators this account uses
           let accountValidators = []
           for (const [key, value] of Object.entries(accountValidatorActivity[0])){
             for(let y = 0; y < value.length; y++){
@@ -315,6 +319,17 @@ export default function StakingActivity(props) {
             }
           }
           console.log('accountvalidators', accountValidators)
+
+          // Step 3:  Get all the validator activity (alltime) of the set of validators used by this account 
+          let allActivity = []
+          allActivity = await queries.getValidatorActivity([accountValidators])
+          console.log('all validator activity', allActivity)
+
+          let newActivity = []
+          for (const [key, value] of Object.entries(allActivity[0])){
+            newActivity = newActivity.concat(value)
+          }
+          console.log('newActivity', newActivity)
 
           // let newAccountActivity = allAccountValidatorActivity.concat(
           //   accountValidatorActivity[0][1].data.depositAndStakes, 
@@ -327,14 +342,12 @@ export default function StakingActivity(props) {
           //   accountValidatorActivity[0][1].data.stakeAlls
           // )
 
+          // Step 4:  Get all the 
+
           let newAccountActivity = []
           for (const [key, value] of Object.entries(accountValidatorActivity[0])){
             newAccountActivity = newAccountActivity.concat(value)
           }
-
-         
-          
-
           console.log('newAccountActivity', newAccountActivity)
 
           // let newAccountActivity = allAccountValidatorActivity.concat(
