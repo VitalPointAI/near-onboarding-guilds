@@ -570,8 +570,8 @@ export default class Queries {
                         executorId: validators[x],
                         blockTime: latestBlockTime
                     }})
-                    
-                    activity.concat([validators[x], validatorActivity.data])
+                    console.log('validatorActivity', validatorActivity)
+                    activity.push([validators[x], validatorActivity.data])
                     console.log('activity here', activity)
                    
                 } catch (err) {
