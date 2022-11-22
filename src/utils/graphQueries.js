@@ -286,6 +286,7 @@ query account_activity($accountId: String!){
         stakingShares
         contractTotalStakedBalance
         contractTotalShares
+        executorId
     }
     deposits(first: 1000, where: {accountIdDepositing: $accountId}) {
         id
@@ -295,6 +296,7 @@ query account_activity($accountId: String!){
         accountIdDepositing
         deposit
         newUnstakedBalance
+        executorId
     }
     withdrawAlls(first: 1000, where: {accountId: $accountId}) {
         id
@@ -303,6 +305,7 @@ query account_activity($accountId: String!){
         accountId
         amount
         newUnstakedBalance
+        executorId
     }
     withdraws(first: 1000, where: {accountId: $accountId}) {
         id
@@ -311,6 +314,7 @@ query account_activity($accountId: String!){
         accountId
         amount
         newUnstakedBalance
+        executorId
     }
     unstakeAlls(first: 1000, where: {accountId: $accountId}) {
         id
@@ -324,6 +328,7 @@ query account_activity($accountId: String!){
         totalStakingShares
         contractTotalStakedBalance
         contractTotalShares
+        executorId
     }
     unstakes(first: 1000, where: {accountId: $accountId}) {
         id
@@ -337,6 +342,7 @@ query account_activity($accountId: String!){
         totalStakingShares
         contractTotalStakedBalance
         contractTotalShares
+        executorId
     }
     stakes(first: 1000, where: {accountIdDepositing: $accountId}, or: {where: {accountIdStaking: $accountId}}){
         id
@@ -352,6 +358,7 @@ query account_activity($accountId: String!){
         stakingShares
         contractTotalStakedBalance
         contractTotalShares
+        executorId
     }
     stakeAlls(first: 1000, where: {accountIdDepositing: $accountId}, or: {where: {accountIdStaking: $accountId}}){
         id
@@ -367,6 +374,7 @@ query account_activity($accountId: String!){
         stakingShares
         contractTotalStakedBalance
         contractTotalShares
+        executorId
     }
 }
 `

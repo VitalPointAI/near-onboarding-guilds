@@ -345,8 +345,19 @@ export default function StakingActivity(props) {
               }
             
             }
+            // finalArray.push({
+            //   validator: accountValidators[y].name,
+            //   epoch: sortedArray[x].epoch,
+            //   blockTime: sortedArray[x].blockTime,
+            //   blockHeight: sortedArray[x].blockHeight,
+            //   contractStakedBalance: sortedArray[x].newContractStakedBalance,
+            //   contractTotalShares: sortedArray[x].newContractTotalShares,
+            //   currentSharePrice: parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
+            //   currentStakingShares: currentStakingShares,
+            //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
+            // })
             finalArray.push({
-              validator: accountValidators[y].name,
+              validator: sortedArray[x].executorId,
               epoch: sortedArray[x].epoch,
               blockTime: sortedArray[x].blockTime,
               blockHeight: sortedArray[x].blockHeight,
@@ -358,7 +369,8 @@ export default function StakingActivity(props) {
             })
           }
             
-          setActivity(finalArray)                  
+          setActivity(finalArray)     
+          console.log('finalArray, finalArray') 
         //}
         let count = 0
         let journalNo = journalStartNo
