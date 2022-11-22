@@ -555,7 +555,7 @@ export default class Queries {
 
     async getValidatorActivity(validators){
         let activity = []
-        let latestBlockTime = 0
+        let latestBlockTime = '0'
         let keepRunning = true
         for(let x = 0; x < validators.length; x++){
             // let validatorClient = new ApolloClient({
