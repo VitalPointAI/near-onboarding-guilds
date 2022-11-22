@@ -572,14 +572,15 @@ export default class Queries {
                     }})
                     
                     activity.concat([validators[x], validatorActivity.data])
-
+                    console.log('activity here', activity)
                    
                 } catch (err) {
                     console.log('error retrieving validator data: ', err)
                 }
-
+                console.log('here2')
                 for (let y = 0; y < activity.length; y++){
                     for (const [key, value] of Object.entries(activity[y][1])){
+                        console.log('value', value)
                         for(let z = 0; z < value.length; z++){
                             console.log('blockTime', latestBlockTime)
                             if(value[z].blockTime > latestBlockTime){
