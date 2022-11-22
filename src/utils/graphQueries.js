@@ -269,8 +269,8 @@ query{
 // `
 
 const VALIDATOR_ACTIVITY = gql`
-query executor_activity($executorId: String!){
-    pings(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+query executor_activity($executorId: String!, $blockTime: String!){
+    pings(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -279,7 +279,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    depositAndStakes(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    depositAndStakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -288,7 +288,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    deposits(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    deposits(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -297,7 +297,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    withdrawAlls(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    withdrawAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -306,7 +306,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    withdraws(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    withdraws(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -315,7 +315,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    unstakes(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    unstakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -324,7 +324,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    unstakeAlls(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    unstakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -333,7 +333,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    stakes(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    stakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -342,7 +342,7 @@ query executor_activity($executorId: String!){
         newContractTotalShares
         executorId
     }
-    stakeAlls(orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}){
+    stakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){   
         blockHeight
         blockTime
         epoch
@@ -555,20 +555,40 @@ export default class Queries {
 
     async getValidatorActivity(validators){
         let activity = []
+        let latestBlockTime = 0
+        let keepRunning = true
         for(let x = 0; x < validators.length; x++){
             // let validatorClient = new ApolloClient({
             //     uri: validators[x],
             //     cache: new InMemoryCache(),
             // })
-          
-            try{
-                let validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
-                    executorId: validators[x]
-                }})
-               
-                activity.push([validators[x], validatorActivity.data])
-            } catch (err) {
-                console.log('error retrieving validator data: ', err)
+
+            while(keepRunning){
+                try{
+                    let validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
+                        executorId: validators[x],
+                        blockTime: latestBlockTime
+                    }})
+                    
+                    activity.push([validators[x], validatorActivity.data])
+
+                   
+                } catch (err) {
+                    console.log('error retrieving validator data: ', err)
+                }
+
+                for (let y = 0; y < activity.length; y++){
+                    for (const [key, value] of Object.entries(activity[y][1])){
+                        for(let z = 0; z < value.length; z++){
+                            if(value[z].blockTime > latestBlockTime){
+                                latestBlockTime = value[z].blockTime
+                            } else {
+                                keepRunning = false
+                                break
+                            }
+                        }
+                    }
+                }
             }
         }
         return activity
