@@ -322,7 +322,7 @@ export default function StakingActivity(props) {
 
           // Step 3:  Get all the validator activity (alltime) of the set of validators used by this account 
           let allActivity = []
-          allActivity = await queries.getValidatorActivity([accountValidators])
+          allActivity = await queries.getValidatorActivity(accountValidators)
           console.log('all validator activity', allActivity)
 
           let newActivity = []
