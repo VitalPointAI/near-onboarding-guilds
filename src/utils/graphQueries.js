@@ -566,7 +566,7 @@ export default class Queries {
                     executorId: validators[x]
                 }})
                
-                activity.push([validators[x], validatorActivity])
+                activity.push([validators[x], validatorActivity.data])
             } catch (err) {
                 console.log('error retrieving validator data: ', err)
             }
