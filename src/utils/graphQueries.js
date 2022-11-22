@@ -270,7 +270,7 @@ query{
 
 const VALIDATOR_ACTIVITY = gql`
 query executor_activity($executorId: String!, $blockTime: String!){
-    pings(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    pings(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -279,7 +279,61 @@ query executor_activity($executorId: String!, $blockTime: String!){
         newContractTotalShares
         executorId
     }
-    depositAndStakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    depositAndStakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+        blockHeight
+        blockTime
+        totalRewardsFee
+        accountIdDepositing
+        deposit
+        newUnstakedBalance
+        accountIdStaking
+        staking
+        receivedStakingShares
+        unstakedBalance
+        stakingShares
+        contractTotalStakedBalance
+        contractTotalShares
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+        executorId
+    }
+    deposits(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+        blockHeight
+        blockTime
+        totalRewardsFee
+        accountIdDepositing
+        deposit
+        newUnstakedBalance
+        accountIdStaking
+        staking
+        receivedStakingShares
+        unstakedBalance
+        stakingShares
+        contractTotalStakedBalance
+        contractTotalShares
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
+        executorId
+    }
+    withdrawAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+        blockHeight
+        blockTime
+        amount
+        newUnstakedBalance
+        executorId
+    }
+    withdraws(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+        blockHeight
+        blockTime
+        amount
+        newUnstakedBalance
+        executorId
+    }
+    unstakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
         epoch
@@ -288,67 +342,45 @@ query executor_activity($executorId: String!, $blockTime: String!){
         newContractTotalShares
         executorId
     }
-    deposits(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    unstakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockHeight
         blockTime
-        epoch
-        rewardsReceived
-        newContractStakedBalance
-        newContractTotalShares
+        amount
+        spentStakingShareAmount
+        totalUnstakedBalance
+        totalStakingShares
+        contractTotalStakedBalance
+        contractTotalShares
         executorId
     }
-    withdrawAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
-        blockHeight
+    stakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
         blockTime
-        epoch
-        rewardsReceived
-        newContractStakedBalance
-        newContractTotalShares
+        blockHeight
+        accountIdDepositing
+        deposit
+        newUnstakedBalance
+        accountIdStaking
+        staking
+        receivedStakingShares
+        unstakedBalance
+        stakingShares
+        contractTotalStakedBalance
+        contractTotalShares
         executorId
     }
-    withdraws(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    stakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){   
         blockHeight
         blockTime
-        epoch
-        rewardsReceived
-        newContractStakedBalance
-        newContractTotalShares
-        executorId
-    }
-    unstakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
-        blockHeight
-        blockTime
-        epoch
-        rewardsReceived
-        newContractStakedBalance
-        newContractTotalShares
-        executorId
-    }
-    unstakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
-        blockHeight
-        blockTime
-        epoch
-        rewardsReceived
-        newContractStakedBalance
-        newContractTotalShares
-        executorId
-    }
-    stakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
-        blockHeight
-        blockTime
-        epoch
-        rewardsReceived
-        newContractStakedBalance
-        newContractTotalShares
-        executorId
-    }
-    stakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){   
-        blockHeight
-        blockTime
-        epoch
-        rewardsReceived
-        newContractStakedBalance
-        newContractTotalShares
+        accountIdDepositing
+        deposit
+        newUnstakedBalance
+        accountIdStaking
+        staking
+        receivedStakingShares
+        unstakedBalance
+        stakingShares
+        contractTotalStakedBalance
+        contractTotalShares
         executorId
     }
 }
