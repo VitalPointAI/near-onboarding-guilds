@@ -72,7 +72,7 @@ let config = {
     ACCOUNT_HELPER_URL: 'https://near-contract-helper.onrender.com',
     GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/catalyst-factory-tnet',
     GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-tnet',
-    VALIDATORS_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/near-validators'
+    VALIDATORS_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/near-validators-poolv1'
   }
 
 if(process.env.ENV === 'localhost') {
@@ -129,7 +129,7 @@ if (process.env.ENV === 'prod') {
         SENDY_API_KEY_CALL: 'https://vp-guilds.azurewebsites.net/api/sendy-mainnet',
         GRAPH_FACTORY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/catalyst-factory-mnet',
         GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-mnet',
-        VALIDATORS_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/near-validators'
+        VALIDATORS_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/near-validators-poolv1'
       }
 }
 

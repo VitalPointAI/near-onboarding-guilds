@@ -266,14 +266,14 @@ export default function StakingActivity(props) {
       if(accountValidators && accountValidators.length > 0){
         setDownloadReady(false)
         setClicked(true)
-        for(let y = 0; y < accountValidators.length;y++){
+        //for(let y = 0; y < accountValidators.length;y++){
           
-          // check whitelisted
-          let whitelisted = await account.viewFunction(
-            'lockup-whitelist.near', 
-            'is_whitelisted', 
-            {staking_pool_account_id: accountValidators[y].name}
-          )
+          // // check whitelisted
+          // let whitelisted = await account.viewFunction(
+          //   'lockup-whitelist.near', 
+          //   'is_whitelisted', 
+          //   {staking_pool_account_id: accountValidators[y].name}
+          // )
           
           // let apiUrl
           // if(whitelisted){
@@ -284,25 +284,26 @@ export default function StakingActivity(props) {
           // }
 
 
-          let allValidatorActivity = []
-          allActivity = await queries.getValidatorActivity([apiUrl])
-          console.log('allActivity', allActivity)
+          // let allValidatorActivity = []
+          // allActivity = await queries.getValidatorActivity([apiUrl])
+          // console.log('allActivity', allActivity)
           
-          let newActivity = allValidatorActivity.concat(
-            allActivity[0][1].data.depositAndStakes, 
-            allActivity[0][1].data.deposits, 
-            allActivity[0][1].data.withdrawAlls,
-            allActivity[0][1].data.withdraws,
-            allActivity[0][1].data.unstakes,
-            allActivity[0][1].data.unstakeAlls,
-            allActivity[0][1].data.stakes,
-            allActivity[0][1].data.stakeAlls,
-            allActivity[0][1].data.pings
-          )
+          // let newActivity = allValidatorActivity.concat(
+          //   allActivity[0][1].data.depositAndStakes, 
+          //   allActivity[0][1].data.deposits, 
+          //   allActivity[0][1].data.withdrawAlls,
+          //   allActivity[0][1].data.withdraws,
+          //   allActivity[0][1].data.unstakes,
+          //   allActivity[0][1].data.unstakeAlls,
+          //   allActivity[0][1].data.stakes,
+          //   allActivity[0][1].data.stakeAlls,
+          //   allActivity[0][1].data.pings
+          // )
                     
           // get this account's validator activity
           let allAccountValidatorActivity = []
-          accountValidatorActivity = await queries.getAccountValidatorActivity([apiUrl], accountId)
+          //accountValidatorActivity = await queries.getAccountValidatorActivity([apiUrl], accountId)
+          accountValidatorActivity = await queries.getAccountValidatorActivity(accountId)
           console.log('accountvalidatoractivity', accountValidatorActivity)
 
           let newAccountActivity = allAccountValidatorActivity.concat(
@@ -316,8 +317,9 @@ export default function StakingActivity(props) {
             accountValidatorActivity[0][1].data.stakeAlls
           )
           
-          let mergedArray = newActivity.concat(newAccountActivity)
-          let sortedArray = _.sortBy(mergedArray, 'blockTime')
+         // let mergedArray = newActivity.concat(newAccountActivity)
+         // let sortedArray = _.sortBy(mergedArray, 'blockTime')
+          let sortedArray = _.sortBy(newAccountActivity, 'blockTime')
 
 
           
@@ -346,7 +348,7 @@ export default function StakingActivity(props) {
           }
             
           setActivity(finalArray)                  
-        }
+        //}
         let count = 0
         let journalNo = journalStartNo
         for(let y = 0; y < accountValidators.length; y++){

@@ -478,24 +478,26 @@ export default class Queries {
         return activity
     }
 
-    async getAccountValidatorActivity(validatorUris, account){
+    //async getAccountValidatorActivity(validatorUris, account){
+    async getAccountValidatorActivity(account){
         let activity = []
-       for(let x = 0; x < validatorUris.length; x++){
-            let validatorClient = new ApolloClient({
-                uri: validatorUris[x],
-                cache: new InMemoryCache(),
-            })
+     //  for(let x = 0; x < validatorUris.length; x++){
+            // let validatorClient = new ApolloClient({
+            //     uri: validatorUris[x],
+            //     cache: new InMemoryCache(),
+            // })
            
             try{
                 let validatorActivity = await validatorClient.query({query: ACCOUNT_VALIDATOR_ACTIVITY, variables: {
                     accountId: account
                 }})
               
-                activity.push([validatorUris[x], validatorActivity])
+                // activity.push([validatorUris[x], validatorActivity])
+                activity.push(validatorActivity)
             } catch (err) {
                 console.log('error retrieving validator data: ', err)
             }
-        }
+     //   }
         return activity
     }
 }
