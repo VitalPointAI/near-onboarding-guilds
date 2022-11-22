@@ -564,13 +564,14 @@ export default class Queries {
             // })
 
             while(keepRunning){
+                console.log('here')
                 try{
                     let validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
                         executorId: validators[x],
                         blockTime: latestBlockTime
                     }})
                     
-                    activity.push([validators[x], validatorActivity.data])
+                    activity.concat([validators[x], validatorActivity.data])
 
                    
                 } catch (err) {
@@ -580,6 +581,7 @@ export default class Queries {
                 for (let y = 0; y < activity.length; y++){
                     for (const [key, value] of Object.entries(activity[y][1])){
                         for(let z = 0; z < value.length; z++){
+                            console.log('blockTime', latestBlockTime)
                             if(value[z].blockTime > latestBlockTime){
                                 latestBlockTime = value[z].blockTime
                             } else {
