@@ -306,15 +306,26 @@ export default function StakingActivity(props) {
           accountValidatorActivity = await queries.getAccountValidatorActivity(accountId)
           console.log('accountvalidatoractivity', accountValidatorActivity)
 
+          // let newAccountActivity = allAccountValidatorActivity.concat(
+          //   accountValidatorActivity[0][1].data.depositAndStakes, 
+          //   accountValidatorActivity[0][1].data.deposits, 
+          //   accountValidatorActivity[0][1].data.withdrawAlls,
+          //   accountValidatorActivity[0][1].data.withdraws,
+          //   accountValidatorActivity[0][1].data.unstakes,
+          //   accountValidatorActivity[0][1].data.unstakeAlls,
+          //   accountValidatorActivity[0][1].data.stakes,
+          //   accountValidatorActivity[0][1].data.stakeAlls
+          // )
+
           let newAccountActivity = allAccountValidatorActivity.concat(
-            accountValidatorActivity[0][1].data.depositAndStakes, 
-            accountValidatorActivity[0][1].data.deposits, 
-            accountValidatorActivity[0][1].data.withdrawAlls,
-            accountValidatorActivity[0][1].data.withdraws,
-            accountValidatorActivity[0][1].data.unstakes,
-            accountValidatorActivity[0][1].data.unstakeAlls,
-            accountValidatorActivity[0][1].data.stakes,
-            accountValidatorActivity[0][1].data.stakeAlls
+            accountValidatorActivity[0].data.depositAndStakes, 
+            accountValidatorActivity[0].data.deposits, 
+            accountValidatorActivity[0].data.withdrawAlls,
+            accountValidatorActivity[0].data.withdraws,
+            accountValidatorActivity[0].data.unstakes,
+            accountValidatorActivity[0].data.unstakeAlls,
+            accountValidatorActivity[0].data.stakes,
+            accountValidatorActivity[0].data.stakeAlls
           )
           
          // let mergedArray = newActivity.concat(newAccountActivity)
