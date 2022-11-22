@@ -370,7 +370,7 @@ export default function StakingActivity(props) {
           }
             
           setActivity(finalArray)     
-          console.log('finalArray, finalArray') 
+          console.log('finalArray', finalArray) 
         //}
         let count = 0
         let journalNo = journalStartNo
