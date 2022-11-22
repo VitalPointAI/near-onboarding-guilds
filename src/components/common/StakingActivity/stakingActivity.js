@@ -301,7 +301,7 @@ export default function StakingActivity(props) {
           // )
                     
           // get this account's validator activity
-          let allAccountValidatorActivity = []
+         // let allAccountValidatorActivity = []
           //accountValidatorActivity = await queries.getAccountValidatorActivity([apiUrl], accountId)
           accountValidatorActivity = await queries.getAccountValidatorActivity(accountId)
           console.log('accountvalidatoractivity', accountValidatorActivity)
@@ -317,16 +317,23 @@ export default function StakingActivity(props) {
           //   accountValidatorActivity[0][1].data.stakeAlls
           // )
 
-          let newAccountActivity = allAccountValidatorActivity.concat(
-            accountValidatorActivity[0].data.depositAndStakes, 
-            accountValidatorActivity[0].data.deposits, 
-            accountValidatorActivity[0].data.withdrawAlls,
-            accountValidatorActivity[0].data.withdraws,
-            accountValidatorActivity[0].data.unstakes,
-            accountValidatorActivity[0].data.unstakeAlls,
-            accountValidatorActivity[0].data.stakes,
-            accountValidatorActivity[0].data.stakeAlls
-          )
+          let newAccountActivity = []
+          for (const [key, value] of Object.entries(accountValidatorActivity[0])){
+            newAccountActivity = newAccountActivity.concat(value)
+          }
+
+          console.log('newAccountActivity', newAccountActivity)
+
+          // let newAccountActivity = allAccountValidatorActivity.concat(
+          //   accountValidatorActivity[0].depositAndStakes, 
+          //   accountValidatorActivity[0].deposits, 
+          //   accountValidatorActivity[0].withdrawAlls,
+          //   accountValidatorActivity[0].withdraws,
+          //   accountValidatorActivity[0].unstakes,
+          //   accountValidatorActivity[0].unstakeAlls,
+          //   accountValidatorActivity[0].stakes,
+          //   accountValidatorActivity[0].stakeAlls
+          // )
           
          // let mergedArray = newActivity.concat(newAccountActivity)
          // let sortedArray = _.sortBy(mergedArray, 'blockTime')
