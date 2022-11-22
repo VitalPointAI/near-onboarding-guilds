@@ -254,6 +254,7 @@ export default function StakingActivity(props) {
 
       let allValidators = []
       let accountValidatorActivity = []
+      let allActivity = []
       let finalArray = []
       let validators = []
       let csvDownload = []
@@ -274,17 +275,18 @@ export default function StakingActivity(props) {
             {staking_pool_account_id: accountValidators[y].name}
           )
           
-          let apiUrl
-          if(whitelisted){
-            let first = accountValidators[y].name.split('.')[0]
-            let stripped = first.replace(/[^a-zA-Z]/g, '')
-            apiUrl = `https://api.thegraph.com/subgraphs/name/vitalpointai/${stripped}validator`
-            allValidators.push(apiUrl)
-          }
+          // let apiUrl
+          // if(whitelisted){
+          //   let first = accountValidators[y].name.split('.')[0]
+          //   let stripped = first.replace(/[^a-zA-Z]/g, '')
+          //   apiUrl = `https://api.thegraph.com/subgraphs/name/vitalpointai/${stripped}validator`
+          //   allValidators.push(apiUrl)
+          // }
 
 
           let allValidatorActivity = []
           allActivity = await queries.getValidatorActivity([apiUrl])
+          console.log('allActivity', allActivity)
           
           let newActivity = allValidatorActivity.concat(
             allActivity[0][1].data.depositAndStakes, 
@@ -301,7 +303,8 @@ export default function StakingActivity(props) {
           // get this account's validator activity
           let allAccountValidatorActivity = []
           accountValidatorActivity = await queries.getAccountValidatorActivity([apiUrl], accountId)
-        
+          console.log('accountvalidatoractivity', accountValidatorActivity)
+
           let newAccountActivity = allAccountValidatorActivity.concat(
             accountValidatorActivity[0][1].data.depositAndStakes, 
             accountValidatorActivity[0][1].data.deposits, 

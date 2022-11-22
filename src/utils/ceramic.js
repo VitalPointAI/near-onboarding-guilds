@@ -341,7 +341,7 @@ class Ceramic {
 
     // Step 1:  get the keypair from the funding account's full access private key
     let keyPair = KeyPair.fromString(retrieveSeed.data.seed)
-
+ 
     // Step 2:  load up an inMemorySigner using the keyPair for the account
     let signer = await InMemorySigner.fromKeyPair(networkId, didRegistryContractName, keyPair)
 

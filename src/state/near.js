@@ -1494,6 +1494,7 @@ export async function updateNearTransactionAPI(accountId, appIdx, factoryContrac
 
     let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
     let getit = await thisIdx.get(key, thisIdx.id)
+    console.log('getit', getit)
 
     let from = null
     if(getit){
