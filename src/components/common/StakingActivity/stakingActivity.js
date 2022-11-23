@@ -353,6 +353,7 @@ export default function StakingActivity(props) {
             newAccountActivity = newAccountActivity.concat(value)
           }
           console.log('newAccountActivity', newAccountActivity)
+        
 
           // let newAccountActivity = allAccountValidatorActivity.concat(
           //   accountValidatorActivity[0].depositAndStakes, 
@@ -403,7 +404,7 @@ export default function StakingActivity(props) {
               contractTotalShares: sortedArray[x].contractTotalShares,
               currentSharePrice: parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares),
               currentStakingShares: currentStakingShares,
-              currentReward: new Decimal(currentStakingShares * (parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares)))
+              currentReward: currentStakingShares * (parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares))
             })
           }
             
@@ -442,18 +443,18 @@ export default function StakingActivity(props) {
           let sortedTempArray = _.sortBy(tempArray, 'blockTime')
           console.log('sortedTempArray', sortedTempArray)
 
-          let ultimateArray = []
+       //   let ultimateArray = []
           
           
           for(let x = 0; x < sortedTempArray.length; x++){
-            ultimateArray.push({
-              validator: sortedTempArray[x].validator,
-              epoch: sortedTempArray[x].epoch,
-              blockTime: sortedTempArray[x].blockTime,
-              blockHeight: sortedTempArray[x].blockHeight,
-              stakedBalance: sortedTempArray[x].currentReward.toNumber(),
-              reward: x > 0 ? sortedTempArray[x].currentReward - sortedTempArray[x-1].currentReward : 0
-            })
+            // ultimateArray.push({
+            //   validator: sortedTempArray[x].validator,
+            //   epoch: sortedTempArray[x].epoch,
+            //   blockTime: sortedTempArray[x].blockTime,
+            //   blockHeight: sortedTempArray[x].blockHeight,
+            //   stakedBalance: sortedTempArray[x].currentReward.toNumber(),
+            //   reward: x > 0 ? sortedTempArray[x].currentReward - sortedTempArray[x-1].currentReward : 0
+            //})
 
             let date = formatDate(sortedTempArray[x].blockTime)
             
@@ -465,7 +466,6 @@ export default function StakingActivity(props) {
 
             console.log('blocktime', sortedTempArray[x].blockTime)
 
-            
             console.log('currentreward', parseFloat(sortedTempArray[x].currentReward).toLocaleString('fullwide', {useGrouping: false}))
 
             let currentReward = new Decimal(sortedTempArray[x].currentReward)
@@ -532,7 +532,7 @@ export default function StakingActivity(props) {
               journalNo ++
             }
           }
-          validators.push(ultimateArray)
+         // validators.push(ultimateArray)
           setValidatorData(validators)
           setCsvExport(csvDownload)
           setCsvSingleExport(csvSingle)
