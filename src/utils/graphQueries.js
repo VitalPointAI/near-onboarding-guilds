@@ -667,146 +667,148 @@ export default class Queries {
                     for (const [key, value] of Object.entries(validatorActivity.data)){
                         console.log('key', key)
                         console.log('value', value)
-                        switch (key) {
-                            case 'depositAndStakes':
-                                if(depositAndStakesKeepRunning){
-                                    value.forEach(element => depositAndStakes.push(element))
-                                    activity = activity.concat(depositAndStakes)
-                                    console.log('depositsandstakes', depositAndStakes)
-                                    if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
-                                        depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
+                        if(value && value.length > 0){
+                            switch (key) {
+                                case 'depositAndStakes':
+                                    if(depositAndStakesKeepRunning){
+                                        value.forEach(element => depositAndStakes.push(element))
+                                        activity = activity.concat(depositAndStakes)
+                                        console.log('depositsandstakes', depositAndStakes)
+                                        if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
+                                            depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
+                                        } else {
+                                            depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
+                                            depositAndStakesKeepRunning = false
+                                        } 
+                                        break
                                     } else {
-                                        depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
-                                        depositAndStakesKeepRunning = false
-                                    } 
-                                    break
-                                } else {
-                                    break
-                                }
-                            case 'deposits':
-                                if(depositsKeepRunning){
-                                    value.forEach(element => deposits.push(element))
-                                    activity = activity.concat(deposits)
-                                    console.log('deposits', deposits)
-                                    if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
-                                        depositsBlockTime = deposits[deposits.length-1].blockTime
+                                        break
+                                    }
+                                case 'deposits':
+                                    if(depositsKeepRunning){
+                                        value.forEach(element => deposits.push(element))
+                                        activity = activity.concat(deposits)
+                                        console.log('deposits', deposits)
+                                        if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
+                                            depositsBlockTime = deposits[deposits.length-1].blockTime
+                                        } else {
+                                            depositsBlockTime = deposits[deposits.length-1].blockTime
+                                            depositsKeepRunning = false
+                                        } 
+                                        break
                                     } else {
-                                        depositsBlockTime = deposits[deposits.length-1].blockTime
-                                        depositsKeepRunning = false
-                                    } 
-                                    break
-                                } else {
-                                    break
-                                }
-                            case 'pings':
-                                if(pingsKeepRunning){
-                                    value.forEach(element => pings.push(element))
-                                    activity = activity.concat(pings)
-                                    console.log('pings', pings)
-                                    if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
-                                        pingsBlockTime = pings[pings.length-1].blockTime
-                                        console.log('ping blocktime1', pingsBlockTime)
+                                        break
+                                    }
+                                case 'pings':
+                                    if(pingsKeepRunning){
+                                        value.forEach(element => pings.push(element))
+                                        activity = activity.concat(pings)
+                                        console.log('pings', pings)
+                                        if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
+                                            pingsBlockTime = pings[pings.length-1].blockTime
+                                            console.log('ping blocktime1', pingsBlockTime)
+                                        } else {
+                                            pingsBlockTime = pings[pings.length-1].blockTime
+                                            console.log('ping blocktime2', pingsBlockTime)
+                                            pingsKeepRunning = false
+                                        } 
+                                        break
                                     } else {
-                                        pingsBlockTime = pings[pings.length-1].blockTime
-                                        console.log('ping blocktime2', pingsBlockTime)
-                                        pingsKeepRunning = false
-                                    } 
-                                    break
-                                } else {
-                                    break
-                                }
-                            case 'stakeAlls':
-                                if(stakeAllsKeepRunning){
-                                    value.forEach(element => stakeAlls.push(element))
-                                    activity = activity.concat(stakeAlls)
-                                    console.log('stakealls', stakeAlls)
-                                    if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
-                                        stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
+                                        break
+                                    }
+                                case 'stakeAlls':
+                                    if(stakeAllsKeepRunning){
+                                        value.forEach(element => stakeAlls.push(element))
+                                        activity = activity.concat(stakeAlls)
+                                        console.log('stakealls', stakeAlls)
+                                        if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
+                                            stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
+                                        } else {
+                                            stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
+                                            stakeAllsKeepRunning = false
+                                        } 
+                                        break
                                     } else {
-                                        stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
-                                        stakeAllsKeepRunning = false
-                                    } 
-                                    break
-                                } else {
-                                    break
-                                }
-                            case 'stakes':
-                                if(stakesKeepRunning){
-                                    value.forEach(element => stakes.push(element))
-                                    activity = activity.concat(stakes)
-                                    console.log('stakes', stakes)
-                                    if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
-                                        stakesBlockTime = stakes[stakes.length-1].blockTime
+                                        break
+                                    }
+                                case 'stakes':
+                                    if(stakesKeepRunning){
+                                        value.forEach(element => stakes.push(element))
+                                        activity = activity.concat(stakes)
+                                        console.log('stakes', stakes)
+                                        if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
+                                            stakesBlockTime = stakes[stakes.length-1].blockTime
+                                        } else {
+                                            stakesBlockTime = stakes[stakes.length-1].blockTime
+                                            stakesKeepRunning = false
+                                        } 
+                                        break
                                     } else {
-                                        stakesBlockTime = stakes[stakes.length-1].blockTime
-                                        stakesKeepRunning = false
-                                    } 
-                                    break
-                                } else {
-                                    break
-                                }
-                            case 'unstakeAlls':
-                                if(unstakeAllsKeepRunning){
-                                    value.forEach(element => unstakeAlls.push(element))
-                                    activity = activity.concat(unstakeAlls)
-                                    console.log('unstakeAlls', unstakeAlls)
-                                    if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
-                                        unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
+                                        break
+                                    }
+                                case 'unstakeAlls':
+                                    if(unstakeAllsKeepRunning){
+                                        value.forEach(element => unstakeAlls.push(element))
+                                        activity = activity.concat(unstakeAlls)
+                                        console.log('unstakeAlls', unstakeAlls)
+                                        if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
+                                            unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
+                                        } else {
+                                            unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
+                                            unstakeAllsKeepRunning = false
+                                        } 
+                                        break
                                     } else {
-                                        unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
-                                        unstakeAllsKeepRunning = false
-                                    } 
-                                    break
-                                } else {
-                                    break
-                                }
-                            case 'unstakes':
-                                if(unstakesKeepRunning){
-                                    value.forEach(element => unstakes.push(element))
-                                    activity = activity.concat(unstakes)
-                                    console.log('unstakes', unstakes)
-                                    if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
-                                        unstakesBlockTime = unstakes[unstakes.length-1].blockTime
+                                        break
+                                    }
+                                case 'unstakes':
+                                    if(unstakesKeepRunning){
+                                        value.forEach(element => unstakes.push(element))
+                                        activity = activity.concat(unstakes)
+                                        console.log('unstakes', unstakes)
+                                        if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
+                                            unstakesBlockTime = unstakes[unstakes.length-1].blockTime
+                                        } else {
+                                            unstakesBlockTime = unstakes[unstakes.length-1].blockTime
+                                            unstakesKeepRunning = false
+                                        } 
+                                        break
                                     } else {
-                                        unstakesBlockTime = unstakes[unstakes.length-1].blockTime
-                                        unstakesKeepRunning = false
-                                    } 
-                                    break
-                                } else {
-                                    break
-                                }
-                            case 'withdrawAlls':
-                                if(withdrawAllsKeepRunning){
-                                    value.forEach(element => withdrawAlls.push(element))
-                                    activity = activity.concat(withdrawAlls)
-                                    console.log('withdrawalls', withdrawAlls)
-                                    if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
-                                        withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
+                                        break
+                                    }
+                                case 'withdrawAlls':
+                                    if(withdrawAllsKeepRunning){
+                                        value.forEach(element => withdrawAlls.push(element))
+                                        activity = activity.concat(withdrawAlls)
+                                        console.log('withdrawalls', withdrawAlls)
+                                        if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
+                                            withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
+                                        } else {
+                                            withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
+                                            withdrawAllsKeepRunning = false
+                                        } 
+                                        break
                                     } else {
-                                        withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
-                                        withdrawAllsKeepRunning = false
-                                    } 
-                                    break
-                                } else {
-                                    break
-                                }
-                            case 'withdraws':
-                                if(withdrawsKeepRunning){
-                                    value.forEach(element => withdraws.push(element))
-                                    activity = activity.concat(withdraws)
-                                    console.log('withdraws', withdraws)
-                                    if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
-                                        withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
+                                        break
+                                    }
+                                case 'withdraws':
+                                    if(withdrawsKeepRunning){
+                                        value.forEach(element => withdraws.push(element))
+                                        activity = activity.concat(withdraws)
+                                        console.log('withdraws', withdraws)
+                                        if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
+                                            withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
+                                        } else {
+                                            withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
+                                            withdrawsKeepRunning = false
+                                        } 
+                                        break
                                     } else {
-                                        withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
-                                        withdrawsKeepRunning = false
-                                    } 
+                                        break
+                                    }
+                                default:
                                     break
-                                } else {
-                                    break
-                                }
-                            default:
-                                break
+                            }
                         }
                         
                         if(!depositAndStakesKeepRunning && !depositsKeepRunning
