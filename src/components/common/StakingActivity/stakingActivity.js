@@ -451,7 +451,7 @@ export default function StakingActivity(props) {
               epoch: sortedTempArray[x].epoch,
               blockTime: sortedTempArray[x].blockTime,
               blockHeight: sortedTempArray[x].blockHeight,
-              stakedBalance: sortedTempArray[x].currentReward,
+              stakedBalance: sortedTempArray[x].currentReward.toNumber(),
               reward: x > 0 ? sortedTempArray[x].currentReward - sortedTempArray[x-1].currentReward : 0
             })
 
