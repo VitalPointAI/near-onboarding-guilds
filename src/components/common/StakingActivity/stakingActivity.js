@@ -367,7 +367,8 @@ export default function StakingActivity(props) {
           
          // let mergedArray = newActivity.concat(newAccountActivity)
          // let sortedArray = _.sortBy(mergedArray, 'blockTime')
-          let sortedArray = _.sortBy(newAccountActivity, 'blockTime')
+         // let sortedArray = _.sortBy(newAccountActivity, 'blockTime')
+          let sortedArray = _.sortBy(newActivity, 'blockTime')
           console.log('sortedArray', sortedArray)
 
           // Step 5:  Determine this account's current share of the stake for each validator
