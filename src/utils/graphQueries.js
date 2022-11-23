@@ -795,32 +795,22 @@ export default class Queries {
                             default:
                                 break
                         }
-                        newActivity = activity.concat(
-                            depositAndStakes[0],
-                            deposits[0],
-                            pings[0],
-                            withdrawAlls[0],
-                            withdraws[0],
-                            unstakeAlls[0],
-                            unstakes[0],
-                            stakes[0],
-                            stakeAlls[0]
-                        )
+                        
                         if(!depositAndStakesKeepRunning && !depositsKeepRunning
                             && !pingsKeepRunning && !stakeAllsKeepRunning
                             && !stakesKeepRunning && !unstakeAllsKeepRunning
                             && !unstakesKeepRunning && !withdrawAllsKeepRunning
                             && !withdrawsKeepRunning){
-                                activity.concat(
-                                    depositAndStakes,
-                                    deposits,
-                                    pings,
-                                    withdrawAlls,
-                                    withdraws,
-                                    unstakeAlls,
-                                    unstakes,
-                                    stakes,
-                                    stakeAlls
+                                newActivity = activity.concat(
+                                    depositAndStakes[0],
+                                    deposits[0],
+                                    pings[0],
+                                    withdrawAlls[0],
+                                    withdraws[0],
+                                    unstakeAlls[0],
+                                    unstakes[0],
+                                    stakes[0],
+                                    stakeAlls[0]
                                 )
                                 keepRunning = false
                             }
