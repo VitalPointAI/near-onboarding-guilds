@@ -662,7 +662,7 @@ export default class Queries {
               
                     for (const [key, value] of Object.entries(validatorActivity.data)){
                         console.log('key', key)
-                        console.log('value', value)
+                        console.log('value', value[0])
                         switch (key) {
                             case 'depositAndStakes':
                                 if(depositAndStakesKeepRunning){
