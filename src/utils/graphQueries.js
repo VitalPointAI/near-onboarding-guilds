@@ -634,7 +634,7 @@ export default class Queries {
 
         for(let x = 0; x < validators.length; x++){
            
-            while(keepRunning){
+            // while(keepRunning){
                 try{
                     validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
                         executorId: validators[x],
@@ -683,7 +683,6 @@ export default class Queries {
                                 continue
                             case 'pings':
                                 pings.push(value)
-                                console.log('pings', pings)
                                 if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
                                     pingsBlockTime = pings[pings.length-1].blockTime
                                 } else {
@@ -746,28 +745,38 @@ export default class Queries {
                                 } 
                                 continue
                         }
-
-                        if(!depositAndStakesKeepRunning && !depositsKeepRunning
-                            && !pingsKeepRunning && !stakeAllsKeepRunning
-                            && !stakesKeepRunning && !unstakeAllsKeepRunning
-                            && !unstakesKeepRunning && !withdrawAllsKeepRunning
-                            && !withdrawsKeepRunning){
-                                activity.concat(
-                                    depositAndStakes,
-                                    deposits,
-                                    pings,
-                                    withdrawAlls,
-                                    withdraws,
-                                    unstakeAlls,
-                                    unstakes,
-                                    stakes,
-                                    stakeAlls
-                                )
-                                keepRunning = false
-                            }
+                        activity.concat(
+                            depositAndStakes,
+                            deposits,
+                            pings,
+                            withdrawAlls,
+                            withdraws,
+                            unstakeAlls,
+                            unstakes,
+                            stakes,
+                            stakeAlls
+                        )
+                        // if(!depositAndStakesKeepRunning && !depositsKeepRunning
+                        //     && !pingsKeepRunning && !stakeAllsKeepRunning
+                        //     && !stakesKeepRunning && !unstakeAllsKeepRunning
+                        //     && !unstakesKeepRunning && !withdrawAllsKeepRunning
+                        //     && !withdrawsKeepRunning){
+                        //         activity.concat(
+                        //             depositAndStakes,
+                        //             deposits,
+                        //             pings,
+                        //             withdrawAlls,
+                        //             withdraws,
+                        //             unstakeAlls,
+                        //             unstakes,
+                        //             stakes,
+                        //             stakeAlls
+                        //         )
+                        //         keepRunning = false
+                        //     }
                     }
                 console.log('activity', activity)
-            }
+           // }
         }
         return activity
     }
