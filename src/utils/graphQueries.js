@@ -635,7 +635,7 @@ export default class Queries {
 
         for(let x = 0; x < validators.length; x++){
            
-            // while(keepRunning){
+            while(keepRunning){
                 try{
                     validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
                         executorId: validators[x],
@@ -806,27 +806,27 @@ export default class Queries {
                             stakes[0],
                             stakeAlls[0]
                         )
-                        // if(!depositAndStakesKeepRunning && !depositsKeepRunning
-                        //     && !pingsKeepRunning && !stakeAllsKeepRunning
-                        //     && !stakesKeepRunning && !unstakeAllsKeepRunning
-                        //     && !unstakesKeepRunning && !withdrawAllsKeepRunning
-                        //     && !withdrawsKeepRunning){
-                        //         activity.concat(
-                        //             depositAndStakes,
-                        //             deposits,
-                        //             pings,
-                        //             withdrawAlls,
-                        //             withdraws,
-                        //             unstakeAlls,
-                        //             unstakes,
-                        //             stakes,
-                        //             stakeAlls
-                        //         )
-                        //         keepRunning = false
-                        //     }
+                        if(!depositAndStakesKeepRunning && !depositsKeepRunning
+                            && !pingsKeepRunning && !stakeAllsKeepRunning
+                            && !stakesKeepRunning && !unstakeAllsKeepRunning
+                            && !unstakesKeepRunning && !withdrawAllsKeepRunning
+                            && !withdrawsKeepRunning){
+                                activity.concat(
+                                    depositAndStakes,
+                                    deposits,
+                                    pings,
+                                    withdrawAlls,
+                                    withdraws,
+                                    unstakeAlls,
+                                    unstakes,
+                                    stakes,
+                                    stakeAlls
+                                )
+                                keepRunning = false
+                            }
                     }
                 console.log('newactivity', newActivity)
-           // }
+            }
         }
         return newActivity
     }
