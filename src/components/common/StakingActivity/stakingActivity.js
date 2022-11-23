@@ -403,7 +403,7 @@ export default function StakingActivity(props) {
               contractTotalShares: sortedArray[x].contractTotalShares,
               currentSharePrice: parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares),
               currentStakingShares: currentStakingShares,
-              currentReward: currentStakingShares * (parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares))
+              currentReward: BigInt(currentStakingShares * (parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares)))
             })
           }
             
@@ -412,7 +412,7 @@ export default function StakingActivity(props) {
         //}
         let count = 0
         let journalNo = journalStartNo
-        for(let y = 0; y < accountValidators.length; y++){
+       // for(let y = 0; y < accountValidators.length; y++){
           let tempArray = finalArray.filter(function(validator) {
             return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
           })
@@ -534,7 +534,7 @@ export default function StakingActivity(props) {
           setCsvExport(csvDownload)
           setCsvSingleExport(csvSingle)
           count++
-        }
+        //}
      // }
 
       setDownloadReady(true)
