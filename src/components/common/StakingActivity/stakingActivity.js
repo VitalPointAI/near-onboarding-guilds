@@ -376,16 +376,18 @@ export default function StakingActivity(props) {
           // validator.  Does this by looking through each item in the array and 
           // calculating a new currentStakingShares if applicable. If not, currentStakingShares
           // remains as last one calculated (stays same until there is a change)
-          let currentStakingShares = 0
+         
           for(let x = 0; x < sortedArray.length; x++){
-            if(sortedArray[x].__typename == 'Ping' || sortedArray[x].accountIdDepositing == accountId || sortedArray[x].accountIdStaking == accountId) {
-           // if(sortedArray[x].accountIdDepositing || sortedArray[x].accountIdStaking || sortedArray[x].accountId){
+            let currentStakingShares = 0
+           // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
+            if(sortedArray[x].accountIdDepositing || sortedArray[x].accountIdStaking || sortedArray[x].accountId){
               if(sortedArray[x].stakingShares){
                 currentStakingShares = sortedArray[x].stakingShares
               }
               if(sortedArray[x].totalStakingShares){
                 currentStakingShares = sortedArray[x].totalStakingShares
               }
+            }
             //}
             // finalArray.push({
             //   validator: accountValidators[y].name,
@@ -409,7 +411,7 @@ export default function StakingActivity(props) {
                 currentStakingShares: currentStakingShares,
                 currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
               })
-            }
+            
           }
             
           setActivity(finalArray)     
