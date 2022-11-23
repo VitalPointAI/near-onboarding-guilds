@@ -653,7 +653,7 @@ export default class Queries {
                             case 'depositAndStakes':
                                 console.log('test blocktime', value[value.length-1].blockTime)
 
-                                if(parseInt(value[z][-1].blockTime) > parseInt(depositAndStakesBlockTime)){
+                                if(parseInt(value[value.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
                                     console.log('there0')
                                     depositAndStakesBlockTime = value[value.length-1].blockTime
                                     console.log('depositandstakesblocktime', depositAndStakesBlockTime)
