@@ -403,7 +403,7 @@ export default function StakingActivity(props) {
               contractTotalShares: sortedArray[x].contractTotalShares,
               currentSharePrice: parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares),
               currentStakingShares: currentStakingShares,
-              currentReward: BigInt(currentStakingShares * (parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares)))
+              currentReward: new Decimal(currentStakingShares * (parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares)))
             })
           }
             
