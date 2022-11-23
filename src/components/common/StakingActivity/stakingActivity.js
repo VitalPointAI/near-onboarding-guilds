@@ -399,11 +399,11 @@ export default function StakingActivity(props) {
               epoch: sortedArray[x].epoch,
               blockTime: sortedArray[x].blockTime,
               blockHeight: sortedArray[x].blockHeight,
-              contractStakedBalance: sortedArray[x].contractTotalStakedBalance,
-              contractTotalShares: sortedArray[x].contractTotalShares,
-              currentSharePrice: parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares),
+              contractStakedBalance: sortedArray[x].newContractTotalStakedBalance,
+              contractTotalShares: sortedArray[x].newContractTotalShares,
+              currentSharePrice: parseFloat(sortedArray[x].newContractTotalStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
               currentStakingShares: currentStakingShares,
-              currentReward: currentStakingShares * (parseFloat(sortedArray[x].contractTotalStakedBalance) / parseFloat(sortedArray[x].contractTotalShares))
+              currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractTotalStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
             })
             currentStakingShares = 0
           }
