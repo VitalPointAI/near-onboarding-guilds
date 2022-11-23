@@ -698,8 +698,10 @@ export default class Queries {
                                     console.log('pings', pings)
                                     if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
                                         pingsBlockTime = pings[pings.length-1].blockTime
+                                        console.log('ping blocktime1', pingsBlockTime)
                                     } else {
                                         pingsBlockTime = pings[pings.length-1].blockTime
+                                        console.log('ping blocktime2', pingsBlockTime)
                                         pingsKeepRunning = false
                                     } 
                                     break
@@ -794,15 +796,15 @@ export default class Queries {
                                 break
                         }
                         newActivity = activity.concat(
-                            depositAndStakes,
-                            deposits,
-                            pings,
-                            withdrawAlls,
-                            withdraws,
-                            unstakeAlls,
-                            unstakes,
-                            stakes,
-                            stakeAlls
+                            depositAndStakes[0],
+                            deposits[0],
+                            pings[0],
+                            withdrawAlls[0],
+                            withdraws[0],
+                            unstakeAlls[0],
+                            unstakes[0],
+                            stakes[0],
+                            stakeAlls[0]
                         )
                         // if(!depositAndStakesKeepRunning && !depositsKeepRunning
                         //     && !pingsKeepRunning && !stakeAllsKeepRunning
