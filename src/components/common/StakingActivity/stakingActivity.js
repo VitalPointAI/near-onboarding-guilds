@@ -427,16 +427,17 @@ export default function StakingActivity(props) {
       
          // let datedArray = tempArray.filter(function(record) {  
             
-          let datedArray = tempArray.filter(function(record) {          
-            let result = BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
-            if(result){
-              return record
-            }
-          })
+          // let datedArray = tempArray.filter(function(record) {          
+          //   let result = BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
+          //   if(result){
+          //     return record
+          //   }
+          // })
 
-          console.log('datedarray', datedArray)
+        //  console.log('datedarray', datedArray)
 
-          let sortedTempArray = _.sortBy(datedArray, 'blockTime')
+        //  let sortedTempArray = _.sortBy(datedArray, 'blockTime')
+          let sortedTempArray = _.sortBy(tempArray, 'blockTime')
           console.log('sortedTempArray', sortedTempArray)
 
           let ultimateArray = []
