@@ -600,6 +600,7 @@ export default class Queries {
     async getValidatorActivity(validators){
         let validatorActivity
         let activity = []
+        let newActivity = []
         let pings = []
         let depositAndStakes = []
         let deposits = []
@@ -665,6 +666,7 @@ export default class Queries {
                         switch (key) {
                             case 'depositAndStakes':
                                 depositAndStakes.push(value)
+                                console.log('depositsandstakes', depositAndStakes)
                                 if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
                                     depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
                                 } else {
@@ -674,6 +676,7 @@ export default class Queries {
                                 continue
                             case 'deposits':
                                 deposits.push(value)
+                                console.log('deposits', deposits)
                                 if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
                                     depositsBlockTime = deposits[deposits.length-1].blockTime
                                 } else {
@@ -683,6 +686,7 @@ export default class Queries {
                                 continue
                             case 'pings':
                                 pings.push(value)
+                                console.log('pings', pings)
                                 if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
                                     pingsBlockTime = pings[pings.length-1].blockTime
                                 } else {
@@ -692,6 +696,7 @@ export default class Queries {
                                 continue
                             case 'stakeAlls':
                                 stakeAlls.push(value)
+                                console.log('stakealls', stakeAlls)
                                 if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
                                     stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
                                 } else {
@@ -701,6 +706,7 @@ export default class Queries {
                                 continue
                             case 'stakes':
                                 stakes.push(value)
+                                console.log('stakes', stakes)
                                 if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
                                     stakesBlockTime = stakes[stakes.length-1].blockTime
                                 } else {
@@ -710,6 +716,7 @@ export default class Queries {
                                 continue
                             case 'unstakeAlls':
                                 unstakeAlls.push(value)
+                                console.log('unstakeAlls', unstakeAlls)
                                 if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
                                     unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
                                 } else {
@@ -719,6 +726,7 @@ export default class Queries {
                                 continue
                             case 'unstakes':
                                 unstakes.push(value)
+                                console.log('unstakes', unstakes)
                                 if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
                                     unstakesBlockTime = unstakes[unstakes.length-1].blockTime
                                 } else {
@@ -728,6 +736,7 @@ export default class Queries {
                                 continue
                             case 'withdrawAlls':
                                 withdrawAlls.push(value)
+                                console.log('withdrawalls', withdrawAlls)
                                 if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
                                     withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
                                 } else {
@@ -737,6 +746,7 @@ export default class Queries {
                                 continue
                             case 'withdraws':
                                 withdraws.push(value)
+                                console.log('withdraws', withdraws)
                                 if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
                                     withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
                                 } else {
@@ -745,7 +755,7 @@ export default class Queries {
                                 } 
                                 continue
                         }
-                        activity.concat(
+                        newActivity = activity.concat(
                             depositAndStakes,
                             deposits,
                             pings,
@@ -775,10 +785,10 @@ export default class Queries {
                         //         keepRunning = false
                         //     }
                     }
-                console.log('activity', activity)
+                console.log('newactivity', newActivity)
            // }
         }
-        return activity
+        return newActivity
     }
 
     //async getAccountValidatorActivity(validatorUris, account){
