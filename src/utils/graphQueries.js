@@ -651,15 +651,15 @@ export default class Queries {
                     for (const [key, value] of Object.entries(activity[y][1])){
                         switch (key) {
                             case 'depositAndStakes':
-                                console.log('test blocktime', value[z][-1].blockTime)
+                                console.log('test blocktime', value[value.length-1].blockTime)
 
                                 if(parseInt(value[z][-1].blockTime) > parseInt(depositAndStakesBlockTime)){
                                     console.log('there0')
-                                    depositAndStakesBlockTime = value[z][-1].blockTime
+                                    depositAndStakesBlockTime = value[value.length-1].blockTime
                                     console.log('depositandstakesblocktime', depositAndStakesBlockTime)
                                 } else {
                                     console.log('there')
-                                    depositAndStakesBlockTime = value[z][-1].blockTime
+                                    depositAndStakesBlockTime = value[value.length-1].blockTime
                                     console.log('depositandstakesblocktime', depositAndStakesBlockTime)
                                     depositAndStakesKeepRunning = false
                                 } 
