@@ -282,7 +282,7 @@ query executor_activity(
     $stakesBlockTime: String!,
     $stakeAllsBlockTime: String!
     ){
-    pings(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $pingsBlockTime}}){
+    pings(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $pingsBlockTime}}){
         blockHeight
         blockTime
         epoch
@@ -291,7 +291,7 @@ query executor_activity(
         newContractTotalShares
         executorId
     }
-    depositAndStakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $depositAndStakesBlockTime}}){
+    depositAndStakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $depositAndStakesBlockTime}}){
         blockHeight
         blockTime
         totalRewardsFee
@@ -311,7 +311,7 @@ query executor_activity(
         newContractTotalShares
         executorId
     }
-    deposits(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $depositsBlockTime}}){
+    deposits(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $depositsBlockTime}}){
         blockHeight
         blockTime
         totalRewardsFee
@@ -331,21 +331,21 @@ query executor_activity(
         newContractTotalShares
         executorId
     }
-    withdrawAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $withdrawAllsBlockTime}}){
+    withdrawAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $withdrawAllsBlockTime}}){
         blockHeight
         blockTime
         amount
         newUnstakedBalance
         executorId
     }
-    withdraws(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $withdrawsBlockTime}}){
+    withdraws(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $withdrawsBlockTime}}){
         blockHeight
         blockTime
         amount
         newUnstakedBalance
         executorId
     }
-    unstakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $unstakesBlockTime}}){
+    unstakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $unstakesBlockTime}}){
         blockHeight
         blockTime
         epoch
@@ -354,7 +354,7 @@ query executor_activity(
         newContractTotalShares
         executorId
     }
-    unstakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $unstakeAllsBlockTime}}){
+    unstakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $unstakeAllsBlockTime}}){
         blockHeight
         blockTime
         amount
@@ -365,7 +365,7 @@ query executor_activity(
         contractTotalShares
         executorId
     }
-    stakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $stakesBlockTime}}){
+    stakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $stakesBlockTime}}){
         blockTime
         blockHeight
         accountIdDepositing
@@ -380,7 +380,7 @@ query executor_activity(
         contractTotalShares
         executorId
     }
-    stakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $stakeAllsBlockTime}}){   
+    stakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $stakeAllsBlockTime}}){   
         blockHeight
         blockTime
         accountIdDepositing
@@ -651,82 +651,76 @@ export default class Queries {
                     for (const [key, value] of Object.entries(activity[y])){
                         switch (key) {
                             case 'depositAndStakes':
-                                console.log('test blocktime', value[value.length-1].blockTime)
-
                                 if(parseInt(value[value.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
-                                    console.log('there0')
                                     depositAndStakesBlockTime = value[value.length-1].blockTime
-                                    console.log('depositandstakesblocktime', depositAndStakesBlockTime)
                                 } else {
-                                    console.log('there')
                                     depositAndStakesBlockTime = value[value.length-1].blockTime
-                                    console.log('depositandstakesblocktime', depositAndStakesBlockTime)
                                     depositAndStakesKeepRunning = false
                                 } 
                                 continue
                             case 'deposits':
-                                let newDepositsLatest = this.getLatestBlockTime(value, depositsBlockTime)
-                                if(!newDepositsLatest){
-                                    depositsKeepRunning = false
+                                if(parseInt(value[value.length-1].blockTime) > parseInt(depositsBlockTime)){
+                                    depositsBlockTime = value[value.length-1].blockTime
                                 } else {
-                                    depositsBlockTime = newDepositsLatest
-                                }
+                                    depositsBlockTime = value[value.length-1].blockTime
+                                    depositsKeepRunning = false
+                                } 
                                 continue
                             case 'pings':
-                                let newPingsLatest = this.getLatestBlockTime(value, pingsBlockTime)
-                                if(!newPingsLatest){
-                                    pingsKeepRunning = false
+                                if(parseInt(value[value.length-1].blockTime) > parseInt(pingsBlockTime)){
+                                    pingsBlockTime = value[value.length-1].blockTime
                                 } else {
-                                    pingsBlockTime = newPingsLatest
-                                }
+                                    pingsBlockTime = value[value.length-1].blockTime
+                                    pingsKeepRunning = false
+                                } 
                                 continue
                             case 'stakeAlls':
-                                let newStakeAllsLatest = this.getLatestBlockTime(value, stakeAllsBlockTime)
-                                if(!newStakeAllsLatest){
-                                    stakeAllsKeepRunning = false
+                                if(parseInt(value[value.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
+                                    stakeAllsBlockTime = value[value.length-1].blockTime
                                 } else {
-                                    stakeAllsBlockTime = newStakeAllsLatest
-                                }
+                                    stakeAllsBlockTime = value[value.length-1].blockTime
+                                    stakeAllsKeepRunning = false
+                                } 
                                 continue
                             case 'stakes':
-                                let newStakesLatest = this.getLatestBlockTime(value, stakesBlockTime)
-                                if(!newStakesLatest){
-                                    stakesKeepRunning = false
+                                if(parseInt(value[value.length-1].blockTime) > parseInt(stakesBlockTime)){
+                                    stakesBlockTime = value[value.length-1].blockTime
                                 } else {
-                                    stakesBlockTime = newStakesLatest
-                                }
+                                    stakesBlockTime = value[value.length-1].blockTime
+                                    stakesKeepRunning = false
+                                } 
                                 continue
                             case 'unstakeAlls':
-                                let newUnstakeAllsLatest = this.getLatestBlockTime(value, unstakeAllsBlockTime)
-                                if(!newUnstakeAllsLatest){
-                                    unstakeAllsKeepRunning = false
+                                if(parseInt(value[value.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
+                                    unstakeAllsBlockTime = value[value.length-1].blockTime
                                 } else {
-                                    unstakeAllsBlockTime = newUnstakeAllsLatest
-                                }
+                                    unstakeAllsBlockTime = value[value.length-1].blockTime
+                                    unstakeAllsKeepRunning = false
+                                } 
                                 continue
                             case 'unstakes':
-                                let newUnstakesLatest = this.getLatestBlockTime(value, unstakesBlockTime)
-                                if(!newUnstakesLatest){
-                                    unstakesKeepRunning = false
+                                if(parseInt(value[value.length-1].blockTime) > parseInt(unstakesBlockTime)){
+                                    unstakesBlockTime = value[value.length-1].blockTime
                                 } else {
-                                    unstakesBlockTime = newUnstakesLatest
-                                }
+                                    unstakesBlockTime = value[value.length-1].blockTime
+                                    unstakesKeepRunning = false
+                                } 
                                 continue
                             case 'withdrawAlls':
-                                let newWithdrawAllsLatest = this.getLatestBlockTime(value, withdrawAllsBlockTime)
-                                if(!newWithdrawAllsLatest){
-                                    withdrawAllsKeepRunning = false
+                                if(parseInt(value[value.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
+                                    withdrawAllsBlockTime = value[value.length-1].blockTime
                                 } else {
-                                    withdrawAllsBlockTime = newWithdrawAllsLatest
-                                }
+                                    withdrawAllsBlockTime = value[value.length-1].blockTime
+                                    withdrawAllsKeepRunning = false
+                                } 
                                 continue
                             case 'withdraws':
-                                let newWithdrawsLatest = this.getLatestBlockTime(value, withdrawsBlockTime)
-                                if(!newWithdrawsLatest){
-                                    withdrawsKeepRunning = false
+                                if(parseInt(value[value.length-1].blockTime) > parseInt(withdrawsBlockTime)){
+                                    withdrawsBlockTime = value[value.length-1].blockTime
                                 } else {
-                                    withdrawsBlockTime = newWithdrawsLatest
-                                }
+                                    withdrawsBlockTime = value[value.length-1].blockTime
+                                    withdrawsKeepRunning = false
+                                } 
                                 continue
                         }
 
@@ -743,18 +737,6 @@ export default class Queries {
             }
         }
         return activity
-    }
-
-    getLatestBlockTime(value, blockTime){
-        console.log('incoming blocktime', blockTime)
-        for(let z = 0; z < value.length; z++){
-            if(parseInt(value[z].blockTime) > parseInt(blockTime)){
-                console.log('returning blocktime', value[z].blockTime)
-                return value[z].blockTime
-            } else {
-                return false
-            }
-        }
     }
 
     //async getAccountValidatorActivity(validatorUris, account){
