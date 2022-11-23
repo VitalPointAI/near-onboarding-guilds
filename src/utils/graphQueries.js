@@ -269,8 +269,19 @@ query{
 // `
 
 const VALIDATOR_ACTIVITY = gql`
-query executor_activity($executorId: String!, $blockTime: String!){
-    pings(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+query executor_activity(
+    $executorId: String!, 
+    $pingsBlockTime: String!,
+    $depositAndStakesBlockTime: String!,
+    $depositsBlockTime: String!,
+    $withdrawAllsBlockTime: String!,
+    $withdrawsBlockTime: String!,
+    $unstakesBlockTime: String!,
+    $unstakeAllsBlockTime: String!,
+    $stakesBlockTime: String!,
+    $stakeAllsBlockTime: String!
+    ){
+    pings(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $pingsBlockTime}}){
         blockHeight
         blockTime
         epoch
@@ -279,7 +290,7 @@ query executor_activity($executorId: String!, $blockTime: String!){
         newContractTotalShares
         executorId
     }
-    depositAndStakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    depositAndStakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $depositAndStakesBlockTime}}){
         blockHeight
         blockTime
         totalRewardsFee
@@ -299,7 +310,7 @@ query executor_activity($executorId: String!, $blockTime: String!){
         newContractTotalShares
         executorId
     }
-    deposits(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    deposits(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $depositsBlockTime}}){
         blockHeight
         blockTime
         totalRewardsFee
@@ -319,21 +330,21 @@ query executor_activity($executorId: String!, $blockTime: String!){
         newContractTotalShares
         executorId
     }
-    withdrawAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    withdrawAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $withdrawAllsblockTime}}){
         blockHeight
         blockTime
         amount
         newUnstakedBalance
         executorId
     }
-    withdraws(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    withdraws(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $withdrawsBlockTime}}){
         blockHeight
         blockTime
         amount
         newUnstakedBalance
         executorId
     }
-    unstakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    unstakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $unstakesBlockTime}}){
         blockHeight
         blockTime
         epoch
@@ -342,7 +353,7 @@ query executor_activity($executorId: String!, $blockTime: String!){
         newContractTotalShares
         executorId
     }
-    unstakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    unstakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $unstakeAllsBlockTime}}){
         blockHeight
         blockTime
         amount
@@ -353,7 +364,7 @@ query executor_activity($executorId: String!, $blockTime: String!){
         contractTotalShares
         executorId
     }
-    stakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){
+    stakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $stakesBlockTime}}){
         blockTime
         blockHeight
         accountIdDepositing
@@ -368,7 +379,7 @@ query executor_activity($executorId: String!, $blockTime: String!){
         contractTotalShares
         executorId
     }
-    stakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $blockTime}}){   
+    stakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $stakeAllsBlockTime}}){   
         blockHeight
         blockTime
         accountIdDepositing
@@ -587,21 +598,46 @@ export default class Queries {
 
     async getValidatorActivity(validators){
         let activity = [] 
-        let latestBlockTime = '1604271586000' // Oct 1 2020 (around start of mainnet)
+
+        // start blocktimes Oct 1 2020 (around start of mainnet)
+        let pingsBlockTime = '1604271586000'
+        let depositAndStakesBlockTime = '1604271586000'
+        let depositsBlockTime = '1604271586000'
+        let withdrawAllsBlockTime = '1604271586000'
+        let withdrawsBlockTime = '1604271586000'
+        let unstakeAllsBlockTime = '1604271586000'
+        let unstakesBlockTime = '1604271586000'
+        let stakesBlockTime = '1604271586000'
+        let stakeAllsBlockTime = '1604271586000'
+        
         let keepRunning = true
+        let depositAndStakesKeepRunning = true
+        let depositsKeepRunning = true
+        let pingsKeepRunning = true
+        let stakeAllsKeepRunning = true
+        let stakesKeepRunning = true
+        let unstakeAllsKeepRunning = true
+        let unstakesKeepRunning = true
+        let withdrawAllsKeepRunning = true
+        let withdrawsKeepRunning = true
+
         for(let x = 0; x < validators.length; x++){
-            // let validatorClient = new ApolloClient({
-            //     uri: validators[x],
-            //     cache: new InMemoryCache(),
-            // })
 
             while(keepRunning){
-                console.log('here')
                 try{
                     let validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
                         executorId: validators[x],
-                        blockTime: latestBlockTime
+                        pingsBlockTime: pingsBlockTime,
+                        depositAndStakesBlockTime: depositAndStakesBlockTime,
+                        depositsBlockTime: depositsBlockTime,
+                        withdrawAllsBlockTime: withdrawAllsBlockTime,
+                        withdrawsBlockTime: withdrawsBlockTime,
+                        unstakeAllsBlockTime: unstakeAllsBlockTime,
+                        unstakesBlockTime: unstakesBlockTime,
+                        stakesBlockTime: stakesBlockTime,
+                        stakeAllsBlockTime: stakeAllsBlockTime
                     }})
+
                     console.log('validatorActivity', validatorActivity)
                     activity.push([validators[x], validatorActivity.data])
                     console.log('activity here', activity)
@@ -609,24 +645,106 @@ export default class Queries {
                 } catch (err) {
                     console.log('error retrieving validator data: ', err)
                 }
-                console.log('here2')
+               
                 for (let y = 0; y < activity.length; y++){
                     for (const [key, value] of Object.entries(activity[y][1])){
-                        console.log('value', value)
-                        for(let z = 0; z < value.length; z++){
-                            console.log('blockTime', latestBlockTime)
-                            if(value[z].blockTime > latestBlockTime){
-                                latestBlockTime = value[z].blockTime
-                            } else {
-                                keepRunning = false
-                                break
-                            }
+                        switch (key) {
+                            case 'depositAndStakes':
+                                let newDepositAndStakesLatest = getLatestBlockTime(value, depositAndStakesBlockTime)
+                                if(!newDepositAndStakesLatest){
+                                    depositAndStakesKeepRunning = false
+                                } else {
+                                    depositAndStakesBlockTime = newDepositAndStakesLatest
+                                }
+                                continue
+                            case 'deposits':
+                                let newDepositsLatest = getLatestBlockTime(value, depositsBlockTime)
+                                if(!newDepositsLatest){
+                                    depositsKeepRunning = false
+                                } else {
+                                    depositsBlockTime = newDepositsLatest
+                                }
+                                continue
+                            case 'pings':
+                                let newPingsLatest = getLatestBlockTime(value, pingsBlockTime)
+                                if(!newPingsLatest){
+                                    pingsKeepRunning = false
+                                } else {
+                                    pingsBlockTime = newPingsLatest
+                                }
+                                continue
+                            case 'stakeAlls':
+                                let newStakeAllsLatest = getLatestBlockTime(value, stakeAllsBlockTime)
+                                if(!newStakeAllsLatest){
+                                    stakeAllsKeepRunning = false
+                                } else {
+                                    stakeAllsBlockTime = newStakeAllsLatest
+                                }
+                                continue
+                            case 'stakes':
+                                let newStakesLatest = getLatestBlockTime(value, stakesBlockTime)
+                                if(!newStakesLatest){
+                                    stakesKeepRunning = false
+                                } else {
+                                    stakesBlockTime = newStakesLatest
+                                }
+                                continue
+                            case 'unstakeAlls':
+                                let newUnstakeAllsLatest = getLatestBlockTime(value, unstakeAllsBlockTime)
+                                if(!newUnstakeAllsLatest){
+                                    unstakeAllsKeepRunning = false
+                                } else {
+                                    unstakeAllsBlockTime = newUnstakeAllsLatest
+                                }
+                                continue
+                            case 'unstakes':
+                                let newUnstakesLatest = getLatestBlockTime(value, unstakesBlockTime)
+                                if(!newUnstakesLatest){
+                                    unstakesKeepRunning = false
+                                } else {
+                                    unstakesBlockTime = newUnstakesLatest
+                                }
+                                continue
+                            case 'withdrawAlls':
+                                let newWithdrawAllsLatest = getLatestBlockTime(value, withdrawAllsBlockTime)
+                                if(!newWithdrawAllsLatest){
+                                    withdrawAllsKeepRunning = false
+                                } else {
+                                    withdrawAllsBlockTime = newWithdrawAllsLatest
+                                }
+                                continue
+                            case 'withdraws':
+                                let newWithdrawsLatest = getLatestBlockTime(value, withdrawsBlockTime)
+                                if(!newWithdrawsLatest){
+                                    withdrawsKeepRunning = false
+                                } else {
+                                    withdrawsBlockTime = newWithdrawsLatest
+                                }
+                                continue
                         }
+
+                        if(!depositAndStakesKeepRunning && !depositsKeepRunning
+                            && !pingsKeepRunning && !stakeAllsKeepRunning
+                            && !stakesKeepRunning && !unstakeAllsKeepRunning
+                            && !unstakesKeepRunning && !withdrawAllsKeepRunning
+                            && !withdrawsKeepRunning){
+                                keepRunning = false
+                            }
                     }
                 }
             }
         }
         return activity
+    }
+
+    getLatestBlockTime(value, blockTime){
+        for(let z = 0; z < value.length; z++){
+            if(value[z].blockTime > blockTime){
+                return blockTime = value[z].blockTime
+            } else {
+                return false
+            }
+        }
     }
 
     //async getAccountValidatorActivity(validatorUris, account){
