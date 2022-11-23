@@ -640,7 +640,7 @@ export default class Queries {
                     }})
 
                     console.log('validatorActivity', validatorActivity)
-                    activity.push([validators[x], validatorActivity.data])
+                    activity.push(validatorActivity.data)
                     console.log('activity here', activity)
                    
                 } catch (err) {
