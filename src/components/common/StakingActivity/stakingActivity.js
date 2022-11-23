@@ -405,7 +405,6 @@ export default function StakingActivity(props) {
               currentStakingShares: currentStakingShares,
               currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractTotalStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
             })
-            currentStakingShares = 0
           }
             
           setActivity(finalArray)     
