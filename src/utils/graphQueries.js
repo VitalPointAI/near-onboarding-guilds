@@ -667,7 +667,7 @@ export default class Queries {
                     for (const [key, value] of Object.entries(validatorActivity.data)){
                         console.log('key', key)
                         console.log('value', value)
-                        if(value && value.length > 0){
+                        if(!value || value.length == 0){
                             switch (key) {
                                 case 'depositAndStakes':
                                     depositAndStakesKeepRunning = false
