@@ -282,7 +282,7 @@ query executor_activity(
     $stakesBlockTime: String!,
     $stakeAllsBlockTime: String!
     ){
-    pings(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $pingsBlockTime}}){
+    pings(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $pingsBlockTime}){
         blockHeight
         blockTime
         epoch
@@ -291,7 +291,7 @@ query executor_activity(
         newContractTotalShares
         executorId
     }
-    depositAndStakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $depositAndStakesBlockTime}}){
+    depositAndStakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $depositAndStakesBlockTime}){
         blockHeight
         blockTime
         totalRewardsFee
@@ -311,7 +311,7 @@ query executor_activity(
         newContractTotalShares
         executorId
     }
-    deposits(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $depositsBlockTime}}){
+    deposits(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $depositsBlockTime}){
         blockHeight
         blockTime
         totalRewardsFee
@@ -331,21 +331,21 @@ query executor_activity(
         newContractTotalShares
         executorId
     }
-    withdrawAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $withdrawAllsBlockTime}}){
+    withdrawAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $withdrawAllsBlockTime}){
         blockHeight
         blockTime
         amount
         newUnstakedBalance
         executorId
     }
-    withdraws(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $withdrawsBlockTime}}){
+    withdraws(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $withdrawsBlockTime}){
         blockHeight
         blockTime
         amount
         newUnstakedBalance
         executorId
     }
-    unstakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $unstakesBlockTime}}){
+    unstakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $unstakesBlockTime}){
         blockHeight
         blockTime
         epoch
@@ -354,7 +354,7 @@ query executor_activity(
         newContractTotalShares
         executorId
     }
-    unstakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $unstakeAllsBlockTime}}){
+    unstakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $unstakeAllsBlockTime}){
         blockHeight
         blockTime
         amount
@@ -365,7 +365,7 @@ query executor_activity(
         contractTotalShares
         executorId
     }
-    stakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $stakesBlockTime}}){
+    stakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $stakesBlockTime}){
         blockTime
         blockHeight
         accountIdDepositing
@@ -380,7 +380,7 @@ query executor_activity(
         contractTotalShares
         executorId
     }
-    stakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {blockTime_gt: $stakeAllsBlockTime}}){   
+    stakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $stakeAllsBlockTime}){   
         blockHeight
         blockTime
         accountIdDepositing
