@@ -1,4 +1,5 @@
 import {ApolloClient, InMemoryCache, gql} from '@apollo/client';
+import { sliderClasses } from '@mui/material';
 import { config } from '../state/config'
 
 const {
@@ -650,12 +651,18 @@ export default class Queries {
                     for (const [key, value] of Object.entries(activity[y][1])){
                         switch (key) {
                             case 'depositAndStakes':
-                                let newDepositAndStakesLatest = this.getLatestBlockTime(value, depositAndStakesBlockTime)
-                                if(!newDepositAndStakesLatest){
-                                    depositAndStakesKeepRunning = false
+                                console.log('test blocktime', value[z][-1].blockTime)
+
+                                if(parseInt(value[z][-1].blockTime) > parseInt(depositAndStakesBlockTime)){
+                                    console.log('there0')
+                                    depositAndStakesBlockTime = value[z][-1].blockTime
+                                    console.log('depositandstakesblocktime', depositAndStakesBlockTime)
                                 } else {
-                                    depositAndStakesBlockTime = newDepositAndStakesLatest
-                                }
+                                    console.log('there')
+                                    depositAndStakesBlockTime = value[z][-1].blockTime
+                                    console.log('depositandstakesblocktime', depositAndStakesBlockTime)
+                                    depositAndStakesKeepRunning = false
+                                } 
                                 continue
                             case 'deposits':
                                 let newDepositsLatest = this.getLatestBlockTime(value, depositsBlockTime)
