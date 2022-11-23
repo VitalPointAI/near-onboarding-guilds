@@ -378,7 +378,8 @@ export default function StakingActivity(props) {
           // remains as last one calculated (stays same until there is a change)
           let currentStakingShares = 0
           for(let x = 0; x < sortedArray.length; x++){
-            if(sortedArray[x].accountIdDepositing || sortedArray[x].accountIdStaking || sortedArray[x].accountId){
+            if(sortedArray[x].__typename == 'Ping' || sortedArray[x].accountIdDepositing == accountId || sortedArray[x].accountIdStaking == accountId) {
+           // if(sortedArray[x].accountIdDepositing || sortedArray[x].accountIdStaking || sortedArray[x].accountId){
               if(sortedArray[x].stakingShares){
                 currentStakingShares = sortedArray[x].stakingShares
               }
