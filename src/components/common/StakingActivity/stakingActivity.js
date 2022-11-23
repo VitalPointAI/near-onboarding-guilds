@@ -372,7 +372,10 @@ export default function StakingActivity(props) {
           
           console.log('sortedArray', sortedArray)
 
-          // Step 5:  Determine this account's current share of the stake for each validator
+          // Step 5:  Determine this account's current share of the stake for each 
+          // validator.  Does this by looking through each item in the array and 
+          // calculating a new currentStakingShares if applicable. If not, currentStakingShares
+          // remains as last one calculated (stays same until there is a change)
           let currentStakingShares = 0
           for(let x = 0; x < sortedArray.length; x++){
             if(sortedArray[x].accountIdDepositing || sortedArray[x].accountIdStaking || sortedArray[x].accountId){
@@ -382,7 +385,7 @@ export default function StakingActivity(props) {
               if(sortedArray[x].totalStakingShares){
                 currentStakingShares = sortedArray[x].totalStakingShares
               }
-            }
+            //}
             // finalArray.push({
             //   validator: accountValidators[y].name,
             //   epoch: sortedArray[x].epoch,
@@ -394,17 +397,18 @@ export default function StakingActivity(props) {
             //   currentStakingShares: currentStakingShares,
             //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
             // })
-            finalArray.push({
-              validator: sortedArray[x].executorId,
-              epoch: sortedArray[x].epoch,
-              blockTime: sortedArray[x].blockTime,
-              blockHeight: sortedArray[x].blockHeight,
-              contractStakedBalance: sortedArray[x].newContractTotalStakedBalance,
-              contractTotalShares: sortedArray[x].newContractTotalShares,
-              currentSharePrice: parseFloat(sortedArray[x].newContractTotalStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
-              currentStakingShares: currentStakingShares,
-              currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractTotalStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
-            })
+              finalArray.push({
+                validator: sortedArray[x].executorId,
+                epoch: sortedArray[x].epoch,
+                blockTime: sortedArray[x].blockTime,
+                blockHeight: sortedArray[x].blockHeight,
+                contractStakedBalance: sortedArray[x].newContractTotalStakedBalance,
+                contractTotalShares: sortedArray[x].newContractTotalShares,
+                currentSharePrice: parseFloat(sortedArray[x].newContractTotalStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
+                currentStakingShares: currentStakingShares,
+                currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractTotalStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
+              })
+            }
           }
             
           setActivity(finalArray)     
