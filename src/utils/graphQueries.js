@@ -660,6 +660,7 @@ export default class Queries {
               //  for (let y = 0; y < validatorActivity.length; y++){
               
                     for (const [key, value] of Object.entries(validatorActivity.data)){
+                        console.log('value', value)
                         switch (key) {
                             case 'depositAndStakes':
                                 depositAndStakes.push(value.depositsAndStakes)
