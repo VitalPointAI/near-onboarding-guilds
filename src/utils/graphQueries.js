@@ -330,7 +330,7 @@ query executor_activity(
         newContractTotalShares
         executorId
     }
-    withdrawAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $withdrawAllsblockTime}}){
+    withdrawAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId}, and: {where: {epoch_not: null}}, and: {where: {blockTime_gt: $withdrawAllsBlockTime}}){
         blockHeight
         blockTime
         amount
