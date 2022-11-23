@@ -622,8 +622,8 @@ export default class Queries {
         let withdrawsKeepRunning = true
 
         for(let x = 0; x < validators.length; x++){
-
-            while(keepRunning){
+            let count = 0
+            while(count < 3){
                 try{
                     let validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
                         executorId: validators[x],
@@ -732,6 +732,7 @@ export default class Queries {
                             }
                     }
                 }
+                count++
             }
         }
         return activity
