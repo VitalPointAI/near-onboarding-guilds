@@ -660,10 +660,11 @@ export default class Queries {
               //  for (let y = 0; y < validatorActivity.length; y++){
               
                     for (const [key, value] of Object.entries(validatorActivity.data)){
+                        console.log('key', key)
                         console.log('value', value)
                         switch (key) {
                             case 'depositAndStakes':
-                                depositAndStakes.push(value.depositsAndStakes)
+                                depositAndStakes.push(value)
                                 if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
                                     depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
                                 } else {
@@ -672,7 +673,7 @@ export default class Queries {
                                 } 
                                 continue
                             case 'deposits':
-                                deposits.push(value.deposits)
+                                deposits.push(value)
                                 if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
                                     depositsBlockTime = deposits[deposits.length-1].blockTime
                                 } else {
@@ -681,7 +682,8 @@ export default class Queries {
                                 } 
                                 continue
                             case 'pings':
-                                pings.push(value.pings)
+                                pings.push(value)
+                                console.log('pings', pings)
                                 if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
                                     pingsBlockTime = pings[pings.length-1].blockTime
                                 } else {
@@ -690,7 +692,7 @@ export default class Queries {
                                 } 
                                 continue
                             case 'stakeAlls':
-                                stakeAlls.push(value.stakeAlls)
+                                stakeAlls.push(value)
                                 if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
                                     stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
                                 } else {
@@ -699,7 +701,7 @@ export default class Queries {
                                 } 
                                 continue
                             case 'stakes':
-                                stakes.push(value.stakes)
+                                stakes.push(value)
                                 if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
                                     stakesBlockTime = stakes[stakes.length-1].blockTime
                                 } else {
@@ -708,7 +710,7 @@ export default class Queries {
                                 } 
                                 continue
                             case 'unstakeAlls':
-                                unstakeAlls.push(value.unstakeAlls)
+                                unstakeAlls.push(value)
                                 if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
                                     unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
                                 } else {
@@ -717,7 +719,7 @@ export default class Queries {
                                 } 
                                 continue
                             case 'unstakes':
-                                unstakes.push(value.unstakes)
+                                unstakes.push(value)
                                 if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
                                     unstakesBlockTime = unstakes[unstakes.length-1].blockTime
                                 } else {
@@ -726,7 +728,7 @@ export default class Queries {
                                 } 
                                 continue
                             case 'withdrawAlls':
-                                withdrawAlls.push(value.withdrawAlls)
+                                withdrawAlls.push(value)
                                 if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
                                     withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
                                 } else {
@@ -735,7 +737,7 @@ export default class Queries {
                                 } 
                                 continue
                             case 'withdraws':
-                                withdraws.push(value.withdraws)
+                                withdraws.push(value)
                                 if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
                                     withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
                                 } else {
