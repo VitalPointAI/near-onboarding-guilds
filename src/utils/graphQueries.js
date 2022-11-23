@@ -665,95 +665,133 @@ export default class Queries {
                         console.log('value', value)
                         switch (key) {
                             case 'depositAndStakes':
-                                depositAndStakes.push(value)
-                                console.log('depositsandstakes', depositAndStakes)
-                                if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
-                                    depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
+                                if(depositAndStakesKeepRunning){
+                                    depositAndStakes.push(value)
+                                    console.log('depositsandstakes', depositAndStakes)
+                                    if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
+                                        depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
+                                    } else {
+                                        depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
+                                        depositAndStakesKeepRunning = false
+                                    } 
+                                    break
                                 } else {
-                                    depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
-                                    depositAndStakesKeepRunning = false
-                                } 
-                                continue
+                                    break
+                                }
                             case 'deposits':
-                                deposits.push(value)
-                                console.log('deposits', deposits)
-                                if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
-                                    depositsBlockTime = deposits[deposits.length-1].blockTime
+                                if(depositsKeepRunning){
+                                    deposits.push(value)
+                                    console.log('deposits', deposits)
+                                    if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
+                                        depositsBlockTime = deposits[deposits.length-1].blockTime
+                                    } else {
+                                        depositsBlockTime = deposits[deposits.length-1].blockTime
+                                        depositsKeepRunning = false
+                                    } 
+                                    break
                                 } else {
-                                    depositsBlockTime = deposits[deposits.length-1].blockTime
-                                    depositsKeepRunning = false
-                                } 
-                                continue
+                                    break
+                                }
                             case 'pings':
-                                pings.push(value)
-                                console.log('pings', pings)
-                                if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
-                                    pingsBlockTime = pings[pings.length-1].blockTime
+                                if(pingsKeepRunning){
+                                    pings.push(value)
+                                    console.log('pings', pings)
+                                    if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
+                                        pingsBlockTime = pings[pings.length-1].blockTime
+                                    } else {
+                                        pingsBlockTime = pings[pings.length-1].blockTime
+                                        pingsKeepRunning = false
+                                    } 
+                                    break
                                 } else {
-                                    pingsBlockTime = pings[pings.length-1].blockTime
-                                    pingsKeepRunning = false
-                                } 
-                                continue
+                                    break
+                                }
                             case 'stakeAlls':
-                                stakeAlls.push(value)
-                                console.log('stakealls', stakeAlls)
-                                if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
-                                    stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
+                                if(stakeAllsKeepRunning){
+                                    stakeAlls.push(value)
+                                    console.log('stakealls', stakeAlls)
+                                    if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
+                                        stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
+                                    } else {
+                                        stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
+                                        stakeAllsKeepRunning = false
+                                    } 
+                                    break
                                 } else {
-                                    stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
-                                    stakeAllsKeepRunning = false
-                                } 
-                                continue
+                                    break
+                                }
                             case 'stakes':
-                                stakes.push(value)
-                                console.log('stakes', stakes)
-                                if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
-                                    stakesBlockTime = stakes[stakes.length-1].blockTime
+                                if(stakesKeepRunning){
+                                    stakes.push(value)
+                                    console.log('stakes', stakes)
+                                    if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
+                                        stakesBlockTime = stakes[stakes.length-1].blockTime
+                                    } else {
+                                        stakesBlockTime = stakes[stakes.length-1].blockTime
+                                        stakesKeepRunning = false
+                                    } 
+                                    break
                                 } else {
-                                    stakesBlockTime = stakes[stakes.length-1].blockTime
-                                    stakesKeepRunning = false
-                                } 
-                                continue
+                                    break
+                                }
                             case 'unstakeAlls':
-                                unstakeAlls.push(value)
-                                console.log('unstakeAlls', unstakeAlls)
-                                if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
-                                    unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
+                                if(unstakeAllsKeepRunning){
+                                    unstakeAlls.push(value)
+                                    console.log('unstakeAlls', unstakeAlls)
+                                    if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
+                                        unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
+                                    } else {
+                                        unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
+                                        unstakeAllsKeepRunning = false
+                                    } 
+                                    break
                                 } else {
-                                    unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
-                                    unstakeAllsKeepRunning = false
-                                } 
-                                continue
+                                    break
+                                }
                             case 'unstakes':
-                                unstakes.push(value)
-                                console.log('unstakes', unstakes)
-                                if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
-                                    unstakesBlockTime = unstakes[unstakes.length-1].blockTime
+                                if(unstakesKeepRunning){
+                                    unstakes.push(value)
+                                    console.log('unstakes', unstakes)
+                                    if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
+                                        unstakesBlockTime = unstakes[unstakes.length-1].blockTime
+                                    } else {
+                                        unstakesBlockTime = unstakes[unstakes.length-1].blockTime
+                                        unstakesKeepRunning = false
+                                    } 
+                                    break
                                 } else {
-                                    unstakesBlockTime = unstakes[unstakes.length-1].blockTime
-                                    unstakesKeepRunning = false
-                                } 
-                                continue
+                                    break
+                                }
                             case 'withdrawAlls':
-                                withdrawAlls.push(value)
-                                console.log('withdrawalls', withdrawAlls)
-                                if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
-                                    withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
+                                if(withdrawAllsKeepRunning){
+                                    withdrawAlls.push(value)
+                                    console.log('withdrawalls', withdrawAlls)
+                                    if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
+                                        withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
+                                    } else {
+                                        withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
+                                        withdrawAllsKeepRunning = false
+                                    } 
+                                    break
                                 } else {
-                                    withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
-                                    withdrawAllsKeepRunning = false
-                                } 
-                                continue
+                                    break
+                                }
                             case 'withdraws':
-                                withdraws.push(value)
-                                console.log('withdraws', withdraws)
-                                if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
-                                    withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
+                                if(withdrawsKeepRunning){
+                                    withdraws.push(value)
+                                    console.log('withdraws', withdraws)
+                                    if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
+                                        withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
+                                    } else {
+                                        withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
+                                        withdrawsKeepRunning = false
+                                    } 
+                                    break
                                 } else {
-                                    withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
-                                    withdrawsKeepRunning = false
-                                } 
-                                continue
+                                    break
+                                }
+                            default:
+                                break
                         }
                         newActivity = activity.concat(
                             depositAndStakes,
