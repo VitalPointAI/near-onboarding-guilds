@@ -598,7 +598,17 @@ export default class Queries {
     }
 
     async getValidatorActivity(validators){
-        let activity = [] 
+        let validatorActivity
+        let activity = []
+        let pings = []
+        let depositAndStakes = []
+        let deposits = []
+        let withdrawAlls = []
+        let withdraws = []
+        let unstakeAlls = []
+        let unstakes = []
+        let stakes = []
+        let stakeAlls = []
 
         // start blocktimes Oct 1 2020 (around start of mainnet)
         let pingsBlockTime = '1604271586000'
@@ -623,10 +633,10 @@ export default class Queries {
         let withdrawsKeepRunning = true
 
         for(let x = 0; x < validators.length; x++){
-            let count = 0
-            while(count < 3){
+           
+            while(keepRunning){
                 try{
-                    let validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
+                    validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
                         executorId: validators[x],
                         pingsBlockTime: pingsBlockTime,
                         depositAndStakesBlockTime: depositAndStakesBlockTime,
@@ -639,86 +649,96 @@ export default class Queries {
                         stakeAllsBlockTime: stakeAllsBlockTime
                     }})
 
-                    console.log('validatorActivity', validatorActivity)
-                    activity.push(validatorActivity.data)
-                    console.log('activity here', activity)
+                    // console.log('validatorActivity', validatorActivity)
+                    // activity.push(validatorActivity.data)
+                    // console.log('activity here', activity)
                    
                 } catch (err) {
                     console.log('error retrieving validator data: ', err)
                 }
                
-                for (let y = 0; y < activity.length; y++){
-                    for (const [key, value] of Object.entries(activity[y])){
+              //  for (let y = 0; y < validatorActivity.length; y++){
+              
+                    for (const [key, value] of Object.entries(validatorActivity.data)){
                         switch (key) {
                             case 'depositAndStakes':
-                                if(parseInt(value[value.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
-                                    depositAndStakesBlockTime = value[value.length-1].blockTime
+                                depositAndStakes.push(value.depositsAndStakes)
+                                if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
+                                    depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
                                 } else {
-                                    depositAndStakesBlockTime = value[value.length-1].blockTime
+                                    depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
                                     depositAndStakesKeepRunning = false
                                 } 
                                 continue
                             case 'deposits':
-                                if(parseInt(value[value.length-1].blockTime) > parseInt(depositsBlockTime)){
-                                    depositsBlockTime = value[value.length-1].blockTime
+                                deposits.push(value.deposits)
+                                if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
+                                    depositsBlockTime = deposits[deposits.length-1].blockTime
                                 } else {
-                                    depositsBlockTime = value[value.length-1].blockTime
+                                    depositsBlockTime = deposits[deposits.length-1].blockTime
                                     depositsKeepRunning = false
                                 } 
                                 continue
                             case 'pings':
-                                if(parseInt(value[value.length-1].blockTime) > parseInt(pingsBlockTime)){
-                                    pingsBlockTime = value[value.length-1].blockTime
+                                pings.push(value.pings)
+                                if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
+                                    pingsBlockTime = pings[pings.length-1].blockTime
                                 } else {
-                                    pingsBlockTime = value[value.length-1].blockTime
+                                    pingsBlockTime = pings[pings.length-1].blockTime
                                     pingsKeepRunning = false
                                 } 
                                 continue
                             case 'stakeAlls':
-                                if(parseInt(value[value.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
-                                    stakeAllsBlockTime = value[value.length-1].blockTime
+                                stakeAlls.push(value.stakeAlls)
+                                if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
+                                    stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
                                 } else {
-                                    stakeAllsBlockTime = value[value.length-1].blockTime
+                                    stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
                                     stakeAllsKeepRunning = false
                                 } 
                                 continue
                             case 'stakes':
-                                if(parseInt(value[value.length-1].blockTime) > parseInt(stakesBlockTime)){
-                                    stakesBlockTime = value[value.length-1].blockTime
+                                stakes.push(value.stakes)
+                                if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
+                                    stakesBlockTime = stakes[stakes.length-1].blockTime
                                 } else {
-                                    stakesBlockTime = value[value.length-1].blockTime
+                                    stakesBlockTime = stakes[stakes.length-1].blockTime
                                     stakesKeepRunning = false
                                 } 
                                 continue
                             case 'unstakeAlls':
-                                if(parseInt(value[value.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
-                                    unstakeAllsBlockTime = value[value.length-1].blockTime
+                                unstakeAlls.push(value.unstakeAlls)
+                                if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
+                                    unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
                                 } else {
-                                    unstakeAllsBlockTime = value[value.length-1].blockTime
+                                    unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
                                     unstakeAllsKeepRunning = false
                                 } 
                                 continue
                             case 'unstakes':
-                                if(parseInt(value[value.length-1].blockTime) > parseInt(unstakesBlockTime)){
-                                    unstakesBlockTime = value[value.length-1].blockTime
+                                unstakes.push(value.unstakes)
+                                if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
+                                    unstakesBlockTime = unstakes[unstakes.length-1].blockTime
                                 } else {
-                                    unstakesBlockTime = value[value.length-1].blockTime
+                                    unstakesBlockTime = unstakes[unstakes.length-1].blockTime
                                     unstakesKeepRunning = false
                                 } 
                                 continue
                             case 'withdrawAlls':
-                                if(parseInt(value[value.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
-                                    withdrawAllsBlockTime = value[value.length-1].blockTime
+                                withdrawAlls.push(value.withdrawAlls)
+                                if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
+                                    withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
                                 } else {
-                                    withdrawAllsBlockTime = value[value.length-1].blockTime
+                                    withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
                                     withdrawAllsKeepRunning = false
                                 } 
                                 continue
                             case 'withdraws':
-                                if(parseInt(value[value.length-1].blockTime) > parseInt(withdrawsBlockTime)){
-                                    withdrawsBlockTime = value[value.length-1].blockTime
+                                withdraws.push(value.withdraws)
+                                if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
+                                    withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
                                 } else {
-                                    withdrawsBlockTime = value[value.length-1].blockTime
+                                    withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
                                     withdrawsKeepRunning = false
                                 } 
                                 continue
@@ -729,11 +749,21 @@ export default class Queries {
                             && !stakesKeepRunning && !unstakeAllsKeepRunning
                             && !unstakesKeepRunning && !withdrawAllsKeepRunning
                             && !withdrawsKeepRunning){
+                                activity.concat(
+                                    depositAndStakes,
+                                    deposits,
+                                    pings,
+                                    withdrawAlls,
+                                    withdraws,
+                                    unstakeAlls,
+                                    unstakes,
+                                    stakes,
+                                    stakeAlls
+                                )
                                 keepRunning = false
                             }
                     }
-                }
-                count++
+                console.log('activity', activity)
             }
         }
         return activity
