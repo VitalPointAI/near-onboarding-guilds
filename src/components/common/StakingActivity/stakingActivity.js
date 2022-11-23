@@ -321,8 +321,13 @@ export default function StakingActivity(props) {
           console.log('accountvalidators', accountValidators)
 
           // Step 3:  Get all the validator activity (alltime) of the set of validators used by this account 
+          let from = new Date(fromDate).getTime()
+          console.log('from', from)
+          let to = new Date(toDate).getTime()
+          console.log('to', to)
+          
           let allActivity = []
-          allActivity = await queries.getValidatorActivity(accountValidators)
+          allActivity = await queries.getValidatorActivity(accountValidators, BigInt(from), BigInt(to))
           console.log('all validator activity', allActivity)
 
           let newActivity = []
@@ -412,12 +417,12 @@ export default function StakingActivity(props) {
           })
          console.log('temparray', tempArray)
           // restrict return to from/to dates requested
-          let from = new Date(fromDate).getTime()
-          // let thisFromDate = new Date(fromDate)
-          // let dayBefore = (thisFromDate.getDate() - 1).getTime()
-          console.log('from', from)
-          let to = new Date(toDate).getTime()
-          console.log('to', to)
+          // let from = new Date(fromDate).getTime()
+          // // let thisFromDate = new Date(fromDate)
+          // // let dayBefore = (thisFromDate.getDate() - 1).getTime()
+          // console.log('from', from)
+          // let to = new Date(toDate).getTime()
+          // console.log('to', to)
       
          // let datedArray = tempArray.filter(function(record) {  
             
