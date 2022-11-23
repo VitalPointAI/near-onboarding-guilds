@@ -326,7 +326,7 @@ export default function StakingActivity(props) {
           console.log('all validator activity', allActivity)
 
           let newActivity = []
-          for (const [key, value] of Object.entries(allActivity[0])){
+          for (const [key, value] of Object.entries(allActivity)){
             newActivity = newActivity.concat(value)
           }
           console.log('newActivity', newActivity)

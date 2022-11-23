@@ -667,6 +667,7 @@ export default class Queries {
                             case 'depositAndStakes':
                                 if(depositAndStakesKeepRunning){
                                     value.forEach(element => depositAndStakes.push(element))
+                                    newActivity = activity.concat(depositAndStakes)
                                     console.log('depositsandstakes', depositAndStakes)
                                     if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
                                         depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
@@ -681,6 +682,7 @@ export default class Queries {
                             case 'deposits':
                                 if(depositsKeepRunning){
                                     value.forEach(element => deposits.push(element))
+                                    newActivity = activity.concat(deposits)
                                     console.log('deposits', deposits)
                                     if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
                                         depositsBlockTime = deposits[deposits.length-1].blockTime
@@ -695,6 +697,7 @@ export default class Queries {
                             case 'pings':
                                 if(pingsKeepRunning){
                                     value.forEach(element => pings.push(element))
+                                    newActivity = activity.concat(pings)
                                     console.log('pings', pings)
                                     if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
                                         pingsBlockTime = pings[pings.length-1].blockTime
@@ -711,6 +714,7 @@ export default class Queries {
                             case 'stakeAlls':
                                 if(stakeAllsKeepRunning){
                                     value.forEach(element => stakeAlls.push(element))
+                                    newActivity = activity.concat(stakeAlls)
                                     console.log('stakealls', stakeAlls)
                                     if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
                                         stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
@@ -725,6 +729,7 @@ export default class Queries {
                             case 'stakes':
                                 if(stakesKeepRunning){
                                     value.forEach(element => stakes.push(element))
+                                    newActivity = activity.concat(stakes)
                                     console.log('stakes', stakes)
                                     if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
                                         stakesBlockTime = stakes[stakes.length-1].blockTime
@@ -739,6 +744,7 @@ export default class Queries {
                             case 'unstakeAlls':
                                 if(unstakeAllsKeepRunning){
                                     value.forEach(element => unstakeAlls.push(element))
+                                    newActivity = activity.concat(unstakeAlls)
                                     console.log('unstakeAlls', unstakeAlls)
                                     if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
                                         unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
@@ -753,6 +759,7 @@ export default class Queries {
                             case 'unstakes':
                                 if(unstakesKeepRunning){
                                     value.forEach(element => unstakes.push(element))
+                                    newActivity = activity.concat(unstakes)
                                     console.log('unstakes', unstakes)
                                     if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
                                         unstakesBlockTime = unstakes[unstakes.length-1].blockTime
@@ -767,6 +774,7 @@ export default class Queries {
                             case 'withdrawAlls':
                                 if(withdrawAllsKeepRunning){
                                     value.forEach(element => withdrawAlls.push(element))
+                                    newActivity = activity.concat(withdrawAlls)
                                     console.log('withdrawalls', withdrawAlls)
                                     if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
                                         withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
@@ -781,6 +789,7 @@ export default class Queries {
                             case 'withdraws':
                                 if(withdrawsKeepRunning){
                                     value.forEach(element => withdraws.push(element))
+                                    newActivity = activity.concat(withdraws)
                                     console.log('withdraws', withdraws)
                                     if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
                                         withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
@@ -801,17 +810,6 @@ export default class Queries {
                             && !stakesKeepRunning && !unstakeAllsKeepRunning
                             && !unstakesKeepRunning && !withdrawAllsKeepRunning
                             && !withdrawsKeepRunning){
-                                newActivity = activity.concat(
-                                    depositAndStakes,
-                                    deposits,
-                                    pings,
-                                    withdrawAlls,
-                                    withdraws,
-                                    unstakeAlls,
-                                    unstakes,
-                                    stakes,
-                                    stakeAlls
-                                )
                                 keepRunning = false
                             }
                     }
