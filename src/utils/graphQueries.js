@@ -648,7 +648,7 @@ export default class Queries {
                 }
                
                 for (let y = 0; y < activity.length; y++){
-                    for (const [key, value] of Object.entries(activity[y][1])){
+                    for (const [key, value] of Object.entries(activity[y])){
                         switch (key) {
                             case 'depositAndStakes':
                                 console.log('test blocktime', value[value.length-1].blockTime)
