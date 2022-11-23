@@ -650,7 +650,7 @@ export default class Queries {
                     for (const [key, value] of Object.entries(activity[y][1])){
                         switch (key) {
                             case 'depositAndStakes':
-                                let newDepositAndStakesLatest = getLatestBlockTime(value, depositAndStakesBlockTime)
+                                let newDepositAndStakesLatest = this.getLatestBlockTime(value, depositAndStakesBlockTime)
                                 if(!newDepositAndStakesLatest){
                                     depositAndStakesKeepRunning = false
                                 } else {
@@ -658,7 +658,7 @@ export default class Queries {
                                 }
                                 continue
                             case 'deposits':
-                                let newDepositsLatest = getLatestBlockTime(value, depositsBlockTime)
+                                let newDepositsLatest = this.getLatestBlockTime(value, depositsBlockTime)
                                 if(!newDepositsLatest){
                                     depositsKeepRunning = false
                                 } else {
@@ -666,7 +666,7 @@ export default class Queries {
                                 }
                                 continue
                             case 'pings':
-                                let newPingsLatest = getLatestBlockTime(value, pingsBlockTime)
+                                let newPingsLatest = this.getLatestBlockTime(value, pingsBlockTime)
                                 if(!newPingsLatest){
                                     pingsKeepRunning = false
                                 } else {
@@ -674,7 +674,7 @@ export default class Queries {
                                 }
                                 continue
                             case 'stakeAlls':
-                                let newStakeAllsLatest = getLatestBlockTime(value, stakeAllsBlockTime)
+                                let newStakeAllsLatest = this.getLatestBlockTime(value, stakeAllsBlockTime)
                                 if(!newStakeAllsLatest){
                                     stakeAllsKeepRunning = false
                                 } else {
@@ -682,7 +682,7 @@ export default class Queries {
                                 }
                                 continue
                             case 'stakes':
-                                let newStakesLatest = getLatestBlockTime(value, stakesBlockTime)
+                                let newStakesLatest = this.getLatestBlockTime(value, stakesBlockTime)
                                 if(!newStakesLatest){
                                     stakesKeepRunning = false
                                 } else {
@@ -690,7 +690,7 @@ export default class Queries {
                                 }
                                 continue
                             case 'unstakeAlls':
-                                let newUnstakeAllsLatest = getLatestBlockTime(value, unstakeAllsBlockTime)
+                                let newUnstakeAllsLatest = this.getLatestBlockTime(value, unstakeAllsBlockTime)
                                 if(!newUnstakeAllsLatest){
                                     unstakeAllsKeepRunning = false
                                 } else {
@@ -698,7 +698,7 @@ export default class Queries {
                                 }
                                 continue
                             case 'unstakes':
-                                let newUnstakesLatest = getLatestBlockTime(value, unstakesBlockTime)
+                                let newUnstakesLatest = this.getLatestBlockTime(value, unstakesBlockTime)
                                 if(!newUnstakesLatest){
                                     unstakesKeepRunning = false
                                 } else {
@@ -706,7 +706,7 @@ export default class Queries {
                                 }
                                 continue
                             case 'withdrawAlls':
-                                let newWithdrawAllsLatest = getLatestBlockTime(value, withdrawAllsBlockTime)
+                                let newWithdrawAllsLatest = this.getLatestBlockTime(value, withdrawAllsBlockTime)
                                 if(!newWithdrawAllsLatest){
                                     withdrawAllsKeepRunning = false
                                 } else {
@@ -714,7 +714,7 @@ export default class Queries {
                                 }
                                 continue
                             case 'withdraws':
-                                let newWithdrawsLatest = getLatestBlockTime(value, withdrawsBlockTime)
+                                let newWithdrawsLatest = this.getLatestBlockTime(value, withdrawsBlockTime)
                                 if(!newWithdrawsLatest){
                                     withdrawsKeepRunning = false
                                 } else {
