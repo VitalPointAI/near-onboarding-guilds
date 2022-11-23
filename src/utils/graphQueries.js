@@ -668,10 +668,10 @@ export default class Queries {
                                 if(depositAndStakesKeepRunning){
                                     depositAndStakes.push(value)
                                     console.log('depositsandstakes', depositAndStakes)
-                                    if(parseInt(depositAndStakes[0][depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
-                                        depositAndStakesBlockTime = depositAndStakes[0][depositAndStakes.length-1].blockTime
+                                    if(parseInt(depositAndStakes[0][depositAndStakes[0].length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
+                                        depositAndStakesBlockTime = depositAndStakes[0][depositAndStakes[0].length-1].blockTime
                                     } else {
-                                        depositAndStakesBlockTime = depositAndStakes[0][depositAndStakes.length-1].blockTime
+                                        depositAndStakesBlockTime = depositAndStakes[0][depositAndStakes[0].length-1].blockTime
                                         depositAndStakesKeepRunning = false
                                     } 
                                     break
@@ -682,10 +682,10 @@ export default class Queries {
                                 if(depositsKeepRunning){
                                     deposits.push(value)
                                     console.log('deposits', deposits)
-                                    if(parseInt(deposits[0][deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
-                                        depositsBlockTime = deposits[0][deposits.length-1].blockTime
+                                    if(parseInt(deposits[0][deposits[0].length-1].blockTime) > parseInt(depositsBlockTime)){
+                                        depositsBlockTime = deposits[0][deposits[0].length-1].blockTime
                                     } else {
-                                        depositsBlockTime = deposits[0][deposits.length-1].blockTime
+                                        depositsBlockTime = deposits[0][deposits[0].length-1].blockTime
                                         depositsKeepRunning = false
                                     } 
                                     break
@@ -696,11 +696,11 @@ export default class Queries {
                                 if(pingsKeepRunning){
                                     pings.push(value)
                                     console.log('pings', pings)
-                                    if(parseInt(pings[0][pings.length-1].blockTime) > parseInt(pingsBlockTime)){
-                                        pingsBlockTime = pings[0][pings.length-1].blockTime
+                                    if(parseInt(pings[0][pings[0].length-1].blockTime) > parseInt(pingsBlockTime)){
+                                        pingsBlockTime = pings[0][pings[0].length-1].blockTime
                                         console.log('ping blocktime1', pingsBlockTime)
                                     } else {
-                                        pingsBlockTime = pings[0][pings.length-1].blockTime
+                                        pingsBlockTime = pings[0][pings[0].length-1].blockTime
                                         console.log('ping blocktime2', pingsBlockTime)
                                         pingsKeepRunning = false
                                     } 
@@ -712,10 +712,10 @@ export default class Queries {
                                 if(stakeAllsKeepRunning){
                                     stakeAlls.push(value)
                                     console.log('stakealls', stakeAlls)
-                                    if(parseInt(stakeAlls[0][stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
-                                        stakeAllsBlockTime = stakeAlls[0][stakeAlls.length-1].blockTime
+                                    if(parseInt(stakeAlls[0][stakeAlls[0].length-1].blockTime) > parseInt(stakeAllsBlockTime)){
+                                        stakeAllsBlockTime = stakeAlls[0][stakeAlls[0].length-1].blockTime
                                     } else {
-                                        stakeAllsBlockTime = stakeAlls[0][stakeAlls.length-1].blockTime
+                                        stakeAllsBlockTime = stakeAlls[0][stakeAlls[0].length-1].blockTime
                                         stakeAllsKeepRunning = false
                                     } 
                                     break
@@ -726,10 +726,10 @@ export default class Queries {
                                 if(stakesKeepRunning){
                                     stakes.push(value)
                                     console.log('stakes', stakes)
-                                    if(parseInt(stakes[0][stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
-                                        stakesBlockTime = stakes[0][stakes.length-1].blockTime
+                                    if(parseInt(stakes[0][stakes[0].length-1].blockTime) > parseInt(stakesBlockTime)){
+                                        stakesBlockTime = stakes[0][stakes[0].length-1].blockTime
                                     } else {
-                                        stakesBlockTime = stakes[0][stakes.length-1].blockTime
+                                        stakesBlockTime = stakes[0][stakes[0].length-1].blockTime
                                         stakesKeepRunning = false
                                     } 
                                     break
@@ -740,10 +740,10 @@ export default class Queries {
                                 if(unstakeAllsKeepRunning){
                                     unstakeAlls.push(value)
                                     console.log('unstakeAlls', unstakeAlls)
-                                    if(parseInt(unstakeAlls[0][unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
-                                        unstakeAllsBlockTime = unstakeAlls[0][unstakeAlls.length-1].blockTime
+                                    if(parseInt(unstakeAlls[0][unstakeAlls[0].length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
+                                        unstakeAllsBlockTime = unstakeAlls[0][unstakeAlls[0].length-1].blockTime
                                     } else {
-                                        unstakeAllsBlockTime = unstakeAlls[0][unstakeAlls.length-1].blockTime
+                                        unstakeAllsBlockTime = unstakeAlls[0][unstakeAlls[0].length-1].blockTime
                                         unstakeAllsKeepRunning = false
                                     } 
                                     break
@@ -754,10 +754,10 @@ export default class Queries {
                                 if(unstakesKeepRunning){
                                     unstakes.push(value)
                                     console.log('unstakes', unstakes)
-                                    if(parseInt(unstakes[0][unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
-                                        unstakesBlockTime = unstakes[0][unstakes.length-1].blockTime
+                                    if(parseInt(unstakes[0][unstakes[0].length-1].blockTime) > parseInt(unstakesBlockTime)){
+                                        unstakesBlockTime = unstakes[0][unstakes[0].length-1].blockTime
                                     } else {
-                                        unstakesBlockTime = unstakes[0][unstakes.length-1].blockTime
+                                        unstakesBlockTime = unstakes[0][unstakes[0].length-1].blockTime
                                         unstakesKeepRunning = false
                                     } 
                                     break
@@ -768,10 +768,10 @@ export default class Queries {
                                 if(withdrawAllsKeepRunning){
                                     withdrawAlls.push(value)
                                     console.log('withdrawalls', withdrawAlls)
-                                    if(parseInt(withdrawAlls[0][withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
-                                        withdrawAllsBlockTime = withdrawAlls[0][withdrawAlls.length-1].blockTime
+                                    if(parseInt(withdrawAlls[0][withdrawAlls[0].length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
+                                        withdrawAllsBlockTime = withdrawAlls[0][withdrawAlls[0].length-1].blockTime
                                     } else {
-                                        withdrawAllsBlockTime = withdrawAlls[0][withdrawAlls.length-1].blockTime
+                                        withdrawAllsBlockTime = withdrawAlls[0][withdrawAlls[0].length-1].blockTime
                                         withdrawAllsKeepRunning = false
                                     } 
                                     break
@@ -782,10 +782,10 @@ export default class Queries {
                                 if(withdrawsKeepRunning){
                                     withdraws.push(value)
                                     console.log('withdraws', withdraws)
-                                    if(parseInt(withdraws[0][withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
-                                        withdrawsBlockTime = withdraws[0][withdraws.length-1].blockTime
+                                    if(parseInt(withdraws[0][withdraws[0].length-1].blockTime) > parseInt(withdrawsBlockTime)){
+                                        withdrawsBlockTime = withdraws[0][withdraws[0].length-1].blockTime
                                     } else {
-                                        withdrawsBlockTime = withdraws[0][withdraws.length-1].blockTime
+                                        withdrawsBlockTime = withdraws[0][withdraws[0].length-1].blockTime
                                         withdrawsKeepRunning = false
                                     } 
                                     break
