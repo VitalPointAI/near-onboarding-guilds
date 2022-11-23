@@ -738,9 +738,11 @@ export default class Queries {
     }
 
     getLatestBlockTime(value, blockTime){
+        console.log('incoming blocktime', blockTime)
         for(let z = 0; z < value.length; z++){
-            if(value[z].blockTime > blockTime){
-                return blockTime = value[z].blockTime
+            if(parseInt(value[z].blockTime) > parseInt(blockTime)){
+                console.log('returning blocktime', value[z].blockTime)
+                return value[z].blockTime
             } else {
                 return false
             }
