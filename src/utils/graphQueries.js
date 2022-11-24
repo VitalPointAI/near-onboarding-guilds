@@ -408,8 +408,8 @@ query executor_activity(
 const ACCOUNT_VALIDATOR_ACTIVITY = gql`
 query account_activity(
     $accountId: String!
-    $from: String,
-    $to: String
+    $from: String!,
+    $to: String!
     ){
     depositAndStakes(first: 1000, where: {accountIdStaking: $accountId, blockTime_gte: $from, blockTime_lte: $to} ) {
         id

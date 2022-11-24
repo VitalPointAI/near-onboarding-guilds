@@ -307,7 +307,9 @@ export default function StakingActivity(props) {
 
           // Step 1:  Get all the activity that this account has had with validator contracts
           let allAccountValidatorActivity = []
-          allAccountValidatorActivity = await queries.getAccountValidatorActivity(accountId)
+          let startDate = new Date("10/1/2020").getTime()
+          let endDate = Date.now()
+          allAccountValidatorActivity = await queries.getAccountValidatorActivity(accountId, startDate.toString(), endDate.toString())
           console.log('allAccountValidatorActivity', allAccountValidatorActivity)
 
           // Step 2:  Create an array of all the unique validators this account uses
@@ -394,7 +396,7 @@ export default function StakingActivity(props) {
           for(let y = 0; y < accountValidators.length; y++){
               let filteredArray = sortedValidatorArray.filter((validator) => validator.executorId == accountValidators[y])
               console.log('filteredArray', filteredArray)
-              
+
               for(let x = 0; x < filteredArray.length; x++){
                 let currentStakingShares = 0
               // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
