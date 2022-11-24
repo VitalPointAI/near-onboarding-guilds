@@ -632,20 +632,20 @@ export default class Queries {
         let stakesBlockTime = '1604271586000'
         let stakeAllsBlockTime = '1604271586000'
         
-        let keepRunning = true
-        let depositAndStakesKeepRunning = true
-        let depositsKeepRunning = true
-        let pingsKeepRunning = true
-        let stakeAllsKeepRunning = true
-        let stakesKeepRunning = true
-        let unstakeAllsKeepRunning = true
-        let unstakesKeepRunning = true
-        let withdrawAllsKeepRunning = true
-        let withdrawsKeepRunning = true
-
         for(let x = 0; x < validators.length; x++){
             console.log('now processing: ', validators[x])
-            keepRunning = true
+
+            let keepRunning = true
+            let depositAndStakesKeepRunning = true
+            let depositsKeepRunning = true
+            let pingsKeepRunning = true
+            let stakeAllsKeepRunning = true
+            let stakesKeepRunning = true
+            let unstakeAllsKeepRunning = true
+            let unstakesKeepRunning = true
+            let withdrawAllsKeepRunning = true
+            let withdrawsKeepRunning = true
+
             while(keepRunning){
                 try{
                     validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
