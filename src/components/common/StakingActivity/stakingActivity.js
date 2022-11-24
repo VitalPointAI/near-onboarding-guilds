@@ -312,7 +312,7 @@ export default function StakingActivity(props) {
 
           // Step 1:  Get all the activity that this account has had with validator contracts
           let accountValidatorActivity = []
-          accountValidatorActivity = await queries.getAccountValidatorActivity(accountId, from, to)
+          accountValidatorActivity = await queries.getAccountValidatorActivity(accountId, from.toString(), to.toString())
           console.log('accountvalidatoractivity', accountValidatorActivity)
 
           // Step 2:  Create an array of all the unique validators this account uses
