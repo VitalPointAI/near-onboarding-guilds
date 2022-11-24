@@ -303,10 +303,16 @@ export default function StakingActivity(props) {
           // get this account's validator activity
          // let allAccountValidatorActivity = []
           //accountValidatorActivity = await queries.getAccountValidatorActivity([apiUrl], accountId)
-          
+         
+          // Step 0:  Get timeframe to pass into queries
+          let from = new Date(fromDate).getTime()
+          console.log('from', from)
+          let to = new Date(toDate).getTime()
+          console.log('to', to)
+
           // Step 1:  Get all the activity that this account has had with validator contracts
           let accountValidatorActivity = []
-          accountValidatorActivity = await queries.getAccountValidatorActivity(accountId)
+          accountValidatorActivity = await queries.getAccountValidatorActivity(accountId, from, to)
           console.log('accountvalidatoractivity', accountValidatorActivity)
 
           // Step 2:  Create an array of all the unique validators this account uses
@@ -321,10 +327,6 @@ export default function StakingActivity(props) {
           console.log('accountvalidators', accountValidators)
 
           // Step 3:  Get all the validator activity between identified times of the set of validators used by this account 
-          let from = new Date(fromDate).getTime()
-          console.log('from', from)
-          let to = new Date(toDate).getTime()
-          console.log('to', to)
           
           let allActivity = []
           allActivity = await queries.getValidatorActivity(accountValidators, from.toString(), to.toString())

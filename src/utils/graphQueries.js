@@ -406,8 +406,12 @@ query executor_activity(
 
 
 const ACCOUNT_VALIDATOR_ACTIVITY = gql`
-query account_activity($accountId: String!){
-    depositAndStakes(first: 1000, where: {accountIdStaking: $accountId} ) {
+query account_activity(
+    $accountId: String!
+    $from: String!,
+    $to: String!
+    ){
+    depositAndStakes(first: 1000, where: {accountIdStaking: $accountId, blockTime_gte: $from, blockTime_lte: $to} ) {
         id
         blockTime
         blockHeight
@@ -424,7 +428,7 @@ query account_activity($accountId: String!){
         contractTotalShares
         executorId
     }
-    deposits(first: 1000, where: {accountIdDepositing: $accountId}) {
+    deposits(first: 1000, where: {accountIdDepositing: $accountId, blockTime_gte: $from, blockTime_lte: $to}) {
         id
         blockTime
         blockHeight
@@ -434,7 +438,7 @@ query account_activity($accountId: String!){
         newUnstakedBalance
         executorId
     }
-    withdrawAlls(first: 1000, where: {accountId: $accountId}) {
+    withdrawAlls(first: 1000, where: {accountId: $accountId, blockTime_gte: $from, blockTime_lte: $to}) {
         id
         blockTime
         blockHeight
@@ -443,7 +447,7 @@ query account_activity($accountId: String!){
         newUnstakedBalance
         executorId
     }
-    withdraws(first: 1000, where: {accountId: $accountId}) {
+    withdraws(first: 1000, where: {accountId: $accountId, blockTime_gte: $from, blockTime_lte: $to}) {
         id
         blockTime
         blockHeight
@@ -452,7 +456,7 @@ query account_activity($accountId: String!){
         newUnstakedBalance
         executorId
     }
-    unstakeAlls(first: 1000, where: {accountId: $accountId}) {
+    unstakeAlls(first: 1000, where: {accountId: $accountId, blockTime_gte: $from, blockTime_lte: $to}) {
         id
         blockTime
         blockHeight
@@ -466,7 +470,7 @@ query account_activity($accountId: String!){
         contractTotalShares
         executorId
     }
-    unstakes(first: 1000, where: {accountId: $accountId}) {
+    unstakes(first: 1000, where: {accountId: $accountId, blockTime_gte: $from, blockTime_lte: $to}) {
         id
         blockTime
         blockHeight
@@ -480,7 +484,7 @@ query account_activity($accountId: String!){
         contractTotalShares
         executorId
     }
-    stakes(first: 1000, where: {accountIdDepositing: $accountId}, or: {where: {accountIdStaking: $accountId}}){
+    stakes(first: 1000, where: {accountIdStaking: $accountId, blockTime_gte: $from, blockTime_lte: $to}){
         id
         blockTime
         blockHeight
@@ -496,7 +500,7 @@ query account_activity($accountId: String!){
         contractTotalShares
         executorId
     }
-    stakeAlls(first: 1000, where: {accountIdDepositing: $accountId}, or: {where: {accountIdStaking: $accountId}}){
+    stakeAlls(first: 1000, where: {accountIdStaking: $accountId, blockTime_gte: $from, blockTime_lte: $to}){
         id
         blockTime
         blockHeight
@@ -862,7 +866,7 @@ export default class Queries {
     }
 
     //async getAccountValidatorActivity(validatorUris, account){
-    async getAccountValidatorActivity(account){
+    async getAccountValidatorActivity(account, from, to){
         let activity = []
      //  for(let x = 0; x < validatorUris.length; x++){
             // let validatorClient = new ApolloClient({
@@ -872,7 +876,9 @@ export default class Queries {
            
             try{
                 let validatorActivity = await validatorClient.query({query: ACCOUNT_VALIDATOR_ACTIVITY, variables: {
-                    accountId: account
+                    accountId: account,
+                    from: from,
+                    to: to
                 }})
               
                 // activity.push([validatorUris[x], validatorActivity])
