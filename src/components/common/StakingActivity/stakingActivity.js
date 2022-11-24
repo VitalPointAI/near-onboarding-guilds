@@ -388,6 +388,23 @@ export default function StakingActivity(props) {
                 currentStakingShares = sortedArray[x].totalStakingShares
               }
             }
+            
+            let contractBalance = '0'
+            if(sortedArray[x].newContractStakedBalance){
+              contractBalance = sortedArray[x].newContractStakedBalance
+            }
+            if(sortedArray[x].contractTotalStakedBalance){
+              contractBalance = sortedArray[x].contractTotalStakedBalance
+            }
+            
+            let contractShares = '0'
+            if(sortedArray[x].contractTotalShares){
+              contractShares = sortedArray[x].contractTotalShares
+            }
+            if(sortedArray[x].newContractTotalShares){
+              contractShares = sortedArray[x].newContractTotalShares
+            }
+
             //}
             // finalArray.push({
             //   validator: accountValidators[y].name,
@@ -400,16 +417,28 @@ export default function StakingActivity(props) {
             //   currentStakingShares: currentStakingShares,
             //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
             // })
+            // 2nd try
+              // finalArray.push({
+              //   validator: sortedArray[x].executorId,
+              //   epoch: sortedArray[x].epoch,
+              //   blockTime: sortedArray[x].blockTime,
+              //   blockHeight: sortedArray[x].blockHeight,
+              //   contractStakedBalance: sortedArray[x].newContractStakedBalance,
+              //   contractTotalShares: sortedArray[x].newContractTotalShares,
+              //   currentSharePrice: parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
+              //   currentStakingShares: currentStakingShares,
+              //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
+              // })
               finalArray.push({
                 validator: sortedArray[x].executorId,
                 epoch: sortedArray[x].epoch,
                 blockTime: sortedArray[x].blockTime,
                 blockHeight: sortedArray[x].blockHeight,
-                contractStakedBalance: sortedArray[x].newContractStakedBalance,
-                contractTotalShares: sortedArray[x].newContractTotalShares,
-                currentSharePrice: parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
+                contractStakedBalance: contractBalance,
+                contractTotalShares: contractShares,
+                currentSharePrice: parseFloat(contractBalance) / parseFloat(contractShares),
                 currentStakingShares: currentStakingShares,
-                currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
+                currentReward: currentStakingShares * (parseFloat(contractBalance) / parseFloat(contractShares))
               })
             
           }
