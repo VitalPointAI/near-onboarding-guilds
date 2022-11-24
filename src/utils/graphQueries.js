@@ -350,10 +350,14 @@ query executor_activity(
     unstakes(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $unstakesBlockTime, blockTime_gte: $from, blockTime_lte: $to}){
         blockHeight
         blockTime
-        epoch
-        rewardsReceived
-        newContractStakedBalance
-        newContractTotalShares
+        accountId
+        totalRewardsFee
+        amount
+        spentStakingShareAmount
+        totalUnstakedBalance
+        totalStakingShares
+        contractTotalShares
+        contractTotalStakedBalance
         executorId
     }
     unstakeAlls(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $unstakeAllsBlockTime, blockTime_gte: $from, blockTime_lte: $to}){
