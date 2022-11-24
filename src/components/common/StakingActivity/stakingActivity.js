@@ -396,7 +396,6 @@ export default function StakingActivity(props) {
           for(let y = 0; y < accountValidators.length; y++){
               console.log('sortedvarray', sortedValidatorActivity)
               let filteredArray = sortedValidatorActivity.filter((validator) => {
-                console.log('validator here', validator)
                 return validator.executorId == accountValidators[y]
               })
               console.log('account validators y', accountValidators[y])
