@@ -377,33 +377,36 @@ export default function StakingActivity(props) {
           // calculating a new currentStakingShares if applicable. If not, currentStakingShares
           // remains as last one calculated (stays same until there is a change)
          
-          for(let x = 0; x < sortedArray.length; x++){
-            let currentStakingShares = 0
-           // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
-            if(sortedArray[x].accountIdDepositing == accountId || sortedArray[x].accountIdStaking == accountId || sortedArray[x].accountId == accountId){
-              if(sortedArray[x].stakingShares){
-                currentStakingShares = sortedArray[x].stakingShares
-              }
-              if(sortedArray[x].totalStakingShares){
-                currentStakingShares = sortedArray[x].totalStakingShares
-              }
-            }
-            
-            let contractBalance = '0'
-            if(sortedArray[x].newContractStakedBalance){
-              contractBalance = sortedArray[x].newContractStakedBalance
-            }
-            if(sortedArray[x].contractTotalStakedBalance){
-              contractBalance = sortedArray[x].contractTotalStakedBalance
-            }
-            
-            let contractShares = '0'
-            if(sortedArray[x].contractTotalShares){
-              contractShares = sortedArray[x].contractTotalShares
-            }
-            if(sortedArray[x].newContractTotalShares){
-              contractShares = sortedArray[x].newContractTotalShares
-            }
+          
+          for(let y = 0; y < accountValidators.length; y++){
+              let filteredArray = sortedArray.filter((validator) => validator.executorId == accountValidators[y])
+              for(let x = 0; x < filteredArray.length; x++){
+                let currentStakingShares = 0
+              // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
+                if(filteredArray[x].accountIdDepositing == accountId || filteredArray[x].accountIdStaking == accountId || filteredArray[x].accountId == accountId){
+                  if(filteredArray[x].stakingShares){
+                    currentStakingShares = filteredArray[x].stakingShares
+                  }
+                  if(filteredArray[x].totalStakingShares){
+                    currentStakingShares = filteredArray[x].totalStakingShares
+                  }
+                }
+
+                let contractBalance = '0'
+                if(filteredArray[x].newContractStakedBalance){
+                  contractBalance = filteredArray[x].newContractStakedBalance
+                }
+                if(filteredArray[x].contractTotalStakedBalance){
+                  contractBalance = filteredArray[x].contractTotalStakedBalance
+                }
+                
+                let contractShares = '0'
+                if(filteredArray[x].contractTotalShares){
+                  contractShares = filteredArray[x].contractTotalShares
+                }
+                if(filteredArray[x].newContractTotalShares){
+                  contractShares = filteredArray[x].newContractTotalShares
+                }
 
             //}
             // finalArray.push({
@@ -430,16 +433,17 @@ export default function StakingActivity(props) {
               //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
               // })
               finalArray.push({
-                validator: sortedArray[x].executorId,
-                epoch: sortedArray[x].epoch,
-                blockTime: sortedArray[x].blockTime,
-                blockHeight: sortedArray[x].blockHeight,
+                validator: filteredArray[x].executorId,
+                epoch: filteredArray[x].epoch,
+                blockTime: filteredArray[x].blockTime,
+                blockHeight: filteredArray[x].blockHeight,
                 contractStakedBalance: contractBalance,
                 contractTotalShares: contractShares,
                 currentSharePrice: parseFloat(contractBalance) / parseFloat(contractShares),
                 currentStakingShares: currentStakingShares,
                 currentReward: currentStakingShares * (parseFloat(contractBalance) / parseFloat(contractShares))
               })
+            }
             
           }
             
