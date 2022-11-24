@@ -380,7 +380,7 @@ export default function StakingActivity(props) {
           for(let x = 0; x < sortedArray.length; x++){
             let currentStakingShares = 0
            // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
-            if(sortedArray[x].accountIdDepositing || sortedArray[x].accountIdStaking || sortedArray[x].accountId){
+            if(sortedArray[x].accountIdDepositing == accountId || sortedArray[x].accountIdStaking == accountId || sortedArray[x].accountId == accountId){
               if(sortedArray[x].stakingShares){
                 currentStakingShares = sortedArray[x].stakingShares
               }
