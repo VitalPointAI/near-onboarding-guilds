@@ -644,7 +644,7 @@ export default class Queries {
         let withdrawsKeepRunning = true
 
         for(let x = 0; x < validators.length; x++){
-           
+            console.log('now processing: ', validators[x])
             while(keepRunning){
                 try{
                     validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
@@ -662,7 +662,7 @@ export default class Queries {
                         stakeAllsBlockTime: stakeAllsBlockTime
                     }})
 
-                    // console.log('validatorActivity', validatorActivity)
+                    console.log('validatorActivity', validatorActivity)
                     // activity.push(validatorActivity.data)
                     // console.log('activity here', activity)
                    
