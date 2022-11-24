@@ -645,6 +645,7 @@ export default class Queries {
 
         for(let x = 0; x < validators.length; x++){
             console.log('now processing: ', validators[x])
+            keepRunning = true
             while(keepRunning){
                 try{
                     validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
