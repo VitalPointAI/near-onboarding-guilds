@@ -303,17 +303,12 @@ export default function StakingActivity(props) {
           // get this account's validator activity
          // let allAccountValidatorActivity = []
           //accountValidatorActivity = await queries.getAccountValidatorActivity([apiUrl], accountId)
-         
-          // Step 0:  Get timeframe to pass into queries
-          let from = new Date(fromDate).getTime()
-          console.log('from', from)
-          let to = new Date(toDate).getTime()
-          console.log('to', to)
+        
 
           // Step 1:  Get all the activity that this account has had with validator contracts
-          let accountValidatorActivity = []
-          accountValidatorActivity = await queries.getAccountValidatorActivity(accountId, from.toString(), to.toString())
-          console.log('accountvalidatoractivity', accountValidatorActivity)
+          let allAccountValidatorActivity = []
+          allAccountValidatorActivity = await queries.getAccountValidatorActivity(accountId)
+          console.log('allAccountValidatorActivity', allAccountValidatorActivity)
 
           // Step 2:  Create an array of all the unique validators this account uses
           let accountValidators = []
@@ -326,7 +321,18 @@ export default function StakingActivity(props) {
           }
           console.log('accountvalidators', accountValidators)
 
-          // Step 3:  Get all the validator activity between identified times of the set of validators used by this account 
+          // Step 3:  Get timeframe to pass into queries
+          let from = new Date(fromDate).getTime()
+          console.log('from', from)
+          let to = new Date(toDate).getTime()
+          console.log('to', to)
+
+          // Step 4:  Get all account validator activity in timeframe
+          let accountValidatorActivity = []
+          accountValidatorActivity = await queries.getAccountValidatorActivity(accountId, from.toString(), to.toString())
+          console.log('accountvalidatoractivity', accountValidatorActivity)
+
+          // Step 4:  Get all the validator activity between identified times of the set of validators used by this account 
           
           let allActivity = []
           allActivity = await queries.getValidatorActivity(accountValidators, from.toString(), to.toString())
