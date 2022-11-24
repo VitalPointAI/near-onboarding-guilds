@@ -312,7 +312,7 @@ export default function StakingActivity(props) {
 
           // Step 2:  Create an array of all the unique validators this account uses
           let accountValidators = []
-          for (const [key, value] of Object.entries(accountValidatorActivity[0])){
+          for (const [key, value] of Object.entries(allAccountValidatorActivity[0])){
             for(let y = 0; y < value.length; y++){
               if(!accountValidators.includes(value[y].executorId)){
                 accountValidators.push(value[y].executorId)
@@ -327,22 +327,30 @@ export default function StakingActivity(props) {
           let to = new Date(toDate).getTime()
           console.log('to', to)
 
-          // Step 4:  Get all account validator activity in timeframe
-          let accountValidatorActivity = []
-          accountValidatorActivity = await queries.getAccountValidatorActivity(accountId, from.toString(), to.toString())
-          console.log('accountvalidatoractivity', accountValidatorActivity)
+          // // Step 4:  Get all account validator activity in timeframe
+          // let accountValidatorActivity = []
+          // accountValidatorActivity = await queries.getAccountValidatorActivity(accountId, from.toString(), to.toString())
+          // console.log('accountvalidatoractivity', accountValidatorActivity)
 
-          // Step 4:  Get all the validator activity between identified times of the set of validators used by this account 
-          
+          // let allAccountActivityTimeframe = []
+          // for (const [key, value] of Object.entries(accountValidatorActivity[0])){
+          //   allAccountActivityTimeframe = allAccountActivityTimeframe.concat(value)
+          // }
+          // console.log('allAccountActivityTimeframe', allAccountActivityTimeframe)
+
+          // Step 4:  For set of validators, get all activity between identified times
+          // and sort ascending by blockTime 
           let allActivity = []
           allActivity = await queries.getValidatorActivity(accountValidators, from.toString(), to.toString())
           console.log('all validator activity', allActivity)
 
-          let newActivity = []
+          let allValidatorsActivity = []
           for (const [key, value] of Object.entries(allActivity)){
-            newActivity = newActivity.concat(value)
+            allValidatorsActivity = allValidatorsActivity.concat(value)
           }
-          console.log('newActivity', newActivity)
+
+          let sortedValidatorActivity = _.sortBy(allValidatorsActivity, 'blockTime')
+          console.log('sortedValidatorActivity', sortedValidatorActivity)
 
           // let newAccountActivity = allAccountValidatorActivity.concat(
           //   accountValidatorActivity[0][1].data.depositAndStakes, 
@@ -355,12 +363,7 @@ export default function StakingActivity(props) {
           //   accountValidatorActivity[0][1].data.stakeAlls
           // )
 
-          // Step 4:  Get all of this account's activity with its validators
-          let newAccountActivity = []
-          for (const [key, value] of Object.entries(accountValidatorActivity[0])){
-            newAccountActivity = newAccountActivity.concat(value)
-          }
-          console.log('newAccountActivity', newAccountActivity)
+         
         
 
           // let newAccountActivity = allAccountValidatorActivity.concat(
@@ -373,12 +376,14 @@ export default function StakingActivity(props) {
           //   accountValidatorActivity[0].stakes,
           //   accountValidatorActivity[0].stakeAlls
           // )
+
+          // Step 6: merge account validator activity with 
           
-          let mergedArray = newActivity.concat(newAccountActivity)
-          let sortedArray = _.sortBy(mergedArray, 'blockTime')
+       //   let mergedArray = newActivity.concat(newAccountActivity)
+        //  let sortedArray = _.sortBy(mergedArray, 'blockTime')
          // let sortedArray = _.sortBy(newAccountActivity, 'blockTime')
           
-          console.log('sortedArray', sortedArray)
+       //   console.log('sortedArray', sortedArray)
 
           // Step 5:  Determine this account's current share of the stake for each 
           // validator.  Does this by looking through each item in the array and 
@@ -387,7 +392,9 @@ export default function StakingActivity(props) {
          
           
           for(let y = 0; y < accountValidators.length; y++){
-              let filteredArray = sortedArray.filter((validator) => validator.executorId == accountValidators[y])
+              let filteredArray = sortedValidatorArray.filter((validator) => validator.executorId == accountValidators[y])
+              console.log('filteredArray', filteredArray)
+              
               for(let x = 0; x < filteredArray.length; x++){
                 let currentStakingShares = 0
               // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
