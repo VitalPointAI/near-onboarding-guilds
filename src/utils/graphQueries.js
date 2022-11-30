@@ -634,6 +634,15 @@ export default class Queries {
         
         for(let x = 0; x < validators.length; x++){
             console.log('now processing: ', validators[x])
+            console.log('depositandstakes: ', depositAndStakesKeepRunning)
+            console.log('deposits: ', depositsKeepRunning)
+            console.log('pings: ', pingsKeepRunning)
+            console.log('stakealls: ', stakeAllsKeepRunning)
+            console.log('stakes: ', stakesKeepRunning)
+            console.log('unstakealls: ', unstakeAllsKeepRunning)
+            console.log('unstakes: ', unstakesKeepRunning)
+            console.log('withdrawalls: ', withdrawAllsKeepRunning)
+            console.log('withdraws: ', withdrawsKeepRunning)
 
             let keepRunning = true
             let depositAndStakesKeepRunning = true
