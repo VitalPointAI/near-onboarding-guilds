@@ -412,7 +412,7 @@ export default function StakingActivity(props) {
               // get currentStakingShares at first date after from date
               let currentStakingShares = '0'
               for(let q = 0; q < filteredArray.length; q++){
-                if(filteredArray[q].blockTime > from){
+                if(BigInt(filteredArray[q].blockTime) > from && filteredArray[q].__typename != "Ping"){
                   if(filteredArray[q].stakingShares != null){
                     currentStakingShares = filteredArray[q].stakingShares
                     console.log('currentstakingshares 1', currentStakingShares)
@@ -427,10 +427,7 @@ export default function StakingActivity(props) {
 
               // now set filterarray back to from/to dates
               filteredArray = filteredArray.filter(function(record) {          
-                let result = BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
-                if(result){
-                  return record
-                }
+                return BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
               })
               console.log('filtered array after adjustment', filteredArray)
 
