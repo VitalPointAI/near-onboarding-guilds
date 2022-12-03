@@ -401,35 +401,35 @@ export default function StakingActivity(props) {
               console.log('account validators y', accountValidators[y])
               console.log('filteredArray', filteredArray)
 
-              for(let x = 0; x < filteredArray.length; x++){
+              for(let z = 0; z < filteredArray.length; z++){
                 let currentStakingShares = '0'
               // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
-                if(filteredArray[x].accountIdDepositing || filteredArray[x].accountIdStaking || filteredArray[x].accountId == accountId){
+                if(filteredArray[z].accountIdDepositing || filteredArray[z].accountIdStaking || filteredArray[z].accountId == accountId){
                   console.log('here')
-                  if(filteredArray[x].stakingShares != null){
-                    currentStakingShares = filteredArray[x].stakingShares
+                  if(filteredArray[z].stakingShares != null){
+                    currentStakingShares = filteredArray[z].stakingShares
                     console.log('currentstakingshares 1', currentStakingShares)
                   }
-                  if(filteredArray[x].totalStakingShares != null){
-                    currentStakingShares = filteredArray[x].totalStakingShares
+                  if(filteredArray[z].totalStakingShares != null){
+                    currentStakingShares = filteredArray[z].totalStakingShares
                     console.log('currentstakingshares 2', currentStakingShares)
                   }
                 }
 
                 let contractBalance = '0'
-                if(filteredArray[x].newContractStakedBalance != null){
-                  contractBalance = filteredArray[x].newContractStakedBalance
+                if(filteredArray[z].newContractStakedBalance != null){
+                  contractBalance = filteredArray[z].newContractStakedBalance
                 }
-                if(filteredArray[x].contractTotalStakedBalance){
-                  contractBalance = filteredArray[x].contractTotalStakedBalance
+                if(filteredArray[z].contractTotalStakedBalance){
+                  contractBalance = filteredArray[z].contractTotalStakedBalance
                 }
                 
                 let contractShares = '0'
-                if(filteredArray[x].contractTotalShares != null){
-                  contractShares = filteredArray[x].contractTotalShares
+                if(filteredArray[z].contractTotalShares != null){
+                  contractShares = filteredArray[z].contractTotalShares
                 }
-                if(filteredArray[x].newContractTotalShares != null){
-                  contractShares = filteredArray[x].newContractTotalShares
+                if(filteredArray[z].newContractTotalShares != null){
+                  contractShares = filteredArray[z].newContractTotalShares
                 }
 
               //}
@@ -456,18 +456,18 @@ export default function StakingActivity(props) {
               //   currentStakingShares: currentStakingShares,
               //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
               // })
-              finalArray.push({
-                validator: filteredArray[x].executorId,
-                epoch: filteredArray[x].epoch,
-                blockTime: filteredArray[x].blockTime,
-                blockHeight: filteredArray[x].blockHeight,
-                contractStakedBalance: contractBalance,
-                contractTotalShares: contractShares,
-                currentSharePrice: parseFloat(contractBalance) / parseFloat(contractShares),
-                currentStakingShares: currentStakingShares,
-                currentReward: parseFloat(currentStakingShares) * (parseFloat(contractBalance) / parseFloat(contractShares))
-              })
-            }
+                finalArray.push({
+                  validator: filteredArray[z].executorId,
+                  epoch: filteredArray[z].epoch,
+                  blockTime: filteredArray[z].blockTime,
+                  blockHeight: filteredArray[z].blockHeight,
+                  contractStakedBalance: contractBalance,
+                  contractTotalShares: contractShares,
+                  currentSharePrice: parseFloat(contractBalance) / parseFloat(contractShares),
+                  currentStakingShares: currentStakingShares,
+                  currentReward: parseFloat(currentStakingShares) * (parseFloat(contractBalance) / parseFloat(contractShares))
+                })
+              }
             
             setActivity(finalArray)     
             console.log('finalArray', finalArray) 
@@ -521,7 +521,7 @@ export default function StakingActivity(props) {
 
               let date = formatDate(sortedTempArray[x].blockTime)
               
-              let price= getPrice(priceArray, date, currency)
+              let price = getPrice(priceArray, date, currency)
               console.log('this price', price)
               if(!price){
                 price = 0
