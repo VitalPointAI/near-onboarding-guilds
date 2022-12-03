@@ -606,7 +606,7 @@ export default function StakingActivity(props) {
                   Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
                   Block: sortedTempArray[x].blockHeight,
                   Epoch: sortedTempArray[x].epoch,
-                  BlockTime: `${sortedTempArray[x].blockTime} `,
+                  BlockTime: `timestamp: ${sortedTempArray[x].blockTime}`,
                   Validator: sortedTempArray[x].validator
                 })
 
