@@ -22,7 +22,7 @@ import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import LinearProgress from '@mui/material/LinearProgress'
+import CircularProgress from '@mui/material/CircularProgress'
 import TextField from '@mui/material/TextField'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
@@ -740,7 +740,7 @@ export default function StakingActivity(props) {
                 </Button>
                 : <>
                   <Typography variant="body1">Preparing Data</Typography>
-                  <LinearProgress />
+                  <CircularProgress disableShrink={true} />
                   </>
                   : <Grid container spacing={0} justifyContent="space-between" alignItems="center">
                   <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop:'20px'}} align="center">
