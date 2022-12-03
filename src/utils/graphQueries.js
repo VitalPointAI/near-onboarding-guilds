@@ -280,7 +280,7 @@ query executor_activity(
     $unstakesBlockTime: String!,
     $unstakeAllsBlockTime: String!,
     $stakesBlockTime: String!,
-    $stakeAllsBlockTime: String!
+    $stakeAllsBlockTime: String!,
     $from: String!,
     $to: String!
     ){
@@ -407,7 +407,7 @@ query executor_activity(
 
 const ACCOUNT_VALIDATOR_ACTIVITY = gql`
 query account_activity(
-    $accountId: String!
+    $accountId: String!,
     $from: String!,
     $to: String!
     ){

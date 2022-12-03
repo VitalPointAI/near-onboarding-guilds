@@ -391,7 +391,6 @@ export default function StakingActivity(props) {
           // validator.  Does this by looking through each item in the array and 
           // calculating a new currentStakingShares if applicable. If not, currentStakingShares
           // remains as last one calculated (stays same until there is a change)
-         
           
           for(let y = 0; y < accountValidators.length; y++){
               console.log('sortedvarray', sortedValidatorActivity)
