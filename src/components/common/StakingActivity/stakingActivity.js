@@ -480,8 +480,8 @@ export default function StakingActivity(props) {
           // })
         let tempArray = finalArray.filter((element) => {
           console.log('element', element)
-          return element.currentStakingShares > 0)
-        }
+          return element.currentStakingShares > 0
+        })
          console.log('temparray', tempArray)
           // restrict return to from/to dates requested
           // let from = new Date(fromDate).getTime()
