@@ -411,28 +411,8 @@ export default function StakingActivity(props) {
 
               // get currentStakingShares at first date after from date
               let currentStakingShares = '0'
-              for(let q = 0; q < filteredArray.length; q++){
-                if(BigInt(filteredArray[q].blockTime) > from && filteredArray[q].__typename != "Ping"){
-                  if(filteredArray[q].stakingShares != null){
-                    currentStakingShares = filteredArray[q].stakingShares
-                    console.log('currentstakingshares 1', currentStakingShares)
-                  }
-                  if(filteredArray[q].totalStakingShares != null){
-                    currentStakingShares = filteredArray[q].totalStakingShares
-                    console.log('currentstakingshares 2', currentStakingShares)
-                  }
-                  break
-                }
-              }
-
-              // now set filterarray back to from/to dates
-              filteredArray = filteredArray.filter(function(record) {          
-                return BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
-              })
-              console.log('filtered array after adjustment', filteredArray)
 
               for(let z = 0; z < filteredArray.length; z++){
-                console.log('initial currentstakingshares', currentStakingShares)
               // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
                 if(filteredArray[z].accountIdDepositing || filteredArray[z].accountIdStaking || filteredArray[z].accountId == accountId){
                   console.log('here')
@@ -498,6 +478,12 @@ export default function StakingActivity(props) {
                   currentReward: parseFloat(currentStakingShares) * (parseFloat(contractBalance) / parseFloat(contractShares))
                 })
               }
+            
+            // now set finalArray back to from/to dates
+            finalArray = finalArray.filter(function(record) {          
+              return BigInt(record.blockTime) >= BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
+            })
+            console.log('filtered final array after adjustment', finalArray)
             
             setActivity(finalArray)     
             console.log('finalArray', finalArray) 
