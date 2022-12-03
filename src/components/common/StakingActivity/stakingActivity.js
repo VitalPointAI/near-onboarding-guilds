@@ -402,14 +402,16 @@ export default function StakingActivity(props) {
               console.log('filteredArray', filteredArray)
 
               for(let x = 0; x < filteredArray.length; x++){
-                let currentStakingShares = 0
+                let currentStakingShares = '0'
               // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
                 if(filteredArray[x].accountIdDepositing == accountId || filteredArray[x].accountIdStaking == accountId || filteredArray[x].accountId == accountId){
                   if(filteredArray[x].stakingShares){
                     currentStakingShares = filteredArray[x].stakingShares
+                    console.log('currentstakingshares 1', currentStakingShares)
                   }
                   if(filteredArray[x].totalStakingShares){
                     currentStakingShares = filteredArray[x].totalStakingShares
+                    console.log('currentstakingshares 2', currentStakingShares)
                   }
                 }
 
@@ -462,7 +464,7 @@ export default function StakingActivity(props) {
                 contractTotalShares: contractShares,
                 currentSharePrice: parseFloat(contractBalance) / parseFloat(contractShares),
                 currentStakingShares: currentStakingShares,
-                currentReward: currentStakingShares * (parseFloat(contractBalance) / parseFloat(contractShares))
+                currentReward: parseFloat(currentStakingShares) * (parseFloat(contractBalance) / parseFloat(contractShares))
               })
             }
             
@@ -479,7 +481,6 @@ export default function StakingActivity(props) {
             
           // })
         let tempArray = finalArray.filter((element) => {
-          console.log('element', element)
           return element.currentStakingShares > 0
         })
          console.log('temparray', tempArray)
