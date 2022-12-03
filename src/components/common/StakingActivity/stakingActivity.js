@@ -312,6 +312,12 @@ export default function StakingActivity(props) {
           allAccountValidatorActivity = await queries.getAccountValidatorActivity(accountId, startDate.toString(), endDate.toString())
           console.log('allAccountValidatorActivity', allAccountValidatorActivity)
 
+          let allAccountValidatorsActivity = []
+          for (const [key, value] of Object.entries(allAccountValidatorActivity[0])){
+            allAccountValidatorsActivity = allAccountValidatorsActivity.concat(value)
+          }
+          console.log('allAccountValidatorsActivity', allAccountValidatorsActivity)
+
           // Step 2:  Create an array of all the unique validators this account uses
           let accountValidators = []
           for (const [key, value] of Object.entries(allAccountValidatorActivity[0])){
@@ -352,8 +358,8 @@ export default function StakingActivity(props) {
           }
 
           // merge with all account validator activity (need all because need starting values of current shares)
-          let mergedActivity = allAccountValidatorActivity[0].concat(allValidatorsActivity)
-          
+          let mergedActivity = allAccountValidatorsActivity.concat(allValidatorsActivity)
+
           let sortedValidatorActivity = _.sortBy(mergedActivity, 'blockTime')
           console.log('sortedValidatorActivity', sortedValidatorActivity)
 
