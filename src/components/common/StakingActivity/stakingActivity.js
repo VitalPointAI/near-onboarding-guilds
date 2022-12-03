@@ -340,7 +340,7 @@ export default function StakingActivity(props) {
           // }
           // console.log('allAccountActivityTimeframe', allAccountActivityTimeframe)
 
-          // Step 4:  For set of validators, get all activity between identified times
+          // Step 4:  For set of validators, get all ping activity between identified times
           // and sort ascending by blockTime 
           let allActivity = []
           allActivity = await queries.getValidatorActivity(accountValidators, from.toString(), to.toString())
@@ -351,7 +351,10 @@ export default function StakingActivity(props) {
             allValidatorsActivity = allValidatorsActivity.concat(value)
           }
 
-          let sortedValidatorActivity = _.sortBy(allValidatorsActivity, 'blockTime')
+          // merge with all account validator activity (need all because need starting values of current shares)
+          let mergedActivity = allAccountValidatorActivity[0].concat(allValidatorsActivity)
+          
+          let sortedValidatorActivity = _.sortBy(mergedActivity, 'blockTime')
           console.log('sortedValidatorActivity', sortedValidatorActivity)
 
           // let newAccountActivity = allAccountValidatorActivity.concat(
