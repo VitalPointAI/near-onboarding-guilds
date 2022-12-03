@@ -478,7 +478,10 @@ export default function StakingActivity(props) {
           //   return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
             
           // })
-        let tempArray = finalArray.filter((element) => element.currentStakingShares > 0)
+        let tempArray = finalArray.filter((element) => {
+          console.log('element', element)
+          return element.currentStakingShares > 0)
+        }
          console.log('temparray', tempArray)
           // restrict return to from/to dates requested
           // let from = new Date(fromDate).getTime()
