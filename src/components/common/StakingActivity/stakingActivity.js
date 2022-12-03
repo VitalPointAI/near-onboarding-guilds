@@ -405,18 +405,19 @@ export default function StakingActivity(props) {
                 let currentStakingShares = '0'
               // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
                 if(filteredArray[x].accountIdDepositing == accountId || filteredArray[x].accountIdStaking == accountId || filteredArray[x].accountId == accountId){
-                  if(filteredArray[x].stakingShares){
+                  console.log('here')
+                  if(filteredArray[x].stakingShares != null){
                     currentStakingShares = filteredArray[x].stakingShares
                     console.log('currentstakingshares 1', currentStakingShares)
                   }
-                  if(filteredArray[x].totalStakingShares){
+                  if(filteredArray[x].totalStakingShares != null){
                     currentStakingShares = filteredArray[x].totalStakingShares
                     console.log('currentstakingshares 2', currentStakingShares)
                   }
                 }
 
                 let contractBalance = '0'
-                if(filteredArray[x].newContractStakedBalance){
+                if(filteredArray[x].newContractStakedBalance != null){
                   contractBalance = filteredArray[x].newContractStakedBalance
                 }
                 if(filteredArray[x].contractTotalStakedBalance){
@@ -424,10 +425,10 @@ export default function StakingActivity(props) {
                 }
                 
                 let contractShares = '0'
-                if(filteredArray[x].contractTotalShares){
+                if(filteredArray[x].contractTotalShares != null){
                   contractShares = filteredArray[x].contractTotalShares
                 }
-                if(filteredArray[x].newContractTotalShares){
+                if(filteredArray[x].newContractTotalShares != null){
                   contractShares = filteredArray[x].newContractTotalShares
                 }
 
