@@ -409,18 +409,43 @@ export default function StakingActivity(props) {
               console.log('account validators y', accountValidators[y])
               console.log('filteredArray', filteredArray)
 
+              // get currentStakingShares at first date after from date
+              let currentStakingShares = '0'
+              for(let q = 0; q < filteredArray.length; q++){
+                if(filteredArray[q].blockTime > from){
+                  if(filteredArray[q].stakingShares != null){
+                    currentStakingShares = filteredArray[q].stakingShares
+                    console.log('currentstakingshares 1', currentStakingShares)
+                  }
+                  if(filteredArray[q].totalStakingShares != null){
+                    currentStakingShares = filteredArray[q].totalStakingShares
+                    console.log('currentstakingshares 2', currentStakingShares)
+                  }
+                  break
+                }
+              }
+
+              // now set filterarray back to from/to dates
+              filteredArray = filteredArray.filter(function(record) {          
+                let result = BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
+                if(result){
+                  return record
+                }
+              })
+              console.log('filtered array after adjustment', filteredArray)
+
               for(let z = 0; z < filteredArray.length; z++){
-                let currentStakingShares = '0'
+                console.log('initial currentstakingshares', currentStakingShares)
               // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
                 if(filteredArray[z].accountIdDepositing || filteredArray[z].accountIdStaking || filteredArray[z].accountId == accountId){
                   console.log('here')
                   if(filteredArray[z].stakingShares != null){
                     currentStakingShares = filteredArray[z].stakingShares
-                    console.log('currentstakingshares 1', currentStakingShares)
+                    console.log('currentstakingshares 3', currentStakingShares)
                   }
                   if(filteredArray[z].totalStakingShares != null){
                     currentStakingShares = filteredArray[z].totalStakingShares
-                    console.log('currentstakingshares 2', currentStakingShares)
+                    console.log('currentstakingshares 4', currentStakingShares)
                   }
                 }
 
