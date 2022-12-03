@@ -404,7 +404,7 @@ export default function StakingActivity(props) {
               for(let x = 0; x < filteredArray.length; x++){
                 let currentStakingShares = '0'
               // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
-                if(filteredArray[x].accountIdDepositing == accountId || filteredArray[x].accountIdStaking == accountId || filteredArray[x].accountId == accountId){
+                if(filteredArray[x].accountIdDepositing || filteredArray[x].accountIdStaking || filteredArray[x].accountId == accountId){
                   console.log('here')
                   if(filteredArray[x].stakingShares != null){
                     currentStakingShares = filteredArray[x].stakingShares
