@@ -475,14 +475,15 @@ export default function StakingActivity(props) {
            // let count = 0
             let journalNo = journalStartNo
        // for(let y = 0; y < accountValidators.length; y++){
-          // let tempArray = finalArray.filter(function(validator) {
-          //   return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
-            
-          // })
-            let tempArray = finalArray.filter((element) => {
-              return element.currentStakingShares > 0
+            let tempArray = finalArray.filter(function(validator) {
+              return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
+              
             })
             console.log('temparray', tempArray)
+            // let tempArray = finalArray.filter((element) => {
+            //   return element.currentStakingShares > 0
+            // })
+            
           // restrict return to from/to dates requested
           // let from = new Date(fromDate).getTime()
           // // let thisFromDate = new Date(fromDate)
