@@ -885,16 +885,19 @@ export default class Queries {
             }
            
         }
+        // activity = activity.concat(
+        //     depositAndStakes,
+        //     deposits,
+        //     pings,
+        //     stakes,
+        //     stakeAlls,
+        //     unstakes,
+        //     unstakeAlls,
+        //     withdraws,
+        //     withdrawAlls)
         activity = activity.concat(
-            depositAndStakes,
-            deposits,
             pings,
-            stakes,
-            stakeAlls,
-            unstakes,
-            unstakeAlls,
-            withdraws,
-            withdrawAlls)
+         )
         console.log('activity', activity)
         return activity
     }
