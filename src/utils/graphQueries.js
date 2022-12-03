@@ -658,6 +658,17 @@ export default class Queries {
 
 
             while(keepRunning){
+
+                console.log('a depositandstakes: ', depositAndStakesKeepRunning)
+                console.log('a deposits: ', depositsKeepRunning)
+                console.log('a pings: ', pingsKeepRunning)
+                console.log('a stakealls: ', stakeAllsKeepRunning)
+                console.log('a stakes: ', stakesKeepRunning)
+                console.log('a unstakealls: ', unstakeAllsKeepRunning)
+                console.log('a unstakes: ', unstakesKeepRunning)
+                console.log('a withdrawalls: ', withdrawAllsKeepRunning)
+                console.log('a withdraws: ', withdrawsKeepRunning)
+
                 try{
                     validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
                         executorId: validators[x],
@@ -725,7 +736,7 @@ export default class Queries {
                             case 'depositAndStakes':
                                 if(depositAndStakesKeepRunning){
                                     value.forEach(element => depositAndStakes.push(element))
-                                    activity = activity.concat(depositAndStakes)
+                                    //activity = activity.concat(depositAndStakes)
                                     console.log('depositsandstakes', depositAndStakes)
                                     if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
                                         depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
@@ -740,7 +751,7 @@ export default class Queries {
                             case 'deposits':
                                 if(depositsKeepRunning){
                                     value.forEach(element => deposits.push(element))
-                                    activity = activity.concat(deposits)
+                                  //  activity = activity.concat(deposits)
                                     console.log('deposits', deposits)
                                     if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
                                         depositsBlockTime = deposits[deposits.length-1].blockTime
@@ -755,7 +766,7 @@ export default class Queries {
                             case 'pings':
                                 if(pingsKeepRunning){
                                     value.forEach(element => pings.push(element))
-                                    activity = activity.concat(pings)
+                                  //  activity = activity.concat(pings)
                                     console.log('pings', pings)
                                     if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
                                         pingsBlockTime = pings[pings.length-1].blockTime
@@ -772,7 +783,7 @@ export default class Queries {
                             case 'stakeAlls':
                                 if(stakeAllsKeepRunning){
                                     value.forEach(element => stakeAlls.push(element))
-                                    activity = activity.concat(stakeAlls)
+                                  //  activity = activity.concat(stakeAlls)
                                     console.log('stakealls', stakeAlls)
                                     if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
                                         stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
@@ -787,7 +798,7 @@ export default class Queries {
                             case 'stakes':
                                 if(stakesKeepRunning){
                                     value.forEach(element => stakes.push(element))
-                                    activity = activity.concat(stakes)
+                                  //  activity = activity.concat(stakes)
                                     console.log('stakes', stakes)
                                     if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
                                         stakesBlockTime = stakes[stakes.length-1].blockTime
@@ -802,7 +813,7 @@ export default class Queries {
                             case 'unstakeAlls':
                                 if(unstakeAllsKeepRunning){
                                     value.forEach(element => unstakeAlls.push(element))
-                                    activity = activity.concat(unstakeAlls)
+                                  //  activity = activity.concat(unstakeAlls)
                                     console.log('unstakeAlls', unstakeAlls)
                                     if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
                                         unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
@@ -817,7 +828,7 @@ export default class Queries {
                             case 'unstakes':
                                 if(unstakesKeepRunning){
                                     value.forEach(element => unstakes.push(element))
-                                    activity = activity.concat(unstakes)
+                                 //   activity = activity.concat(unstakes)
                                     console.log('unstakes', unstakes)
                                     if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
                                         unstakesBlockTime = unstakes[unstakes.length-1].blockTime
@@ -832,7 +843,7 @@ export default class Queries {
                             case 'withdrawAlls':
                                 if(withdrawAllsKeepRunning){
                                     value.forEach(element => withdrawAlls.push(element))
-                                    activity = activity.concat(withdrawAlls)
+                                  //  activity = activity.concat(withdrawAlls)
                                     console.log('withdrawalls', withdrawAlls)
                                     if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
                                         withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
@@ -847,7 +858,7 @@ export default class Queries {
                             case 'withdraws':
                                 if(withdrawsKeepRunning){
                                     value.forEach(element => withdraws.push(element))
-                                    activity = activity.concat(withdraws)
+                                  //  activity = activity.concat(withdraws)
                                     console.log('withdraws', withdraws)
                                     if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
                                         withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
@@ -871,6 +882,16 @@ export default class Queries {
                                 keepRunning = false
                         }
                     }
+                activity = activity.concat(
+                    depositAndStakes,
+                    deposits,
+                    pings,
+                    stakes,
+                    stakeAlls,
+                    unstakes,
+                    unstakeAlls,
+                    withdraws,
+                    withdrawAlls)
                 console.log('activity', activity)
             }
         }
