@@ -432,19 +432,19 @@ export default function StakingActivity(props) {
                   contractShares = filteredArray[x].newContractTotalShares
                 }
 
-            //}
-            // finalArray.push({
-            //   validator: accountValidators[y].name,
-            //   epoch: sortedArray[x].epoch,
-            //   blockTime: sortedArray[x].blockTime,
-            //   blockHeight: sortedArray[x].blockHeight,
-            //   contractStakedBalance: sortedArray[x].newContractStakedBalance,
-            //   contractTotalShares: sortedArray[x].newContractTotalShares,
-            //   currentSharePrice: parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
-            //   currentStakingShares: currentStakingShares,
-            //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
-            // })
-            // 2nd try
+              //}
+              // finalArray.push({
+              //   validator: accountValidators[y].name,
+              //   epoch: sortedArray[x].epoch,
+              //   blockTime: sortedArray[x].blockTime,
+              //   blockHeight: sortedArray[x].blockHeight,
+              //   contractStakedBalance: sortedArray[x].newContractStakedBalance,
+              //   contractTotalShares: sortedArray[x].newContractTotalShares,
+              //   currentSharePrice: parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
+              //   currentStakingShares: currentStakingShares,
+              //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
+              // })
+              // 2nd try
               // finalArray.push({
               //   validator: sortedArray[x].executorId,
               //   epoch: sortedArray[x].epoch,
@@ -469,22 +469,20 @@ export default function StakingActivity(props) {
               })
             }
             
-          }
-            
-          setActivity(finalArray)     
-          console.log('finalArray', finalArray) 
+            setActivity(finalArray)     
+            console.log('finalArray', finalArray) 
         //}
-        let count = 0
-        let journalNo = journalStartNo
+           // let count = 0
+            let journalNo = journalStartNo
        // for(let y = 0; y < accountValidators.length; y++){
           // let tempArray = finalArray.filter(function(validator) {
           //   return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
             
           // })
-        let tempArray = finalArray.filter((element) => {
-          return element.currentStakingShares > 0
-        })
-         console.log('temparray', tempArray)
+            let tempArray = finalArray.filter((element) => {
+              return element.currentStakingShares > 0
+            })
+            console.log('temparray', tempArray)
           // restrict return to from/to dates requested
           // let from = new Date(fromDate).getTime()
           // // let thisFromDate = new Date(fromDate)
@@ -505,103 +503,104 @@ export default function StakingActivity(props) {
         //  console.log('datedarray', datedArray)
 
         //  let sortedTempArray = _.sortBy(datedArray, 'blockTime')
-          let sortedTempArray = _.sortBy(tempArray, 'blockTime')
-          console.log('sortedTempArray', sortedTempArray)
+            let sortedTempArray = _.sortBy(tempArray, 'blockTime')
+            console.log('sortedTempArray', sortedTempArray)
 
        //   let ultimateArray = []
           
           
-          for(let x = 0; x < sortedTempArray.length; x++){
-            // ultimateArray.push({
-            //   validator: sortedTempArray[x].validator,
-            //   epoch: sortedTempArray[x].epoch,
-            //   blockTime: sortedTempArray[x].blockTime,
-            //   blockHeight: sortedTempArray[x].blockHeight,
-            //   stakedBalance: sortedTempArray[x].currentReward.toNumber(),
-            //   reward: x > 0 ? sortedTempArray[x].currentReward - sortedTempArray[x-1].currentReward : 0
-            //})
+            for(let x = 0; x < sortedTempArray.length; x++){
+              // ultimateArray.push({
+              //   validator: sortedTempArray[x].validator,
+              //   epoch: sortedTempArray[x].epoch,
+              //   blockTime: sortedTempArray[x].blockTime,
+              //   blockHeight: sortedTempArray[x].blockHeight,
+              //   stakedBalance: sortedTempArray[x].currentReward.toNumber(),
+              //   reward: x > 0 ? sortedTempArray[x].currentReward - sortedTempArray[x-1].currentReward : 0
+              //})
 
-            let date = formatDate(sortedTempArray[x].blockTime)
+              let date = formatDate(sortedTempArray[x].blockTime)
+              
+              let price= getPrice(priceArray, date, currency)
+              console.log('this price', price)
+              if(!price){
+                price = 0
+              }
+
+              console.log('blocktime', sortedTempArray[x].blockTime)
+
+              console.log('currentreward', parseFloat(sortedTempArray[x].currentReward).toLocaleString('fullwide', {useGrouping: false}))
+
+              let currentReward = new Decimal(sortedTempArray[x].currentReward)
+              let lastReward = x > 0 ? new Decimal(sortedTempArray[x-1].currentReward) : new Decimal(0)
+              let thisReward =  x > 0 ? currentReward.minus(lastReward) : new Decimal(0)
+              let fixedOne = parseFloat(thisReward).toLocaleString('fullwide', {useGrouping: false})
+              console.log('this reward 0', fixedOne)
+              let thisRewardFormatted
+              fixedOne != "NaN" ? thisRewardFormatted = formatNearAmount(fixedOne, 5) : thisRewardFormatted = '0'
+              console.log('this reward formatted 1', thisRewardFormatted)
+              console.log('this reward formatted', parseFloat(thisRewardFormatted))
+              totalRewards = totalRewards + parseFloat(thisRewardFormatted)
+              console.log('total rewards', totalRewards)
+              let readyForCardReward = totalRewards.toFixed(5)
+              setCardTotalReward(readyForCardReward)
+
+              totalValue = totalValue + (parseFloat(thisRewardFormatted) * price)
             
-            let price= getPrice(priceArray, date, currency)
-            console.log('this price', price)
-            if(!price){
-              price = 0
-            }
+              let readyForCardValue = totalValue.toFixed(2)
+              setCardTotalValue(readyForCardValue)
 
-            console.log('blocktime', sortedTempArray[x].blockTime)
+              // ensure no zero value quantities/prices
+              if(thisRewardFormatted != '0'){
+                csvDownload.push({
+                  JournalNo: journalNo,
+                  JournalDate: date,
+                  Currency: currency.toUpperCase(),
+                  Memo: '',
+                  AccountName: debitAccountName,
+                  Debits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+                  Credits: '',
+                  Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
+                  Name: sortedTempArray[x].validator,
+                  Location: '',
+                  Class: ''
+                })
 
-            console.log('currentreward', parseFloat(sortedTempArray[x].currentReward).toLocaleString('fullwide', {useGrouping: false}))
+                csvDownload.push({
+                  JournalNo: journalNo,
+                  JournalDate: date,
+                  Currency: currency.toUpperCase(),
+                  Memo: '',
+                  AccountName: creditAccountName,
+                  Debits: '',
+                  Credits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+                  Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
+                  Name: sortedTempArray[x].validator,
+                  Location: '',
+                  Class: ''
+                })
+                console.log('blocktime here', sortedTempArray[x].blockTime)
+                csvSingle.push({
+                  Date: date,
+                  Currency: currency.toUpperCase(),
+                  Reward: thisRewardFormatted,
+                  Price: price,
+                  Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+                  Block: sortedTempArray[x].blockHeight,
+                  Epoch: sortedTempArray[x].epoch,
+                  BlockTime: sortedTempArray[x].blockTime,
+                  Validator: sortedTempArray[x].validator
+                })
 
-            let currentReward = new Decimal(sortedTempArray[x].currentReward)
-            let lastReward = x > 0 ? new Decimal(sortedTempArray[x-1].currentReward) : new Decimal(0)
-            let thisReward =  x > 0 ? currentReward.minus(lastReward) : new Decimal(0)
-            let fixedOne = parseFloat(thisReward).toLocaleString('fullwide', {useGrouping: false})
-            console.log('this reward 0', fixedOne)
-            let thisRewardFormatted
-            fixedOne != "NaN" ? thisRewardFormatted = formatNearAmount(fixedOne, 5) : thisRewardFormatted = '0'
-            console.log('this reward formatted 1', thisRewardFormatted)
-            console.log('this reward formatted', parseFloat(thisRewardFormatted))
-            totalRewards = totalRewards + parseFloat(thisRewardFormatted)
-            console.log('total rewards', totalRewards)
-            let readyForCardReward = totalRewards.toFixed(5)
-            setCardTotalReward(readyForCardReward)
-
-            totalValue = totalValue + (parseFloat(thisRewardFormatted) * price)
-           
-            let readyForCardValue = totalValue.toFixed(2)
-            setCardTotalValue(readyForCardValue)
-
-            // ensure no zero value quantities/prices
-            if(thisRewardFormatted != '0'){
-              csvDownload.push({
-                JournalNo: journalNo,
-                JournalDate: date,
-                Currency: currency.toUpperCase(),
-                Memo: '',
-                AccountName: debitAccountName,
-                Debits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-                Credits: '',
-                Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
-                Name: sortedTempArray[x].validator,
-                Location: '',
-                Class: ''
-              })
-
-              csvDownload.push({
-                JournalNo: journalNo,
-                JournalDate: date,
-                Currency: currency.toUpperCase(),
-                Memo: '',
-                AccountName: creditAccountName,
-                Debits: '',
-                Credits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-                Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
-                Name: sortedTempArray[x].validator,
-                Location: '',
-                Class: ''
-              })
-              console.log('blocktime here', sortedTempArray[x].blockTime)
-              csvSingle.push({
-                Date: date,
-                Currency: currency.toUpperCase(),
-                Reward: thisRewardFormatted,
-                Price: price,
-                Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-                Block: sortedTempArray[x].blockHeight,
-                Epoch: sortedTempArray[x].epoch,
-                BlockTime: sortedTempArray[x].blockTime,
-                Validator: sortedTempArray[x].validator
-              })
-
-              journalNo ++
+                journalNo ++
+              }
             }
           }
          // validators.push(ultimateArray)
           setValidatorData(validators)
           setCsvExport(csvDownload)
           setCsvSingleExport(csvSingle)
-          count++
+         // count++
         //}
      // }
 
