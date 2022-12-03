@@ -475,8 +475,9 @@ export default function StakingActivity(props) {
            // let count = 0
             let journalNo = journalStartNo
        // for(let y = 0; y < accountValidators.length; y++){
+            console.log('processing validator name: ', accountValidators[y])
             let tempArray = finalArray.filter(function(validator) {
-              return (validator.validator == accountValidators[y].name && validator.currentStakingShares > 0)
+              return (validator.validator == accountValidators[y] && validator.currentStakingShares != "0")
               
             })
             console.log('temparray', tempArray)
