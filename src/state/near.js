@@ -1691,7 +1691,8 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
 
         // get last month and year
         if(transData && transData.history.length > 0){
-            lastTime = new Date(transData.history[0].transaction.block_timestamp/1000000)
+            // set lasttime to just before first of the month of the last transaction
+            lastTime = new Date(transData.history[transData.history.length - 1].transaction.block_timestamp-1/1000000)
             exists = true
         }
         
@@ -1700,7 +1701,7 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
             exists = true
         }
 
-        startDate.setDate(startDate.getDate() - 30) 
+     //   startDate.setDate(startDate.getDate() - 30) 
     }
     console.log('lastTime', lastTime)
 
