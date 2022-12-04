@@ -1684,7 +1684,7 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
     //while(!exists){
     console.log('all aliases', allAliases)
     for(let a = allAliases.data.storeAliases.length-1; a >= 0; a--){
-        
+        if(allAliases.data.storeAliases[a].description.includes('transaction')){
        // let key = (currentYear+a)+currentMonth+'NearTransactionHistory'
        
         // let firstAlias
@@ -1694,32 +1694,33 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
         //         break
         //     }
         // }
-        let key = allAliases.data.storeAliases[a].alias
-        let defn = allAliases.data.storeAliases[a].definition
-        let alias = {[key]: defn}
-        console.log('alias', alias)
-        let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
-        console.log('thisidx', thisIdx)
-        
-        let transData = await thisIdx.get(key, thisIdx.id)
-        console.log('transData', transData)
+            let key = allAliases.data.storeAliases[a].alias
+            let defn = allAliases.data.storeAliases[a].definition
+            let alias = {[key]: defn}
+            console.log('alias', alias)
+            let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
+            console.log('thisidx', thisIdx)
+            
+            let transData = await thisIdx.get(key, thisIdx.id)
+            console.log('transData', transData)
 
-        // get last month and year
-        if(transData && transData.history.length > 0){
-            // set lasttime to just before first of the month of the last transaction
-            lastTime = new Date((transData.history[transData.history.length - 1].transaction.block_timestamp-1)/1000000)
-            break
-            // exists = true
-        }
-        
-        if(new Date().getTime() <= new Date('October 18, 2020 00:00:01').getTime()){
-            lastTime = new Date('October 18, 2020 00:00:01')
-            break
-        //    exists = true
-        }
+            // get last month and year
+            if(transData && transData.history.length > 0){
+                // set lasttime to just before first of the month of the last transaction
+                lastTime = new Date((transData.history[transData.history.length - 1].transaction.block_timestamp-1)/1000000)
+                break
+                // exists = true
+            }
+            
+            if(new Date().getTime() <= new Date('October 18, 2020 00:00:01').getTime()){
+                lastTime = new Date('October 18, 2020 00:00:01')
+                break
+            //    exists = true
+            }
 
-        if(a == 0 && transData && transData.history.length == 0){
-            lastTime = new Date('October 18, 2020 00:00:01')
+            if(a == 0 && transData && transData.history.length == 0){
+                lastTime = new Date('October 18, 2020 00:00:01')
+            }
         }
 
      //   startDate.setDate(startDate.getDate() - 30) 
