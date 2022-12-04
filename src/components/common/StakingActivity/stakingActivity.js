@@ -15,6 +15,7 @@ import { currencies } from './currencies'
 // Material UI components
 import { makeStyles } from '@mui/styles'
 import Grid from '@mui/material/Grid'
+import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import LinearProgress from '@mui/material/LinearProgress'
 import TextField from '@mui/material/TextField'
