@@ -1412,7 +1412,8 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
 }
 
 export async function buildTransactionTable(from, to, accountId, account, factoryContract, didRegistryContract, appIdx){
-   
+    console.log('from build table', from)
+    console.log('to build table', to)
     let allAliases = await queries.getAliases()
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
