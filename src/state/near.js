@@ -1142,19 +1142,12 @@ export function getCombinedSkills(accountType, persona){
 }
 
 export function getPrice(priceArray, date, currency){
-    console.log('passed in date', date)
-    console.log('passed in pricearray', priceArray)
     if(priceArray && priceArray.length > 0){
-        console.log('stake here0')
         for(let a = 0; a < priceArray.length; a++){
             if(priceArray[a].date == date){
-                console.log('price Array date', priceArray[a].date)
-                console.log('stake here 1')
                 let obj = priceArray[a].currentPrice
-                console.log('stake obj', obj)
                 let asArray = Object.entries(obj)
                 let price = asArray.filter(([key, value]) => key == currency)
-                console.log('price here', price)
                 if(price){
                     return price[0][1]
                 }

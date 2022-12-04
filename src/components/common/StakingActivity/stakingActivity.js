@@ -2,27 +2,21 @@ import React, { useState, useEffect, useContext } from 'react'
 import { appStore } from '../../../state/app'
 import { queries } from '../../../utils/graphQueries'
 import { 
-  generateId, 
   formatDate, 
-  formatGeckoDate, 
   getPrice, 
   buildPriceTable,
-  populateNearPriceAPI, 
   formatNearAmount, 
-  updateNearPriceAPI } from '../../../state/near'
-import { useForm, Controller, useFieldArray } from 'react-hook-form'
-import { CSVLink, CSVDownload } from 'react-csv'
+  } from '../../../state/near'
+import { useForm } from 'react-hook-form'
+import { CSVLink } from 'react-csv'
 import Decimal from 'decimal.js'
-const axios = require('axios').default
-
+import { currencies } from './currencies'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
 import Grid from '@mui/material/Grid'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import CircularProgress from '@mui/material/CircularProgress'
+import LinearProgress from '@mui/material/LinearProgress'
 import TextField from '@mui/material/TextField'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
@@ -49,19 +43,16 @@ const useStyles = makeStyles((theme) => ({
 export default function StakingActivity(props) {
    
     const [activity, setActivity] = useState([])
-    const [validatorData, setValidatorData] = useState([])
     const [accountValidators, setAccountValidators] = useState([])
     const [journalStartNo, setJournalStartNo] = useState(1)
     const [debitAccountName, setDebitAccountName] = useState('NEAR')
     const [creditAccountName, setCreditAccountName] = useState('Staking Income')
-    const [qbClass, setQbClass] = useState('')
     const [currency, setCurrency] = useState('cad')
-    const [csvExport, setCsvExport] = useState([])
+    const [qbExport, setQbExport] = useState([])
     const [csvSingleExport, setCsvSingleExport] = useState([])
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [priceTable, setPriceTable] = useState([])
-    const [message, setMessage] = useState(<Typography variant="body1">Please add your staking validators to your profile.</Typography>)
     const [validators, setValidators] = useState(false)
     const [cardTotalReward, setCardTotalReward] = useState('0')
     const [cardTotalValue, setCardTotalValue] = useState('0')
@@ -69,116 +60,16 @@ export default function StakingActivity(props) {
     const [downloadReady, setDownloadReady] = useState(false)
     const [clicked, setClicked] = useState(false)
 
-    const currencies = [
-      "aed",
-      "ars",
-      "aud",
-      "bch",
-      "bdt",
-      "bhd",
-      "bmd",
-      "bnb",
-      "brl",
-      "btc",
-      "cad",
-      "chf",
-      "clp",
-      "cny",
-      "czk",
-      "dkk",
-      "dot",
-      "eos",
-      "eth",
-      "eur",
-      "gbp",
-      "hkd",
-      "huf",
-      "idr",
-      "ils",
-      "inr",
-      "jpy",
-      "krw",
-      "kwd",
-      "lkr",
-      "ltc",
-      "mmk",
-      "mxn",
-      "myr",
-      "ngn",
-      "nok",
-      "nzd",
-      "php",
-      "pkr",
-      "pln",
-      "rub",
-      "sar",
-      "sek",
-      "sgd",
-      "thb",
-      "try",
-      "twd",
-      "uah",
-      "usd",
-      "vef",
-      "vnd",
-      "xag",
-      "xau",
-      "xdr",
-      "xlm",
-      "xrp",
-      "yfi",
-      "zar",
-      "bits",
-      "link",
-      "sats",
-    ]
-
-    const classes = useStyles()
     const { register, handleSubmit, watch, errors, control, reset, setValue, getValues } = useForm()
     const { state, dispatch, update } = useContext(appStore)
 
     const {
       accountId,
-      account,
       appIdx,
-      did,
-      didRegistryContract
+      did
     } = state
 
-    // useEffect(() => {
-    //   async function update(){
-    //     if(appIdx){
-    //       // let from = new Date(2022,05,01)
-    //       // let to = new Date(2022,09,25)
-    //       // await populateNearPriceAPI(from, to, accountId, appIdx, didRegistryContract)
-    //       await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
-    //     }
-    //   }
-
-    //   update()
-    //   .then(() => {
-
-    //   })
-    // },[appIdx])
-
-    useEffect(() => {
-      async function fetchPersona(){
-        if(appIdx){
-          let accountPersona = await appIdx.get('guildProfile', did)
-          if(accountPersona && accountPersona.validators){
-              setAccountValidators(accountPersona.validators)
-              setValidators(true)
-          }          
-        }
-      }
-
-      fetchPersona()
-      .then((res) => {
-
-      })
-    },[appIdx])
-
-    const headers = [
+    const qbHeaders = [
       {label: "JournalNo", key: "JournalNo"},
       {label: "JournalDate", key: "JournalDate"},
       {label: "Currency", key: "Currency"},
@@ -192,7 +83,7 @@ export default function StakingActivity(props) {
       {label: "Class", key: "Class"}
     ]
 
-    const stakingDataHeaders = [
+    const csvDataHeaders = [
       {label: "Date", key: "Date"},
       {label: "Currency", key: "Currency"},
       {label: "Reward", key: "Reward"},
@@ -249,379 +140,194 @@ export default function StakingActivity(props) {
 
     async function createQBExport(fromDate, toDate, accountId){
       setDownloadReady(false)
+      setClicked(true)
 
-      let priceArray = await fetchPriceTable(fromDate, toDate, accountId)
-
-      //let allValidators = []
-     
-     
       let finalArray = []
-      let validators = []
-      let csvDownload = []
+      let qbDownload = []
       let csvSingle = []
 
       let totalRewards = 0
       let totalValue = 0
-         
-    // if(accountValidators && accountValidators.length > 0){
-        setDownloadReady(false)
-        setClicked(true)
-        //for(let y = 0; y < accountValidators.length;y++){
-          
-          // // check whitelisted
-          // let whitelisted = await account.viewFunction(
-          //   'lockup-whitelist.near', 
-          //   'is_whitelisted', 
-          //   {staking_pool_account_id: accountValidators[y].name}
-          // )
-          
-          // let apiUrl
-          // if(whitelisted){
-          //   let first = accountValidators[y].name.split('.')[0]
-          //   let stripped = first.replace(/[^a-zA-Z]/g, '')
-          //   apiUrl = `https://api.thegraph.com/subgraphs/name/vitalpointai/${stripped}validator`
-          //   allValidators.push(apiUrl)
-          // }
+    
+      // Step 1:  Get all the activity that this account has had with validator contracts
+      let allAccountValidatorActivity = []
+      let startDate = new Date("10/18/2020").getTime()
+      let endDate = Date.now()
+      allAccountValidatorActivity = await queries.getAccountValidatorActivity(accountId, startDate.toString(), endDate.toString())
 
+      let allAccountValidatorsActivity = []
+      for (const [key, value] of Object.entries(allAccountValidatorActivity[0])){
+        allAccountValidatorsActivity = allAccountValidatorsActivity.concat(value)
+      }
 
-          // let allValidatorActivity = []
-          // allActivity = await queries.getValidatorActivity([apiUrl])
-          // console.log('allActivity', allActivity)
-          
-          // let newActivity = allValidatorActivity.concat(
-          //   allActivity[0][1].data.depositAndStakes, 
-          //   allActivity[0][1].data.deposits, 
-          //   allActivity[0][1].data.withdrawAlls,
-          //   allActivity[0][1].data.withdraws,
-          //   allActivity[0][1].data.unstakes,
-          //   allActivity[0][1].data.unstakeAlls,
-          //   allActivity[0][1].data.stakes,
-          //   allActivity[0][1].data.stakeAlls,
-          //   allActivity[0][1].data.pings
-          // )
-                    
-          // get this account's validator activity
-         // let allAccountValidatorActivity = []
-          //accountValidatorActivity = await queries.getAccountValidatorActivity([apiUrl], accountId)
-        
+      // Step 2: check to determine if the account has any staking data
+      allAccountValidatorsActivity.length > 0 ? setValidators(true) : setValidators(false)
 
-          // Step 1:  Get all the activity that this account has had with validator contracts
-          let allAccountValidatorActivity = []
-          let startDate = new Date("10/1/2020").getTime()
-          let endDate = Date.now()
-          allAccountValidatorActivity = await queries.getAccountValidatorActivity(accountId, startDate.toString(), endDate.toString())
-          console.log('allAccountValidatorActivity', allAccountValidatorActivity)
-
-          let allAccountValidatorsActivity = []
-          for (const [key, value] of Object.entries(allAccountValidatorActivity[0])){
-            allAccountValidatorsActivity = allAccountValidatorsActivity.concat(value)
+      // Step 3:  Create an array of all the unique validators this account uses
+      let accountValidators = []
+      for (const [key, value] of Object.entries(allAccountValidatorActivity[0])){
+        for(let y = 0; y < value.length; y++){
+          if(!accountValidators.includes(value[y].executorId)){
+            accountValidators.push(value[y].executorId)
           }
-          console.log('allAccountValidatorsActivity', allAccountValidatorsActivity)
+        }
+      }
+     
+      // Step 4:  Get timeframe to pass into queries
+      let from = new Date(fromDate).getTime()
+      let to = new Date(toDate).getTime()
 
-          // Step 2:  Create an array of all the unique validators this account uses
-          let accountValidators = []
-          for (const [key, value] of Object.entries(allAccountValidatorActivity[0])){
-            for(let y = 0; y < value.length; y++){
-              if(!accountValidators.includes(value[y].executorId)){
-                accountValidators.push(value[y].executorId)
-              }
-            }
-          }
-          console.log('accountvalidators', accountValidators)
+      // Step 5:  For set of validators, get all ping activity between identified times
+      // and sort ascending by blockTime 
+      let allActivity = []
+      allActivity = await queries.getValidatorActivity(accountValidators, from.toString(), to.toString())
 
-          // Step 3:  Get timeframe to pass into queries
-          let from = new Date(fromDate).getTime()
-          console.log('from', from)
-          let to = new Date(toDate).getTime()
-          console.log('to', to)
+      let allValidatorsActivity = []
+      for (const [key, value] of Object.entries(allActivity)){
+        allValidatorsActivity = allValidatorsActivity.concat(value)
+      }
 
-          // // Step 4:  Get all account validator activity in timeframe
-          // let accountValidatorActivity = []
-          // accountValidatorActivity = await queries.getAccountValidatorActivity(accountId, from.toString(), to.toString())
-          // console.log('accountvalidatoractivity', accountValidatorActivity)
+      // merge with all account validator activity (need all because need starting values of current shares)
+      let mergedActivity = allAccountValidatorsActivity.concat(allValidatorsActivity)
+      let sortedValidatorActivity = _.sortBy(mergedActivity, 'blockTime')
 
-          // let allAccountActivityTimeframe = []
-          // for (const [key, value] of Object.entries(accountValidatorActivity[0])){
-          //   allAccountActivityTimeframe = allAccountActivityTimeframe.concat(value)
-          // }
-          // console.log('allAccountActivityTimeframe', allAccountActivityTimeframe)
-
-          // Step 4:  For set of validators, get all ping activity between identified times
-          // and sort ascending by blockTime 
-          let allActivity = []
-          allActivity = await queries.getValidatorActivity(accountValidators, from.toString(), to.toString())
-          console.log('all validator activity', allActivity)
-
-          let allValidatorsActivity = []
-          for (const [key, value] of Object.entries(allActivity)){
-            allValidatorsActivity = allValidatorsActivity.concat(value)
-          }
-
-          // merge with all account validator activity (need all because need starting values of current shares)
-          let mergedActivity = allAccountValidatorsActivity.concat(allValidatorsActivity)
-
-          let sortedValidatorActivity = _.sortBy(mergedActivity, 'blockTime')
-          console.log('sortedValidatorActivity', sortedValidatorActivity)
-
-          // let newAccountActivity = allAccountValidatorActivity.concat(
-          //   accountValidatorActivity[0][1].data.depositAndStakes, 
-          //   accountValidatorActivity[0][1].data.deposits, 
-          //   accountValidatorActivity[0][1].data.withdrawAlls,
-          //   accountValidatorActivity[0][1].data.withdraws,
-          //   accountValidatorActivity[0][1].data.unstakes,
-          //   accountValidatorActivity[0][1].data.unstakeAlls,
-          //   accountValidatorActivity[0][1].data.stakes,
-          //   accountValidatorActivity[0][1].data.stakeAlls
-          // )
-
-         
-        
-
-          // let newAccountActivity = allAccountValidatorActivity.concat(
-          //   accountValidatorActivity[0].depositAndStakes, 
-          //   accountValidatorActivity[0].deposits, 
-          //   accountValidatorActivity[0].withdrawAlls,
-          //   accountValidatorActivity[0].withdraws,
-          //   accountValidatorActivity[0].unstakes,
-          //   accountValidatorActivity[0].unstakeAlls,
-          //   accountValidatorActivity[0].stakes,
-          //   accountValidatorActivity[0].stakeAlls
-          // )
-
-          // Step 6: merge account validator activity with 
-          
-       //   let mergedArray = newActivity.concat(newAccountActivity)
-        //  let sortedArray = _.sortBy(mergedArray, 'blockTime')
-         // let sortedArray = _.sortBy(newAccountActivity, 'blockTime')
-          
-       //   console.log('sortedArray', sortedArray)
-
-          // Step 5:  Determine this account's current share of the stake for each 
-          // validator.  Does this by looking through each item in the array and 
-          // calculating a new currentStakingShares if applicable. If not, currentStakingShares
-          // remains as last one calculated (stays same until there is a change)
-          
-          for(let y = 0; y < accountValidators.length; y++){
-              console.log('sortedvarray', sortedValidatorActivity)
-              let filteredArray = sortedValidatorActivity.filter((validator) => {
-                return validator.executorId == accountValidators[y]
-              })
-              console.log('account validators y', accountValidators[y])
-              console.log('filteredArray', filteredArray)
-
-              // get currentStakingShares at first date after from date
-              let currentStakingShares = '0'
-
-              for(let z = 0; z < filteredArray.length; z++){
-              // if(sortedArray[x].accountIdDepositing untId || sortedArray[x].accountIdStaking == accountId) {
-                if(filteredArray[z].accountIdDepositing || filteredArray[z].accountIdStaking || filteredArray[z].accountId == accountId){
-                  console.log('here')
-                  if(filteredArray[z].stakingShares != null){
-                    currentStakingShares = filteredArray[z].stakingShares
-                    console.log('currentstakingshares 3', currentStakingShares)
-                  }
-                  if(filteredArray[z].totalStakingShares != null){
-                    currentStakingShares = filteredArray[z].totalStakingShares
-                    console.log('currentstakingshares 4', currentStakingShares)
-                  }
-                }
-
-                let contractBalance = '0'
-                if(filteredArray[z].newContractStakedBalance != null){
-                  contractBalance = filteredArray[z].newContractStakedBalance
-                }
-                if(filteredArray[z].contractTotalStakedBalance){
-                  contractBalance = filteredArray[z].contractTotalStakedBalance
-                }
-                
-                let contractShares = '0'
-                if(filteredArray[z].contractTotalShares != null){
-                  contractShares = filteredArray[z].contractTotalShares
-                }
-                if(filteredArray[z].newContractTotalShares != null){
-                  contractShares = filteredArray[z].newContractTotalShares
-                }
-
-              //}
-              // finalArray.push({
-              //   validator: accountValidators[y].name,
-              //   epoch: sortedArray[x].epoch,
-              //   blockTime: sortedArray[x].blockTime,
-              //   blockHeight: sortedArray[x].blockHeight,
-              //   contractStakedBalance: sortedArray[x].newContractStakedBalance,
-              //   contractTotalShares: sortedArray[x].newContractTotalShares,
-              //   currentSharePrice: parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
-              //   currentStakingShares: currentStakingShares,
-              //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
-              // })
-              // 2nd try
-              // finalArray.push({
-              //   validator: sortedArray[x].executorId,
-              //   epoch: sortedArray[x].epoch,
-              //   blockTime: sortedArray[x].blockTime,
-              //   blockHeight: sortedArray[x].blockHeight,
-              //   contractStakedBalance: sortedArray[x].newContractStakedBalance,
-              //   contractTotalShares: sortedArray[x].newContractTotalShares,
-              //   currentSharePrice: parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares),
-              //   currentStakingShares: currentStakingShares,
-              //   currentReward: currentStakingShares * (parseFloat(sortedArray[x].newContractStakedBalance) / parseFloat(sortedArray[x].newContractTotalShares))
-              // })
-                finalArray.push({
-                  validator: filteredArray[z].executorId,
-                  epoch: filteredArray[z].epoch,
-                  blockTime: filteredArray[z].blockTime,
-                  blockHeight: filteredArray[z].blockHeight,
-                  contractStakedBalance: contractBalance,
-                  contractTotalShares: contractShares,
-                  currentSharePrice: parseFloat(contractBalance) / parseFloat(contractShares),
-                  currentStakingShares: currentStakingShares,
-                  currentReward: parseFloat(currentStakingShares) * (parseFloat(contractBalance) / parseFloat(contractShares))
-                })
-              }
-            
-            // now set finalArray back to from/to dates
-            finalArray = finalArray.filter(function(record) {          
-              return BigInt(record.blockTime) >= BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
-            })
-            console.log('filtered final array after adjustment', finalArray)
-            
-            setActivity(finalArray)     
-            console.log('finalArray', finalArray) 
-        //}
-           // let count = 0
-            let journalNo = journalStartNo
-       // for(let y = 0; y < accountValidators.length; y++){
-            console.log('processing validator name: ', accountValidators[y])
-            let tempArray = finalArray.filter(function(validator) {
-              return (validator.validator == accountValidators[y] && validator.currentStakingShares != "0")
-              
-            })
-            console.log('temparray', tempArray)
-            // let tempArray = finalArray.filter((element) => {
-            //   return element.currentStakingShares > 0
-            // })
-            
-          // restrict return to from/to dates requested
-          // let from = new Date(fromDate).getTime()
-          // // let thisFromDate = new Date(fromDate)
-          // // let dayBefore = (thisFromDate.getDate() - 1).getTime()
-          // console.log('from', from)
-          // let to = new Date(toDate).getTime()
-          // console.log('to', to)
+      // Step 6:  Determine this account's current share of the stake for each 
+      // validator.  Does this by looking through each item in the array and 
+      // calculating a new currentStakingShares if applicable. If not, currentStakingShares
+      // remains as last one calculated (stays same until there is a change)
       
-         // let datedArray = tempArray.filter(function(record) {  
-            
-          // let datedArray = tempArray.filter(function(record) {          
-          //   let result = BigInt(record.blockTime) > BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
-          //   if(result){
-          //     return record
-          //   }
-          // })
+      for(let y = 0; y < accountValidators.length; y++){
+          let filteredArray = sortedValidatorActivity.filter((validator) => {
+            return validator.executorId == accountValidators[y]
+          })
 
-        //  console.log('datedarray', datedArray)
-
-        //  let sortedTempArray = _.sortBy(datedArray, 'blockTime')
-            let sortedTempArray = _.sortBy(tempArray, 'blockTime')
-            console.log('sortedTempArray', sortedTempArray)
-
-       //   let ultimateArray = []
-          
-          
-            for(let x = 0; x < sortedTempArray.length; x++){
-              // ultimateArray.push({
-              //   validator: sortedTempArray[x].validator,
-              //   epoch: sortedTempArray[x].epoch,
-              //   blockTime: sortedTempArray[x].blockTime,
-              //   blockHeight: sortedTempArray[x].blockHeight,
-              //   stakedBalance: sortedTempArray[x].currentReward.toNumber(),
-              //   reward: x > 0 ? sortedTempArray[x].currentReward - sortedTempArray[x-1].currentReward : 0
-              //})
-
-              let date = formatDate(sortedTempArray[x].blockTime)
-              
-              let price = getPrice(priceArray, date, currency)
-              console.log('this price', price)
-              if(!price){
-                price = 0
+          // Determine account's current staking shares to insert into the final array
+          let currentStakingShares = '0'
+          for(let z = 0; z < filteredArray.length; z++){
+            if(filteredArray[z].accountIdDepositing || filteredArray[z].accountIdStaking || filteredArray[z].accountId == accountId){
+              if(filteredArray[z].stakingShares != null){
+                currentStakingShares = filteredArray[z].stakingShares
               }
-
-              console.log('blocktime', sortedTempArray[x].blockTime)
-
-              console.log('currentreward', parseFloat(sortedTempArray[x].currentReward).toLocaleString('fullwide', {useGrouping: false}))
-
-              let currentReward = new Decimal(sortedTempArray[x].currentReward)
-              let lastReward = x > 0 ? new Decimal(sortedTempArray[x-1].currentReward) : new Decimal(0)
-              let thisReward =  x > 0 ? currentReward.minus(lastReward) : new Decimal(0)
-              let fixedOne = parseFloat(thisReward).toLocaleString('fullwide', {useGrouping: false})
-              console.log('this reward 0', fixedOne)
-              let thisRewardFormatted
-              fixedOne != "NaN" ? thisRewardFormatted = formatNearAmount(fixedOne, 5) : thisRewardFormatted = '0'
-              console.log('this reward formatted 1', thisRewardFormatted)
-              console.log('this reward formatted', parseFloat(thisRewardFormatted))
-              totalRewards = totalRewards + parseFloat(thisRewardFormatted)
-              console.log('total rewards', totalRewards)
-              let readyForCardReward = totalRewards.toFixed(5)
-              setCardTotalReward(readyForCardReward)
-
-              totalValue = totalValue + (parseFloat(thisRewardFormatted) * price)
-            
-              let readyForCardValue = totalValue.toFixed(2)
-              setCardTotalValue(readyForCardValue)
-
-              // ensure no zero value quantities/prices
-              if(thisRewardFormatted != '0'){
-                csvDownload.push({
-                  JournalNo: journalNo,
-                  JournalDate: date,
-                  Currency: currency.toUpperCase(),
-                  Memo: '',
-                  AccountName: debitAccountName,
-                  Debits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-                  Credits: '',
-                  Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
-                  Name: sortedTempArray[x].validator,
-                  Location: '',
-                  Class: ''
-                })
-
-                csvDownload.push({
-                  JournalNo: journalNo,
-                  JournalDate: date,
-                  Currency: currency.toUpperCase(),
-                  Memo: '',
-                  AccountName: creditAccountName,
-                  Debits: '',
-                  Credits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-                  Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
-                  Name: sortedTempArray[x].validator,
-                  Location: '',
-                  Class: ''
-                })
-                console.log('blocktime here', sortedTempArray[x].blockTime)
-                csvSingle.push({
-                  Date: date,
-                  Currency: currency.toUpperCase(),
-                  Reward: thisRewardFormatted,
-                  Price: price,
-                  Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
-                  Block: sortedTempArray[x].blockHeight,
-                  Epoch: sortedTempArray[x].epoch,
-                  BlockTime: `timestamp: ${sortedTempArray[x].blockTime}`,
-                  Validator: sortedTempArray[x].validator
-                })
-
-                journalNo ++
+              if(filteredArray[z].totalStakingShares != null){
+                currentStakingShares = filteredArray[z].totalStakingShares
               }
             }
-          }
-         // validators.push(ultimateArray)
-          setValidatorData(validators)
-          setCsvExport(csvDownload)
-          setCsvSingleExport(csvSingle)
-         // count++
-        //}
-     // }
 
+            let contractBalance = '0'
+            if(filteredArray[z].newContractStakedBalance != null){
+              contractBalance = filteredArray[z].newContractStakedBalance
+            }
+            if(filteredArray[z].contractTotalStakedBalance){
+              contractBalance = filteredArray[z].contractTotalStakedBalance
+            }
+            
+            let contractShares = '0'
+            if(filteredArray[z].contractTotalShares != null){
+              contractShares = filteredArray[z].contractTotalShares
+            }
+            if(filteredArray[z].newContractTotalShares != null){
+              contractShares = filteredArray[z].newContractTotalShares
+            }
+
+            finalArray.push({
+              validator: filteredArray[z].executorId,
+              epoch: filteredArray[z].epoch,
+              blockTime: filteredArray[z].blockTime,
+              blockHeight: filteredArray[z].blockHeight,
+              contractStakedBalance: contractBalance,
+              contractTotalShares: contractShares,
+              currentSharePrice: parseFloat(contractBalance) / parseFloat(contractShares),
+              currentStakingShares: currentStakingShares,
+              currentReward: parseFloat(currentStakingShares) * (parseFloat(contractBalance) / parseFloat(contractShares))
+            })
+          }
+        
+        // now set finalArray back to from/to dates
+        finalArray = finalArray.filter(function(record) {          
+          return BigInt(record.blockTime) >= BigInt(from) && BigInt(record.blockTime) <= BigInt(to)
+        })
+   
+        let journalNo = journalStartNo
+        
+        let tempArray = finalArray.filter(function(validator) {
+          return (validator.validator == accountValidators[y] && validator.currentStakingShares != "0")
+        })
+        
+        let sortedTempArray = _.sortBy(tempArray, 'blockTime')
+      
+        for(let x = 0; x < sortedTempArray.length; x++){
+
+          let date = formatDate(sortedTempArray[x].blockTime)
+          
+          let priceArray = await fetchPriceTable(fromDate, toDate, accountId)
+          let price = getPrice(priceArray, date, currency)
+          if(!price) price = 0
+
+          let currentReward = new Decimal(sortedTempArray[x].currentReward)
+          let lastReward = x > 0 ? new Decimal(sortedTempArray[x-1].currentReward) : new Decimal(0)
+          let thisReward =  x > 0 ? currentReward.minus(lastReward) : new Decimal(0)
+          let fixedOne = parseFloat(thisReward).toLocaleString('fullwide', {useGrouping: false})
+          
+          let thisRewardFormatted
+          fixedOne != "NaN" ? thisRewardFormatted = formatNearAmount(fixedOne, 5) : thisRewardFormatted = '0'
+          
+          totalRewards = totalRewards + parseFloat(thisRewardFormatted)
+          let readyForCardReward = totalRewards.toFixed(5)
+          setCardTotalReward(readyForCardReward)
+
+          totalValue = totalValue + (parseFloat(thisRewardFormatted) * price)
+          let readyForCardValue = totalValue.toFixed(2)
+          setCardTotalValue(readyForCardValue)
+
+          // ensure no zero value quantities/prices and populate various exports
+          if(thisRewardFormatted != '0'){
+            qbDownload.push({
+              JournalNo: journalNo,
+              JournalDate: date,
+              Currency: currency.toUpperCase(),
+              Memo: '',
+              AccountName: debitAccountName,
+              Debits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+              Credits: '',
+              Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
+              Name: sortedTempArray[x].validator,
+              Location: '',
+              Class: ''
+            })
+
+            qbDownload.push({
+              JournalNo: journalNo,
+              JournalDate: date,
+              Currency: currency.toUpperCase(),
+              Memo: '',
+              AccountName: creditAccountName,
+              Debits: '',
+              Credits: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+              Description: `Epoch: ${sortedTempArray[x].epoch}, block: ${sortedTempArray[x].blockHeight}, Quantity: ${thisReward}`,
+              Name: sortedTempArray[x].validator,
+              Location: '',
+              Class: ''
+            })
+          
+            csvSingle.push({
+              Date: date,
+              Currency: currency.toUpperCase(),
+              Reward: thisRewardFormatted,
+              Price: price,
+              Value: (parseFloat(thisRewardFormatted) * price).toFixed(2),
+              Block: sortedTempArray[x].blockHeight,
+              Epoch: sortedTempArray[x].epoch,
+              BlockTime: `timestamp: ${sortedTempArray[x].blockTime}`,
+              Validator: sortedTempArray[x].validator
+            })
+
+            journalNo ++
+          }
+        }
+      }
+
+      setQbExport(qbDownload)
+      setCsvSingleExport(csvSingle)
       setDownloadReady(true)
       return true
     }
@@ -758,7 +464,7 @@ export default function StakingActivity(props) {
                 </Button>
                 : <>
                   <Typography variant="body1">Preparing Data</Typography>
-                  <CircularProgress disableShrink={true} />
+                  <LinearProgress />
                   </>
                   : <Grid container spacing={0} justifyContent="space-between" alignItems="center">
                   <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{marginTop:'20px'}} align="center">
@@ -767,7 +473,7 @@ export default function StakingActivity(props) {
                     </Typography>
                   </Grid>
                     <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
-                      <CSVLink data={csvExport} filename={`${accountId.split('.')[0]}-staking-quickbooks.csv`} headers={headers}>
+                      <CSVLink data={qbExport} filename={`${accountId.split('.')[0]}-staking-quickbooks.csv`} headers={qbHeaders}>
                         <img src={qbIcon} style={{width:'30px', height:'auto'}}/>
                         <Typography variant="body1" style={{marginTop: '-5px'}}>
                           Quickbooks
@@ -783,7 +489,7 @@ export default function StakingActivity(props) {
                       </Button>
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} lg={4} xl={4} align="center">
-                      <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-staking.csv`} headers={stakingDataHeaders}>
+                      <CSVLink data={csvSingleExport} filename={`${accountId.split('.')[0]}-staking.csv`} headers={csvDataHeaders}>
                         <img src={csvIcon} style={{width:'30px', height:'auto'}}/>
                         <Typography variant="body1" style={{marginTop: '-5px'}}>
                           CSV
@@ -796,7 +502,7 @@ export default function StakingActivity(props) {
             </Grid>
         : <Grid container alignItems="center" justifyContent="center" spacing={0} >
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-            {message}
+              <Typography variant="body1">This account has no staking activity.</Typography>
             </Grid>
           </Grid>
     )
