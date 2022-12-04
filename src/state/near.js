@@ -238,6 +238,10 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
 
         // ********* Account Transactions Update ******
+
+        // uncomment to clear existing transaction data
+        await clearCeramicTransactionData(account, appIdx, factoryContract, didRegistryContract)
+        
         await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account, update)
 
         // ********* All Announcements ****************
@@ -1404,7 +1408,7 @@ export async function populateNearPriceAPI(from, to, accountId, appIdx, didRegis
 }
 
 export async function buildTransactionTable(from, to, accountId, account, factoryContract, didRegistryContract, appIdx){
-    let appClient = await ceramic.getAppCeramic(accountId)
+   
     let allAliases = await queries.getAliases()
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
@@ -1427,7 +1431,6 @@ export async function buildTransactionTable(from, to, accountId, account, factor
         }
     }
 
-    // let thisIdx = new IDX({ ceramic: appClient, aliases: aliases})
     let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, aliases)
 
     let transactionArray = []
@@ -1603,6 +1606,29 @@ export async function updateNearTransactionAPI(accountId, appIdx, factoryContrac
     // }
 }
 
+export async function clearCeramicTransactionData(account, appIdx, factoryContract, didRegistryContract){
+    let allAliases = await queries.getAliases()
+    
+    for(let x = 0; x < allAliases.data.storeAliases.length; x++){
+        if(allAliases.data.storeAliases[x].description == "near transaction history"){
+            let key = allAliases.data.storeAliases[x].alias
+            let def = allAliases.data.storeAliases[x].definition
+            let alias = {[key]: def}
+            let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
+            let existingData = await thisIdx.get(key, thisIdx.id)
+            console.log('existing data before', existingData)
+            if(existingData != null){
+                let record = {
+                    history: []
+                }
+                await thisIdx.set(key, record)
+                dataCheck = await thisIdx.get(key, thisIdx.id)
+                console.log('existing data after', dataCheck)
+            }
+        }
+    }
+}
+
 export async function populateNearTransactionAPI(from, to, accountId, appIdx, factoryContract, didRegistryContract, account){
     console.log('from pop', from)
     console.log('to pop', to)
@@ -1635,10 +1661,10 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
         console.log('alias', alias)
         let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
         console.log('thisidx', thisIdx)
-        // let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
-        // console.log('thisidx', thisIdx)
+        
         let transData = await thisIdx.get(key, thisIdx.id)
         console.log('transData', transData)
+
         // get last month and year
         if(transData && transData.history.length > 0){
             lastTime = new Date(transData.history[0].transaction.block_timestamp/1000000)
