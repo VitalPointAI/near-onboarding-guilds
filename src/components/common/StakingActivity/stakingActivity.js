@@ -170,7 +170,7 @@ export default function StakingActivity(props) {
       return allAccountValidatorsActivity
     }
 
-    async function createQBExport(fromDate, toDate, accountId){
+    async function createDataExports(fromDate, toDate, accountId){
       setDownloadReady(false)
       setClicked(true)
 
@@ -468,7 +468,7 @@ export default function StakingActivity(props) {
                 !clicked ?
                   <Button 
                     variant="outlined"
-                    onClick={(e) => createQBExport(fromDate, toDate, accountId)}
+                    onClick={(e) => createDataExports(fromDate, toDate, accountId)}
                   >
                   Create Data Exports
                 </Button>
