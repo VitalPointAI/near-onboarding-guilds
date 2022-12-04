@@ -1424,9 +1424,9 @@ export async function buildTransactionTable(from, to, accountId, account, factor
         let dayMonth = uniqueMonthArray[dayD]
         everyDayAlias.push(dayYear+dayMonth+'NearTransactionHistory')
     }
-
+    console.log('every day alias', everyDayAlias)
     let aliasList = everyDayAlias.filter((x, i, a) => a.indexOf(x) === i)
-
+    console.log('aliasList', aliasList)
     let aliases = {}
     for(let y = 0; y < aliasList.length; y++){
         for(let x = 0; x < allAliases.data.storeAliases.length; x++){
@@ -1435,6 +1435,7 @@ export async function buildTransactionTable(from, to, accountId, account, factor
             }
         }
     }
+    console.log('alias check', aliases)
 
     let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, aliases)
 
@@ -1698,7 +1699,7 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
         // get last month and year
         if(transData && transData.history.length > 0){
             // set lasttime to just before first of the month of the last transaction
-            lastTime = new Date(transData.history[transData.history.length - 1].transaction.block_timestamp-1/1000000)
+            lastTime = new Date((transData.history[transData.history.length - 1].transaction.block_timestamp-1)/1000000)
             exists = true
         }
         

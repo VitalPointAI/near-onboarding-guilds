@@ -8,8 +8,7 @@ import {
   formatNearAmount } from '../../../state/near'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { CSVLink, CSVDownload } from 'react-csv'
-import Decimal from 'decimal.js'
-const axios = require('axios').default
+import { currencies } from '../../../utils/currencies'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -54,70 +53,6 @@ export default function AccountTransactionActivity(props) {
     const [downloadReady, setDownloadReady] = useState(false)
     const [clicked, setClicked] = useState(false)
     const [transactionCount, setTransactionCount] = useState(0)
-
-    const currencies = [
-      "aed",
-      "ars",
-      "aud",
-      "bch",
-      "bdt",
-      "bhd",
-      "bmd",
-      "bnb",
-      "brl",
-      "btc",
-      "cad",
-      "chf",
-      "clp",
-      "cny",
-      "czk",
-      "dkk",
-      "dot",
-      "eos",
-      "eth",
-      "eur",
-      "gbp",
-      "hkd",
-      "huf",
-      "idr",
-      "ils",
-      "inr",
-      "jpy",
-      "krw",
-      "kwd",
-      "lkr",
-      "ltc",
-      "mmk",
-      "mxn",
-      "myr",
-      "ngn",
-      "nok",
-      "nzd",
-      "php",
-      "pkr",
-      "pln",
-      "rub",
-      "sar",
-      "sek",
-      "sgd",
-      "thb",
-      "try",
-      "twd",
-      "uah",
-      "usd",
-      "vef",
-      "vnd",
-      "xag",
-      "xau",
-      "xdr",
-      "xlm",
-      "xrp",
-      "yfi",
-      "zar",
-      "bits",
-      "link",
-      "sats",
-    ]
 
     const classes = useStyles()
     const { register, handleSubmit, watch, errors, control, reset, setValue, getValues } = useForm()
@@ -209,7 +144,7 @@ export default function AccountTransactionActivity(props) {
            
       let sortedArray = _.sortBy(transactionArray, 'block_timestamp')
       console.log('sorted Array', sortedArray)   
-       
+
       setActivity(sortedArray)                  
       setTransactionCount(sortedArray.length)
 

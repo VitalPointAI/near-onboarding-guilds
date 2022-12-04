@@ -10,7 +10,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { CSVLink } from 'react-csv'
 import Decimal from 'decimal.js'
-import { currencies } from './currencies'
+import { currencies } from '../../../utils/currencies'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
