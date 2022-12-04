@@ -65,9 +65,13 @@ export default function StakingActivity(props) {
 
     const {
       accountId,
-      appIdx,
-      did
     } = state
+
+    useEffect(() => {
+      validatorCheck().then((res) => {
+
+      })
+    },[])
 
     const qbHeaders = [
       {label: "JournalNo", key: "JournalNo"},
@@ -138,17 +142,7 @@ export default function StakingActivity(props) {
       }
     }
 
-    async function createQBExport(fromDate, toDate, accountId){
-      setDownloadReady(false)
-      setClicked(true)
-
-      let finalArray = []
-      let qbDownload = []
-      let csvSingle = []
-
-      let totalRewards = 0
-      let totalValue = 0
-    
+    async function validatorCheck(){
       // Step 1:  Get all the activity that this account has had with validator contracts
       let allAccountValidatorActivity = []
       let startDate = new Date("10/18/2020").getTime()
@@ -162,7 +156,7 @@ export default function StakingActivity(props) {
 
       // Step 2: check to determine if the account has any staking data
       allAccountValidatorsActivity.length > 0 ? setValidators(true) : setValidators(false)
-
+      
       // Step 3:  Create an array of all the unique validators this account uses
       let accountValidators = []
       for (const [key, value] of Object.entries(allAccountValidatorActivity[0])){
@@ -172,7 +166,23 @@ export default function StakingActivity(props) {
           }
         }
       }
-     
+      setAccountValidators(accountValidators)
+      return allAccountValidatorsActivity
+    }
+
+    async function createQBExport(fromDate, toDate, accountId){
+      setDownloadReady(false)
+      setClicked(true)
+
+      let finalArray = []
+      let qbDownload = []
+      let csvSingle = []
+
+      let totalRewards = 0
+      let totalValue = 0
+
+      let allAccountValidatorsActivity = await validatorCheck()
+
       // Step 4:  Get timeframe to pass into queries
       let from = new Date(fromDate).getTime()
       let to = new Date(toDate).getTime()
