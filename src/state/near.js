@@ -1677,22 +1677,25 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
     
     let exists = false
     let startDate = new Date()
+   // let currentYear = currentYear.getFullYear()
+   // let currentMonth = uniqueMonthArray[startDate.getMonth()]
 
     let lastTime
-    while(!exists){
-        let currentYear = startDate.getFullYear()
-        let currentMonth = uniqueMonthArray[startDate.getMonth()]
-        let key = currentYear+currentMonth+'NearTransactionHistory'
+    //while(!exists){
+    for(let a = allAliases.data.storeAliases.length; a >= 0; a--){
+        
+       // let key = (currentYear+a)+currentMonth+'NearTransactionHistory'
        
-        let firstAlias
-        for(let h = 0; h < allAliases.data.storeAliases.length; h++){
-            if(allAliases.data.storeAliases[h].alias == key){
-                firstAlias = allAliases.data.storeAliases[h].definition
-                break
-            }
-        }
-
-        let alias = {[key]: firstAlias}
+        // let firstAlias
+        // for(let h = 0; h < allAliases.data.storeAliases.length; h++){
+        //     if(allAliases.data.storeAliases[h].alias == key){
+        //         firstAlias = allAliases.data.storeAliases[h].definition
+        //         break
+        //     }
+        // }
+        let key = allAliases.data.storeAliases[a].alias
+        let defn = allAliases.data.storeAliases[a].definition
+        let alias = {[key]: defn}
         console.log('alias', alias)
         let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
         console.log('thisidx', thisIdx)
@@ -1704,12 +1707,18 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
         if(transData && transData.history.length > 0){
             // set lasttime to just before first of the month of the last transaction
             lastTime = new Date((transData.history[transData.history.length - 1].transaction.block_timestamp-1)/1000000)
-            exists = true
+            break
+            // exists = true
         }
         
-        if(startDate.getTime() <= new Date('October 18, 2020 00:00:01').getTime()){
+        if(new Date().getTime() <= new Date('October 18, 2020 00:00:01').getTime()){
             lastTime = new Date('October 18, 2020 00:00:01')
-            exists = true
+            break
+        //    exists = true
+        }
+
+        if(a == 0 && transData && transData.history.length == 0){
+            lastTime = new Date('October 18, 2020 00:00:01')
         }
 
      //   startDate.setDate(startDate.getDate() - 30) 
