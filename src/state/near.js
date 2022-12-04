@@ -1409,13 +1409,7 @@ export async function buildTransactionTable(from, to, accountId, account, factor
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
     let everyDayAlias = []
-   
-    let adjustedFrom = new Date(from)
-    adjustedFrom.setDate(adjustedFrom.getDate()+1)
-    let adjustedTo = new Date(to)
-    adjustedTo.setDate(adjustedTo.getDate()+1)
-    for (let day = new Date(adjustedFrom); day <= adjustedTo; day.setDate(day.getDate() + 1)) {
-        console.log('day build', day)
+    for (let day = new Date(from); day <= new Date(to); day.setDate(day.getDate() + 1)) {
         let dayYear = new Date(day).getFullYear()
         let dayD = new Date(day).getMonth()
         let dayMonth = uniqueMonthArray[dayD]
@@ -1423,7 +1417,6 @@ export async function buildTransactionTable(from, to, accountId, account, factor
     }
 
     let aliasList = everyDayAlias.filter((x, i, a) => a.indexOf(x) === i)
-    console.log('aliasList', aliasList)
 
     let aliases = {}
     for(let y = 0; y < aliasList.length; y++){
@@ -1433,22 +1426,65 @@ export async function buildTransactionTable(from, to, accountId, account, factor
             }
         }
     }
-    console.log('aliases', aliases)
 
+    // let thisIdx = new IDX({ ceramic: appClient, aliases: aliases})
     let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, aliases)
-    console.log('thisidx', thisIdx)
 
     let transactionArray = []
     for(let z = 0; z < aliasList.length; z++){
         let transactionObject = await thisIdx.get(aliasList[z], thisIdx.id)
-        console.log('transactionObject', transactionObject)
         if(transactionObject != null){
             transactionArray = transactionArray.concat(transactionObject.history)
         }
     }
 
-    console.log('transactionArray', transactionArray)
     return transactionArray
+    
+    // let appClient = await ceramic.getAppCeramic(accountId)
+    // let allAliases = await queries.getAliases()
+    // const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+
+    // let everyDayAlias = []
+   
+    // let adjustedFrom = new Date(from)
+    // adjustedFrom.setDate(adjustedFrom.getDate()+1)
+    // let adjustedTo = new Date(to)
+    // adjustedTo.setDate(adjustedTo.getDate()+1)
+    // for (let day = new Date(adjustedFrom); day <= adjustedTo; day.setDate(day.getDate() + 1)) {
+    //     console.log('day build', day)
+    //     let dayYear = new Date(day).getFullYear()
+    //     let dayD = new Date(day).getMonth()
+    //     let dayMonth = uniqueMonthArray[dayD]
+    //     everyDayAlias.push(dayYear+dayMonth+'NearTransactionHistory')
+    // }
+
+    // let aliasList = everyDayAlias.filter((x, i, a) => a.indexOf(x) === i)
+    // console.log('aliasList', aliasList)
+
+    // let aliases = {}
+    // for(let y = 0; y < aliasList.length; y++){
+    //     for(let x = 0; x < allAliases.data.storeAliases.length; x++){
+    //         if(aliasList[y] == allAliases.data.storeAliases[x].alias){
+    //             aliases = {...aliases, [aliasList[y]]: allAliases.data.storeAliases[x].definition}
+    //         }
+    //     }
+    // }
+    // console.log('aliases', aliases)
+
+    // let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, aliases)
+    // console.log('thisidx', thisIdx)
+
+    // let transactionArray = []
+    // for(let z = 0; z < aliasList.length; z++){
+    //     let transactionObject = await thisIdx.get(aliasList[z], thisIdx.id)
+    //     console.log('transactionObject', transactionObject)
+    //     if(transactionObject != null){
+    //         transactionArray = transactionArray.concat(transactionObject.history)
+    //     }
+    // }
+
+    // console.log('transactionArray', transactionArray)
+    // return transactionArray
 }
 
 export async function updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account, update){
@@ -1496,7 +1532,7 @@ export async function updateNearTransactionAPI(accountId, appIdx, factoryContrac
     }
 
     if(!from){
-        from = new Date('October 1, 2020 00:00:01')
+        from = new Date('October 18, 2020 00:00:01')
     }
 
     if(to >= from){
@@ -1609,8 +1645,8 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
             exists = true
         }
         
-        if(startDate.getTime() <= new Date('October 1, 2020 00:00:01').getTime()){
-            lastTime = new Date('October 1, 2020 00:00:01')
+        if(startDate.getTime() <= new Date('October 18, 2020 00:00:01').getTime()){
+            lastTime = new Date('October 18, 2020 00:00:01')
             exists = true
         }
 
