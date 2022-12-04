@@ -1683,7 +1683,7 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
     let lastTime
     //while(!exists){
     console.log('all aliases', allAliases)
-    for(let a = allAliases.data.storeAliases.length; a >= 0; a--){
+    for(let a = allAliases.data.storeAliases.length-1; a >= 0; a--){
         
        // let key = (currentYear+a)+currentMonth+'NearTransactionHistory'
        
