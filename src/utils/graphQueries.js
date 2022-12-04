@@ -1,5 +1,4 @@
 import {ApolloClient, InMemoryCache, gql} from '@apollo/client';
-import { sliderClasses } from '@mui/material';
 import { config } from '../state/config'
 
 const {
@@ -192,83 +191,6 @@ query{
 }
 `
 
-// const VALIDATOR_ACTIVITY = gql`
-// query executor_activity($executorId: String!){
-//     pings(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
-//         blockHeight
-//         blockTime
-//         epoch
-//         rewardsReceived
-//         newContractStakedBalance
-//         newContractTotalShares
-//     }
-//     depositAndStakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
-//         blockHeight
-//         blockTime
-//         epoch
-//         rewardsReceived
-//         newContractStakedBalance
-//         newContractTotalShares
-//     }
-//     deposits(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
-//         blockHeight
-//         blockTime
-//         epoch
-//         rewardsReceived
-//         newContractStakedBalance
-//         newContractTotalShares
-//     }
-//     withdrawAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
-//         blockHeight
-//         blockTime
-//         epoch
-//         rewardsReceived
-//         newContractStakedBalance
-//         newContractTotalShares
-//     }
-//     withdraws(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
-//         blockHeight
-//         blockTime
-//         epoch
-//         rewardsReceived
-//         newContractStakedBalance
-//         newContractTotalShares
-//     }
-//     unstakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
-//         blockHeight
-//         blockTime
-//         epoch
-//         rewardsReceived
-//         newContractStakedBalance
-//         newContractTotalShares
-//     }
-//     unstakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
-//         blockHeight
-//         blockTime
-//         epoch
-//         rewardsReceived
-//         newContractStakedBalance
-//         newContractTotalShares
-//     }
-//     stakes(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
-//         blockHeight
-//         blockTime
-//         epoch
-//         rewardsReceived
-//         newContractStakedBalance
-//         newContractTotalShares
-//     }
-//     stakeAlls(first: 1000, orderBy: epoch, orderDirection: asc, where: {epoch_not: null}){
-//         blockHeight
-//         blockTime
-//         epoch
-//         rewardsReceived
-//         newContractStakedBalance
-//         newContractTotalShares
-//     }
-// }
-// `
-
 const VALIDATOR_ACTIVITY = gql`
 query executor_activity(
     $executorId: String!, 
@@ -399,6 +321,25 @@ query executor_activity(
         stakingShares
         contractTotalStakedBalance
         contractTotalShares
+        executorId
+    }
+}
+`
+
+const VALIDATOR_PING_ACTIVITY = gql`
+query executor_activity(
+    $executorId: String!, 
+    $pingsBlockTime: String!,
+    $from: String!,
+    $to: String!
+    ){
+    pings(first: 1000, orderBy: blockHeight, orderDirection: asc, where: {executorId: $executorId, blockTime_gt: $pingsBlockTime, blockTime_gte: $from, blockTime_lte: $to}){
+        blockHeight
+        blockTime
+        epoch
+        rewardsReceived
+        newContractStakedBalance
+        newContractTotalShares
         executorId
     }
 }
@@ -610,7 +551,6 @@ export default class Queries {
     async getValidatorActivity(validators, from, to){
         let validatorActivity
         let activity = []
-        let newActivity = []
         let pings = []
         let depositAndStakes = []
         let deposits = []
@@ -633,7 +573,6 @@ export default class Queries {
         let stakeAllsBlockTime = '1604271586000'
         
         for(let x = 0; x < validators.length; x++){
-            console.log('now processing: ', validators[x])
            
             let keepRunning = true
             let depositAndStakesKeepRunning = true
@@ -646,28 +585,7 @@ export default class Queries {
             let withdrawAllsKeepRunning = true
             let withdrawsKeepRunning = true
 
-            console.log('depositandstakes: ', depositAndStakesKeepRunning)
-            console.log('deposits: ', depositsKeepRunning)
-            console.log('pings: ', pingsKeepRunning)
-            console.log('stakealls: ', stakeAllsKeepRunning)
-            console.log('stakes: ', stakesKeepRunning)
-            console.log('unstakealls: ', unstakeAllsKeepRunning)
-            console.log('unstakes: ', unstakesKeepRunning)
-            console.log('withdrawalls: ', withdrawAllsKeepRunning)
-            console.log('withdraws: ', withdrawsKeepRunning)
-
-
             while(keepRunning){
-
-                console.log('a depositandstakes: ', depositAndStakesKeepRunning)
-                console.log('a deposits: ', depositsKeepRunning)
-                console.log('a pings: ', pingsKeepRunning)
-                console.log('a stakealls: ', stakeAllsKeepRunning)
-                console.log('a stakes: ', stakesKeepRunning)
-                console.log('a unstakealls: ', unstakeAllsKeepRunning)
-                console.log('a unstakes: ', unstakesKeepRunning)
-                console.log('a withdrawalls: ', withdrawAllsKeepRunning)
-                console.log('a withdraws: ', withdrawsKeepRunning)
 
                 try{
                     validatorActivity = await validatorClient.query({query: VALIDATOR_ACTIVITY, variables: {
@@ -684,16 +602,10 @@ export default class Queries {
                         stakesBlockTime: stakesBlockTime,
                         stakeAllsBlockTime: stakeAllsBlockTime
                     }})
-
-                    console.log('validatorActivity', validatorActivity)
-                    // activity.push(validatorActivity.data)
-                    // console.log('activity here', activity)
                    
                 } catch (err) {
                     console.log('error retrieving validator data: ', err)
                 }
-               
-              //  for (let y = 0; y < validatorActivity.length; y++){
               
                     for (const [key, value] of Object.entries(validatorActivity.data)){
                         console.log('key', key)
@@ -736,8 +648,6 @@ export default class Queries {
                             case 'depositAndStakes':
                                 if(depositAndStakesKeepRunning){
                                     value.forEach(element => depositAndStakes.push(element))
-                                    //activity = activity.concat(depositAndStakes)
-                                    console.log('depositsandstakes', depositAndStakes)
                                     if(parseInt(depositAndStakes[depositAndStakes.length-1].blockTime) > parseInt(depositAndStakesBlockTime)){
                                         depositAndStakesBlockTime = depositAndStakes[depositAndStakes.length-1].blockTime
                                     } else {
@@ -751,8 +661,6 @@ export default class Queries {
                             case 'deposits':
                                 if(depositsKeepRunning){
                                     value.forEach(element => deposits.push(element))
-                                  //  activity = activity.concat(deposits)
-                                    console.log('deposits', deposits)
                                     if(parseInt(deposits[deposits.length-1].blockTime) > parseInt(depositsBlockTime)){
                                         depositsBlockTime = deposits[deposits.length-1].blockTime
                                     } else {
@@ -766,14 +674,10 @@ export default class Queries {
                             case 'pings':
                                 if(pingsKeepRunning){
                                     value.forEach(element => pings.push(element))
-                                  //  activity = activity.concat(pings)
-                                    console.log('pings', pings)
                                     if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
                                         pingsBlockTime = pings[pings.length-1].blockTime
-                                        console.log('ping blocktime1', pingsBlockTime)
                                     } else {
                                         pingsBlockTime = pings[pings.length-1].blockTime
-                                        console.log('ping blocktime2', pingsBlockTime)
                                         pingsKeepRunning = false
                                     } 
                                     break
@@ -783,8 +687,6 @@ export default class Queries {
                             case 'stakeAlls':
                                 if(stakeAllsKeepRunning){
                                     value.forEach(element => stakeAlls.push(element))
-                                  //  activity = activity.concat(stakeAlls)
-                                    console.log('stakealls', stakeAlls)
                                     if(parseInt(stakeAlls[stakeAlls.length-1].blockTime) > parseInt(stakeAllsBlockTime)){
                                         stakeAllsBlockTime = stakeAlls[stakeAlls.length-1].blockTime
                                     } else {
@@ -798,8 +700,6 @@ export default class Queries {
                             case 'stakes':
                                 if(stakesKeepRunning){
                                     value.forEach(element => stakes.push(element))
-                                  //  activity = activity.concat(stakes)
-                                    console.log('stakes', stakes)
                                     if(parseInt(stakes[stakes.length-1].blockTime) > parseInt(stakesBlockTime)){
                                         stakesBlockTime = stakes[stakes.length-1].blockTime
                                     } else {
@@ -813,8 +713,6 @@ export default class Queries {
                             case 'unstakeAlls':
                                 if(unstakeAllsKeepRunning){
                                     value.forEach(element => unstakeAlls.push(element))
-                                  //  activity = activity.concat(unstakeAlls)
-                                    console.log('unstakeAlls', unstakeAlls)
                                     if(parseInt(unstakeAlls[unstakeAlls.length-1].blockTime) > parseInt(unstakeAllsBlockTime)){
                                         unstakeAllsBlockTime = unstakeAlls[unstakeAlls.length-1].blockTime
                                     } else {
@@ -828,8 +726,6 @@ export default class Queries {
                             case 'unstakes':
                                 if(unstakesKeepRunning){
                                     value.forEach(element => unstakes.push(element))
-                                 //   activity = activity.concat(unstakes)
-                                    console.log('unstakes', unstakes)
                                     if(parseInt(unstakes[unstakes.length-1].blockTime) > parseInt(unstakesBlockTime)){
                                         unstakesBlockTime = unstakes[unstakes.length-1].blockTime
                                     } else {
@@ -843,8 +739,6 @@ export default class Queries {
                             case 'withdrawAlls':
                                 if(withdrawAllsKeepRunning){
                                     value.forEach(element => withdrawAlls.push(element))
-                                  //  activity = activity.concat(withdrawAlls)
-                                    console.log('withdrawalls', withdrawAlls)
                                     if(parseInt(withdrawAlls[withdrawAlls.length-1].blockTime) > parseInt(withdrawAllsBlockTime)){
                                         withdrawAllsBlockTime = withdrawAlls[withdrawAlls.length-1].blockTime
                                     } else {
@@ -858,8 +752,6 @@ export default class Queries {
                             case 'withdraws':
                                 if(withdrawsKeepRunning){
                                     value.forEach(element => withdraws.push(element))
-                                  //  activity = activity.concat(withdraws)
-                                    console.log('withdraws', withdraws)
                                     if(parseInt(withdraws[withdraws.length-1].blockTime) > parseInt(withdrawsBlockTime)){
                                         withdrawsBlockTime = withdraws[withdraws.length-1].blockTime
                                     } else {
@@ -885,45 +777,95 @@ export default class Queries {
             }
            
         }
-        // activity = activity.concat(
-        //     depositAndStakes,
-        //     deposits,
-        //     pings,
-        //     stakes,
-        //     stakeAlls,
-        //     unstakes,
-        //     unstakeAlls,
-        //     withdraws,
-        //     withdrawAlls)
+       
         activity = activity.concat(
-            pings,
+            pings
          )
-        console.log('activity', activity)
+        
         return activity
     }
 
-    //async getAccountValidatorActivity(validatorUris, account){
+    async getValidatorPingActivity(validators, from, to){
+        let validatorActivity
+        let activity = []
+        let pings = []
+
+        // start blocktimes Oct 1 2020 (around start of mainnet)
+        let pingsBlockTime = '1604271586000'
+        
+        for(let x = 0; x < validators.length; x++){
+           
+            let keepRunning = true
+            let pingsKeepRunning = true
+
+            while(keepRunning){
+
+                try{
+                    validatorActivity = await validatorClient.query({query: VALIDATOR_PING_ACTIVITY, variables: {
+                        executorId: validators[x],
+                        from: from,
+                        to: to,
+                        pingsBlockTime: pingsBlockTime,
+                    }})
+                   
+                } catch (err) {
+                    console.log('error retrieving validator data: ', err)
+                }
+              
+                    for (const [key, value] of Object.entries(validatorActivity.data)){
+                        if(!value || value.length == 0){
+                            switch (key) {
+                                case 'pings':
+                                    pingsKeepRunning = false
+                                    break
+                                default:
+                                    break
+                            }
+                        }
+
+                        switch (key) {
+                            case 'pings':
+                                if(pingsKeepRunning){
+                                    value.forEach(element => pings.push(element))
+                                    if(parseInt(pings[pings.length-1].blockTime) > parseInt(pingsBlockTime)){
+                                        pingsBlockTime = pings[pings.length-1].blockTime
+                                    } else {
+                                        pingsBlockTime = pings[pings.length-1].blockTime
+                                        pingsKeepRunning = false
+                                    } 
+                                    break
+                                } else {
+                                    break
+                                }
+                            default:
+                                break
+                        }
+                    
+                        if(!pingsKeepRunning){
+                                keepRunning = false
+                        }
+                    }
+            }
+        }
+        activity = activity.concat(
+            pings
+         )
+        return activity
+    }
+
+   
     async getAccountValidatorActivity(account, from, to){
         let activity = []
-     //  for(let x = 0; x < validatorUris.length; x++){
-            // let validatorClient = new ApolloClient({
-            //     uri: validatorUris[x],
-            //     cache: new InMemoryCache(),
-            // })
-           
             try{
                 let validatorActivity = await validatorClient.query({query: ACCOUNT_VALIDATOR_ACTIVITY, variables: {
                     accountId: account,
                     from: from,
                     to: to
                 }})
-              
-                // activity.push([validatorUris[x], validatorActivity])
                 activity.push(validatorActivity.data)
             } catch (err) {
                 console.log('error retrieving validator data: ', err)
             }
-     //   }
         return activity
     }
 }

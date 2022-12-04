@@ -191,7 +191,7 @@ export default function StakingActivity(props) {
       // Step 5:  For set of validators, get all ping activity between identified times
       // and sort ascending by blockTime 
       let allActivity = []
-      allActivity = await queries.getValidatorActivity(accountValidators, from.toString(), to.toString())
+      allActivity = await queries.getValidatorPingActivity(accountValidators, from.toString(), to.toString())
 
       let allValidatorsActivity = []
       for (const [key, value] of Object.entries(allActivity)){
