@@ -103,14 +103,12 @@ export default function AccountTransactionActivity(props) {
 
     const handleFromDateChange = (event) => {
       let value = event.target.value.toString()
-      value = value.replace(/-/g, '\/')
       console.log('value from', value)
       setFromDate(value)
     }
 
     const handleToDateChange = (event) => {
       let value = event.target.value.toString() 
-      value = value.replace(/-/g, '\/')
       console.log('value to', value)
       setToDate(value)
     }
@@ -130,7 +128,7 @@ export default function AccountTransactionActivity(props) {
 
     async function fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract){
       if(fromDate && toDate){
-        let transactions = await buildTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract, appIdx)
+        let transactions = await buildTransactionTable(fromDate.replace(/-/g, '\/'), toDate.replace(/-/g, '\/'), accountId, account, factoryContract, didRegistryContract, appIdx)
         setTransactionTable(transactions)
         return transactions
       }
