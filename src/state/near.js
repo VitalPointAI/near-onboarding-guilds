@@ -235,6 +235,10 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         let curUserIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
 
         // ********* NEAR Price API Update ************
+        
+        // uncomment to clear existing near price data
+        //await clearCeramicPriceData(appIdx)
+
         await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
 
         // ********* Account Transactions Update ******
@@ -1610,7 +1614,7 @@ export async function clearCeramicTransactionData(account, appIdx, factoryContra
     let allAliases = await queries.getAliases()
     
     for(let x = 0; x < allAliases.data.storeAliases.length; x++){
-        if(allAliases.data.storeAliases[x].description == "near transaction history"){
+        if(allAliases.data.storeAliases[x].description.includes('transaction')){
             let key = allAliases.data.storeAliases[x].alias
             let def = allAliases.data.storeAliases[x].definition
             let alias = {[key]: def}
@@ -1624,6 +1628,26 @@ export async function clearCeramicTransactionData(account, appIdx, factoryContra
                 await thisIdx.set(key, record)
                 dataCheck = await thisIdx.get(key, thisIdx.id)
                 console.log('existing data after', dataCheck)
+            }
+        }
+    }
+}
+
+export async function clearCeramicPriceData(appIdx){
+    let allAliases = await queries.getAliases()
+    
+    for(let x = 0; x < allAliases.data.storeAliases.length; x++){
+        if(allAliases.data.storeAliases[x].description.includes('price')){
+            let key = allAliases.data.storeAliases[x].alias
+            let existingData = await appIdx.get(key, appIdx.id)
+            console.log('existing price data before', existingData)
+            if(existingData != null){
+                let record = {
+                    history: []
+                }
+                await appIdx.set(key, record)
+                dataCheck = await appIdx.get(key, thisIdx.id)
+                console.log('existing price data after', dataCheck)
             }
         }
     }
