@@ -235,7 +235,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         let curUserIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
 
         // ********* NEAR Price API Update ************
-        
+
         // uncomment to clear existing near price data
         //await clearCeramicPriceData(appIdx)
 
@@ -244,7 +244,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         // ********* Account Transactions Update ******
 
         // uncomment to clear existing transaction data
-        await clearCeramicTransactionData(account, appIdx, factoryContract, didRegistryContract)
+        //await clearCeramicTransactionData(account, appIdx, factoryContract, didRegistryContract)
         
         await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account, update)
 
