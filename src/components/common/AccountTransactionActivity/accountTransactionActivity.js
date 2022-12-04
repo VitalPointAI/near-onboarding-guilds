@@ -102,12 +102,16 @@ export default function AccountTransactionActivity(props) {
     }
 
     const handleFromDateChange = (event) => {
-      let value = event.target.value.toString() 
+      let value = event.target.value.toString()
+      value = value.replace(/-/g, '\/')
+      console.log('value from', value)
       setFromDate(value)
     }
 
     const handleToDateChange = (event) => {
       let value = event.target.value.toString() 
+      value = value.replace(/-/g, '\/')
+      console.log('value to', value)
       setToDate(value)
     }
 

@@ -1171,7 +1171,7 @@ export async function buildPriceTable(from, to, accountId){
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
     let everyDayAlias = []
-    for (let day = new Date(from).replace(/-/g, '\/').replace(/T.+/, ''); day <= new Date(to).replace(/-/g, '\/').replace(/T.+/, ''); day.setDate(day.getDate() + 1).replace(/-/g, '\/').replace(/T.+/, '')) {
+    for (let day = new Date(from); day <= new Date(to); day.setDate(day.getDate() + 1)) {
         let dayYear = new Date(day).getFullYear()
         let dayD = new Date(day).getMonth()
         let dayMonth = uniqueMonthArray[dayD]
@@ -1207,7 +1207,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     let allAliases = await queries.getAliases()
 
-    let to = new Date().replace(/-/g, '\/').replace(/T.+/, '')
+    let to = new Date()
 
     let existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
 
@@ -1240,12 +1240,12 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
    
     let from = null
     if(getit){
-        let endDate = new Date(getit.history[getit.history.length-1].date).replace(/-/g, '\/').replace(/T.+/, '')
-        from = new Date(endDate.setDate(endDate.getDate() + 1)).replace(/-/g, '\/').replace(/T.+/, '')
+        let endDate = new Date(getit.history[getit.history.length-1].date)
+        from = new Date(endDate.setDate(endDate.getDate() + 1))
     }
 
     if(to >= from){
-        for (let day = new Date(from).replace(/-/g, '\/').replace(/T.+/, ''); day <= to; day.setDate(day.getDate() + 1).replace(/-/g, '\/').replace(/T.+/, '')) {
+        for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
             let thisDay = day.getMonth()
             let thisMonth = uniqueMonthArray[thisDay]
             let thisYear = day.getFullYear()
@@ -1418,7 +1418,7 @@ export async function buildTransactionTable(from, to, accountId, account, factor
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
     let everyDayAlias = []
-    for (let day = new Date(from).replace(/-/g, '\/').replace(/T.+/, ''); day <= new Date(to).replace(/-/g, '\/').replace(/T.+/, ''); day.setDate(day.getDate() + 1).replace(/-/g, '\/').replace(/T.+/, '')) {
+    for (let day = new Date(from); day <= new Date(to); day.setDate(day.getDate() + 1)) {
         console.log('day', day)
         let dayYear = new Date(day).getFullYear()
         console.log('dayYear', dayYear)
@@ -1505,7 +1505,7 @@ export async function updateNearTransactionAPI(accountId, appIdx, factoryContrac
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     let allAliases = await queries.getAliases()
 
-    let to = new Date().replace(/-/g, '\/').replace(/T.+/, '')
+    let to = new Date()
 
     let existingAliases = await appIdx.get('nearTransactionHistory', appIdx.id)
 
@@ -1540,21 +1540,21 @@ export async function updateNearTransactionAPI(accountId, appIdx, factoryContrac
 
     let from = null
     if(getit.history.length != 0){
-        let endDate = new Date(getit.history[getit.history.length-1].date).replace(/-/g, '\/').replace(/T.+/, '')
+        let endDate = new Date(getit.history[getit.history.length-1].date)
         let eDay = endDate.getMonth()
         let eMonth = uniqueMonthArray[eDay]
         let eYear = endDate.getFullYear()
-        from = new Date(eMonth+' 1 '+eYear).replace(/-/g, '\/').replace(/T.+/, '')
+        from = new Date(eMonth+' 1 '+eYear)
         console.log('from new', from)
         //from = new Date(endDate.setDate(endDate.getDate() + 1))
     }
 
     if(!from){
-        from = new Date('October 18, 2020 00:00:01').replace(/-/g, '\/').replace(/T.+/, '')
+        from = new Date('October 18, 2020 00:00:01')
     }
 
     if(to >= from){
-        for (let day = new Date(from).replace(/-/g, '\/').replace(/T.+/, ''); day <= to; day.setDate(day.getDate() + 1).replace(/-/g, '\/').replace(/T.+/, '')) {
+        for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
             let thisDay = day.getMonth()
             let thisMonth = uniqueMonthArray[thisDay]
             let thisYear = day.getFullYear()
@@ -1676,7 +1676,7 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
     // find last month that has data
     
     let exists = false
-    let startDate = new Date().replace(/-/g, '\/').replace(/T.+/, '')
+    let startDate = new Date()
 
     let lastTime
     while(!exists){
@@ -1703,12 +1703,12 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
         // get last month and year
         if(transData && transData.history.length > 0){
             // set lasttime to just before first of the month of the last transaction
-            lastTime = new Date((transData.history[transData.history.length - 1].transaction.block_timestamp-1)/1000000).replace(/-/g, '\/').replace(/T.+/, '')
+            lastTime = new Date((transData.history[transData.history.length - 1].transaction.block_timestamp-1)/1000000)
             exists = true
         }
         
         if(startDate.getTime() <= new Date('October 18, 2020 00:00:01').getTime()){
-            lastTime = new Date('October 18, 2020 00:00:01').replace(/-/g, '\/').replace(/T.+/, '')
+            lastTime = new Date('October 18, 2020 00:00:01')
             exists = true
         }
 
@@ -1744,11 +1744,11 @@ export async function populateNearTransactionAPI(from, to, accountId, appIdx, fa
 
         for(let x = 0; x < allTransactions.length; x++){
             // get transaction day
-            let currentDay = new Date(parseFloat(allTransactions[x].block_timestamp)/1000000).replace(/-/g, '\/').replace(/T.+/, '')
+            let currentDay = new Date(parseFloat(allTransactions[x].block_timestamp)/1000000)
             let tyear = currentDay.getUTCFullYear()
             let tmonth = currentDay.getUTCMonth()
             let tday = currentDay.getUTCDate()
-            let newDate = new Date(tyear, tmonth, tday).replace(/-/g, '\/').replace(/T.+/, '')
+            let newDate = new Date(tyear, tmonth, tday)
             console.log('currentDay', newDate)
             console.log('currentDay time', newDate.getTime())
             
