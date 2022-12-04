@@ -1535,7 +1535,12 @@ export async function updateNearTransactionAPI(accountId, appIdx, factoryContrac
     let from = null
     if(getit.history.length != 0){
         let endDate = new Date(getit.history[getit.history.length-1].date)
-        from = new Date(endDate.setDate(endDate.getDate() + 1))
+        let eDay = endDate.getMonth()
+        let eMonth = uniqueMonthArray[eDay]
+        let eYear = endDate.getFullYear()
+        from = new Date(eMonth+' 1 '+eYear)
+        console.log('from new', from)
+        //from = new Date(endDate.setDate(endDate.getDate() + 1))
     }
 
     if(!from){

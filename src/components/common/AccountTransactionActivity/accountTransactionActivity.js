@@ -199,19 +199,17 @@ export default function AccountTransactionActivity(props) {
 
     async function createExport(fromDate, toDate, accountId){
       setDownloadReady(false)
+      setClicked(true)
 
       let priceArray = await fetchPriceTable(fromDate, toDate, accountId)
       let transactionArray = await fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract)
       
       let csvSingle = [] 
-
       let totalFees = 0
-      
-      setDownloadReady(false)
-      setClicked(true)
-               
+           
       let sortedArray = _.sortBy(transactionArray, 'block_timestamp')
-      console.log('sorted Array', sortedArray)    
+      console.log('sorted Array', sortedArray)   
+       
       setActivity(sortedArray)                  
       setTransactionCount(sortedArray.length)
 
