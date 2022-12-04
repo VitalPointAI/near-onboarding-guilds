@@ -244,7 +244,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         // ********* Account Transactions Update ******
 
         // uncomment to clear existing transaction data
-        await clearCeramicTransactionData(account, appIdx, factoryContract, didRegistryContract)
+        //await clearCeramicTransactionData(account, appIdx, factoryContract, didRegistryContract)
         
         await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account, update)
 
