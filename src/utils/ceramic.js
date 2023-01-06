@@ -346,11 +346,11 @@ class Ceramic {
     let signer = await InMemorySigner.fromKeyPair(networkId, didRegistryContractName, keyPair)
 
     // Step 3:  create a connection to the network using the signer's keystore and default config for testnet
-    const myKeyStore = new BrowserLocalStorageKeyStore();
+    //const myKeyStore = new BrowserLocalStorageKeyStore();
 
     const connectionConfig = {
         networkId: networkId,
-        keyStore: myKeyStore,
+        keyStore: signer.keyStore,
         nodeUrl: nodeUrl,
         walletUrl: walletUrl,
         helperUrl: helperUrl,
