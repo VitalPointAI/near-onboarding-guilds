@@ -487,7 +487,8 @@ class Ceramic {
           schema: schemaURL.commitId.toUrl()
         })
         let didContract = await this.useFundingAccount(accountId)
-        await didContract.storeAlias({alias: accountId+':'+aliasName, definition: definition.id.toString(), description: description})
+        console.log('didcontract', didContract)
+        await didContract.contract.storeAlias({alias: accountId+':'+aliasName, definition: definition.id.toString(), description: description})
         return definition.id.toString()
       }
     } catch (err) {

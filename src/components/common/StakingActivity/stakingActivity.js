@@ -357,7 +357,7 @@ export default function StakingActivity(props) {
               <Grid item xs={6} sm={6} md={6} lg={6} xl={6} align="center" style={{marginBottom: '20px'}}>
                 <Card>
                   <Typography variant="h6" align="center">Value
-                    <Tooltip TransitionComponent={Zoom} title="The accumulated acquisition cost (adjusted cost basis) of the rewards.  This is the accumulated value of the rewards on the day they are received.">
+                    <Tooltip title="The accumulated acquisition cost (adjusted cost basis) of the rewards.  This is the accumulated value of the rewards on the day they are received.">
                       <InfoIcon fontSize="small" style={{marginLeft:'5px', marginTop:'-3px'}} />
                     </Tooltip>
                   </Typography>
