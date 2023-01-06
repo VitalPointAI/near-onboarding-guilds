@@ -239,7 +239,7 @@ export const initNear = () => async ({ update, getState, dispatch }) => {
         // uncomment to clear existing near price data
         //await clearCeramicPriceData(appIdx)
 
-        await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
+        await updateNearPriceAPI(APP_OWNER_ACCOUNT, appIdx, didRegistryContract, update)
 
         // ********* Account Transactions Update ******
 
@@ -1238,8 +1238,8 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     let appClient = await ceramic.getAppCeramic(accountId)
     let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
     let getit = await thisIdx.get(lastKey, thisIdx.id)
-   
-    let from = null
+    console.log('get it', getit)
+    let from
     if(getit){
         let endDate = new Date(getit.history[getit.history.length-1].date)
         from = new Date(endDate.setDate(endDate.getDate() + 1))
