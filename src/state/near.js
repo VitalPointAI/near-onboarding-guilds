@@ -1206,6 +1206,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     
     const uniqueMonthArray = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     let allAliases = await queries.getAliases()
+    console.log('allAliases', allAliases)
 
     let to = new Date()
     console.log('to', to)
@@ -1258,7 +1259,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
         from = new Date(endDate.setDate(endDate.getDate() + 1))
     }
     console.log('from', from)
-    
+
     if(to >= from){
         for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
             console.log('to here', to)
