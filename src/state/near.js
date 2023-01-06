@@ -1211,10 +1211,13 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     console.log('to', to)
 
     let existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
+    console.log('existing aliases', existingAliases)
 
     let lastKey = existingAliases.history[existingAliases.history.length-1][0]
+    console.log('lastKey', lastKey)
 
     let lastYear = lastKey.substring(0,4)
+    console.log('last year', lastYear)
 
     let lastMonth
     for (let x = 0; x < uniqueMonthArray.length; x++){
@@ -1223,8 +1226,10 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
             break
         }
     }
+    console.log('lastMonth', lastMonth)
 
     let key = lastYear+lastMonth+'NearPriceHistory'
+    console.log('key', key)
 
     let yearMonthAlias
     for(let q = 0; q < allAliases.data.storeAliases.length; q++){
@@ -1233,18 +1238,27 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
             break
         }
     }
+    console.log('yearmonthalias', yearMonthAlias)
 
     let alias = {[key]: yearMonthAlias}
+    console.log('alias', alias)
+
     let appClient = await ceramic.getAppCeramic(accountId)
+    console.log('appClient', appClient)
+
     let thisIdx = new IDX({ ceramic: appClient, aliases: alias})
+    console.log('thisidx', thisIdx)
+
     let getit = await thisIdx.get(lastKey, thisIdx.id)
     console.log('get it', getit)
-    let from
+
+    let from = null
     if(getit){
         let endDate = new Date(getit.history[getit.history.length-1].date)
         from = new Date(endDate.setDate(endDate.getDate() + 1))
     }
-
+    console.log('from', from)
+    
     if(to >= from){
         for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
             console.log('to here', to)
@@ -1539,7 +1553,7 @@ export async function updateNearTransactionAPI(accountId, appIdx, factoryContrac
 
     let thisIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract, alias)
     let getit = await thisIdx.get(key, thisIdx.id)
-    console.log('getit', getit)
+    console.log('getit trans api', getit)
 
     let from = null
     if(getit.history.length != 0){
