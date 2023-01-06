@@ -1208,6 +1208,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     let allAliases = await queries.getAliases()
 
     let to = new Date()
+    console.log('to', to)
 
     let existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
 
@@ -1246,6 +1247,8 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
 
     if(to >= from){
         for (let day = new Date(from); day <= to; day.setDate(day.getDate() + 1)) {
+            console.log('to here', to)
+            console.log('from here', from)
             let thisDay = day.getMonth()
             let thisMonth = uniqueMonthArray[thisDay]
             let thisYear = day.getFullYear()
