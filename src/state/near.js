@@ -1688,7 +1688,7 @@ export async function clearCeramicPriceData(appIdx){
                     history: []
                 }
                 await appIdx.set(key, record)
-                dataCheck = await appIdx.get(key, thisIdx.id)
+                dataCheck = await appIdx.get(key, appIdx.id)
                 console.log('existing price data after', dataCheck)
             }
         }
