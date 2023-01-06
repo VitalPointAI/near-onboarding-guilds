@@ -1211,33 +1211,39 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     let to = new Date()
     console.log('to', to)
 
-    let existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
-    console.log('existing aliases', existingAliases)
-
-    let lastKey = existingAliases.history[existingAliases.history.length-1][0]
-    console.log('lastKey', lastKey)
-
-    let lastYear = lastKey.substring(0,4)
-    console.log('last year', lastYear)
-
-    let lastMonth
-    for (let x = 0; x < uniqueMonthArray.length; x++){
-        if(lastKey.includes(uniqueMonthArray[x])){
-            lastMonth = uniqueMonthArray[x]
-            break
-        }
-    }
-    console.log('lastMonth', lastMonth)
-
-    let key = lastYear+lastMonth+'NearPriceHistory'
-    console.log('key', key)
-
     let yearMonthAlias
+    let key
+    let lastKey
+    let existingAliases
+    let lastYear
+    let lastMonth
     for(let q = 0; q < allAliases.data.storeAliases.length; q++){
+        existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
+        console.log('existing aliases', existingAliases)
+
+        lastKey = existingAliases.history[existingAliases.history.length-(q+1)][0]
+        console.log('lastKey', lastKey)
+
+        lastYear = lastKey.substring(0,4)
+        console.log('last year', lastYear)
+
+        lastMonth
+        for (let x = 0; x < uniqueMonthArray.length; x++){
+            if(lastKey.includes(uniqueMonthArray[x])){
+                lastMonth = uniqueMonthArray[x]
+                break
+            }
+        }
+        console.log('lastMonth', lastMonth)
+
+        key = lastYear+lastMonth+'NearPriceHistory'
+        console.log('key', key)
+
         if(allAliases.data.storeAliases[q].alias == key){
             yearMonthAlias = allAliases.data.storeAliases[q].definition
-            break
+            if(yearMonthAlias) break
         }
+        
     }
     console.log('yearmonthalias', yearMonthAlias)
 
