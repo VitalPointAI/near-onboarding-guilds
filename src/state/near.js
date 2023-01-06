@@ -1214,36 +1214,41 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     let yearMonthAlias
     let key
     let lastKey
-    let existingAliases
+    let existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
+    console.log('existing aliases', existingAliases)
+
     let lastYear
     let lastMonth
-    for(let q = 0; q < allAliases.data.storeAliases.length; q++){
-        existingAliases = await appIdx.get('nearPriceHistory', appIdx.id)
-        console.log('existing aliases', existingAliases)
+    //for(let q = 0; q < allAliases.data.storeAliases.length; q++){
+    if(existingAliases && existingAliases.history.length > 0){
+        for(let q = 0; q < existingAliases.history.length; q++){
 
-        lastKey = existingAliases.history[existingAliases.history.length-(q+1)][0]
-        console.log('lastKey', lastKey)
+            lastKey = existingAliases.history[existingAliases.history.length-1][0]
+            console.log('lastKey', lastKey)
 
-        lastYear = lastKey.substring(0,4)
-        console.log('last year', lastYear)
+            lastYear = lastKey.substring(0,4)
+            console.log('last year', lastYear)
 
-        lastMonth
-        for (let x = 0; x < uniqueMonthArray.length; x++){
-            if(lastKey.includes(uniqueMonthArray[x])){
-                lastMonth = uniqueMonthArray[x]
+            lastMonth
+            for (let x = 0; x < uniqueMonthArray.length; x++){
+                if(lastKey.includes(uniqueMonthArray[x])){
+                    lastMonth = uniqueMonthArray[x]
+                    break
+                }
+            }
+            console.log('lastMonth', lastMonth)
+
+            key = lastYear+lastMonth+'NearPriceHistory'
+            console.log('key', key)
+
+            // if(allAliases.data.storeAliases[q].alias == key){
+            if(existingAliases.history[q][0] == key){
+            //    yearMonthAlias = allAliases.data.storeAliases[q].definition
+            yearMonthAlias = existingAliases.history[q][1]
                 break
             }
+            
         }
-        console.log('lastMonth', lastMonth)
-
-        key = lastYear+lastMonth+'NearPriceHistory'
-        console.log('key', key)
-
-        if(allAliases.data.storeAliases[q].alias == key){
-            yearMonthAlias = allAliases.data.storeAliases[q].definition
-            if(yearMonthAlias) break
-        }
-        
     }
     console.log('yearmonthalias', yearMonthAlias)
 
