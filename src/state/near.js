@@ -1223,7 +1223,7 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
     if(existingAliases && existingAliases.history.length > 0){
         for(let q = 0; q < existingAliases.history.length; q++){
 
-            lastKey = existingAliases.history[existingAliases.history.length-1][0]
+            lastKey = existingAliases.history[existingAliases.history.length-(q+1)][0]
             console.log('lastKey', lastKey)
 
             lastYear = lastKey.substring(0,4)
@@ -1242,9 +1242,9 @@ export async function updateNearPriceAPI(accountId, appIdx, didRegistryContract,
             console.log('key', key)
 
             // if(allAliases.data.storeAliases[q].alias == key){
-            if(existingAliases.history[q][0] == key){
+            if(existingAliases.history[q][0] == key && existingAliases.history[q][1] != false){
             //    yearMonthAlias = allAliases.data.storeAliases[q].definition
-            yearMonthAlias = existingAliases.history[q][1]
+                yearMonthAlias = existingAliases.history[q][1]
                 break
             }
             
