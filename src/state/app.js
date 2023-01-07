@@ -90,7 +90,7 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
 
     const appAccount = await near.account(APP_OWNER_ACCOUNT)
 
-    const appRegistryContract = await registry.initiateregistryContract(account)
+    const appRegistryContract = await registry.initiateregistryContract(appAccount)
     
     const appIdx = await ceramic.getAppIdx(appRegistryContract, appAccount)
 
