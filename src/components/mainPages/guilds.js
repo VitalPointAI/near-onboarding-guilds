@@ -3,7 +3,7 @@ import { appStore, onAppMount } from '../../state/app'
 import Fuse from 'fuse.js'
 import GuildCard from '../Cards/GuildCard/guildCard'
 import SearchBar from '../common/SearchBar/search'
-import { updateCurrentGuilds } from '../../state/near'
+import { updateCurrentGuilds } from '../../state/user'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -67,7 +67,7 @@ export default function ExploreGuilds(props) {
       near,
       isUpdated,
       did,
-      didRegistryContract,
+      registryContract,
       nearPrice,
       appIdx
     } = state

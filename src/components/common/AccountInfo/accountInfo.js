@@ -41,8 +41,12 @@ export default function PersonaInfo(props) {
       links,
       balance,
       did,
-      accountType
+      
     } = state
+
+    const {
+        accountType
+    } = state.user
 
     const {
         contractId

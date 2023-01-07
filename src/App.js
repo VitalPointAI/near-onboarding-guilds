@@ -83,11 +83,12 @@ const App = () => {
     const classes = useStyles()
     const matches = useMediaQuery('(max-width:500px)')
 
+    // initialize global app settings
     const onMount = () => {
-        dispatch(onAppMount());
-    };
+        dispatch(onAppMount())
+    }
 
-    useEffect(onMount, []);
+    useEffect(onMount, [])
 
     window.onerror = function (message, url, lineNo) {
         alert('Error: ' + message + 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../../state/app'
+import { formatDate } from '../../../utils/helpers'
 
 // Material UI Components
 import Button from '@mui/material/Button'
@@ -63,12 +64,6 @@ export default function AnnouncementCard(props) {
 
   function handleExpanded() {
     setAnchorEl(null)
-  }
-
-  function formatDate(timestamp) {
-    //let stringDate = timestamp.toString()
-    let options = {year: 'numeric', month: 'long', day: 'numeric'}
-    return new Date(parseInt(timestamp.slice(0,13))).toLocaleString('en-US', options)
   }
 
     return(

@@ -6,9 +6,9 @@ import { AppProvider } from './state/app.js'
 
 ReactDOM.render(
 	<AppProvider>
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>
+			<BrowserRouter>
+				<App />
+			</BrowserRouter>
 	</AppProvider>,
 	document.getElementById('root')
 );

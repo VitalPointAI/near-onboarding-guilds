@@ -34,7 +34,7 @@ export default function Purpose(props) {
   
   const {
     factoryContract,
-    didRegistryContract,
+    registryContract,
     appIdx
   } = state
 
@@ -43,7 +43,7 @@ export default function Purpose(props) {
 
         async function fetchData(){
           if(contractId){
-            let contractDid = await ceramic.getDid(contractId, factoryContract, didRegistryContract)
+            let contractDid = await ceramic.getDid(contractId, factoryContract, registryContract)
             let community = await appIdx.get('guildProfile', contractDid)
             community ? setPurpose(community.purpose) : setPurpose('Not set yet!')
           }

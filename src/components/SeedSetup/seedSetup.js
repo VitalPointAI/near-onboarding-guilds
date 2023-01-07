@@ -21,7 +21,7 @@ import Tooltip from '@mui/material/Tooltip'
 import InfoIcon from '@mui/icons-material/Info'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
-import { ACCOUNT_LINKS } from '../../state/near'
+import { ACCOUNT_LINKS } from '../../state/user'
 
 const bip39 = require('bip39')
 const base58 = require('bs58')

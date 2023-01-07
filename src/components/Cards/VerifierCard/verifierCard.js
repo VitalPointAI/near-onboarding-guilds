@@ -6,7 +6,7 @@ import { appStore, onAppMount } from '../../../state/app'
 import { ceramic } from '../../../utils/ceramic'
 import Intro from '../Intro/intro'
 import Social from '../../common/Social/social'
-import { signal } from '../../../state/near'
+import { signal } from '../../../state/user'
 
 
 // Material UI Components
@@ -65,11 +65,16 @@ export default function VerifierCard(props) {
      isUpdated,
      near,
      accountId,
-     didRegistryContract,
+     registryContract,
      factoryContract,
-     superAdmin,
+   
      admins
    } = state
+
+   const {
+    superAdmin,
+
+   } = state.app
 
     useEffect(
       () => {
@@ -77,14 +82,14 @@ export default function VerifierCard(props) {
       async function fetchData() {
           if(isUpdated){}
           if(personId.accountId && appIdx && near){
-            let did = await ceramic.getDid(personId.accountId, factoryContract, didRegistryContract)
+            let did = await ceramic.getDid(personId.accountId, factoryContract, registryContract)
             setDid(did)
             // Registration Status
             did ? setRegistered(true) : setRegistered(false)
             
             // Verification Status
             try{
-              let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: personId.accountId})
+              let verificationStatus = await registryContract.getVerificationStatus({accountId: personId.accountId})
                 if(verificationStatus != 'null'){
                   setVerified(verificationStatus)
                 }
@@ -95,7 +100,7 @@ export default function VerifierCard(props) {
             let thisCurUserIdx
             try{
               let personAccount = new nearAPI.Account(near.connection, personId.accountId)
-              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, factoryContract, didRegistryContract)
+              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, factoryContract, registryContract)
               setCurUserIdx(thisCurUserIdx)
               } catch (err) {
                 console.log('problem getting curuseridx', err)
@@ -157,18 +162,13 @@ export default function VerifierCard(props) {
     await signal(sig, curUserIdx, personId.accountId, 'individual')
     update('', {isUpdated: !isUpdated})
   }
-  
-  function formatDate(timestamp) {
-    let stringDate = timestamp.toString()
-    let options = {year: 'numeric', month: 'long', day: 'numeric'}
-    return new Date(parseInt(stringDate.slice(0,13))).toLocaleString('en-US', options)
-  }
+
 
   async function removeVerifier() {
     event.preventDefault()
     setRemoveVerifierFinished(false)
     try {
-        await didRegistryContract.removeVerifier({
+        await registryContract.removeVerifier({
           accountId: personId.accountId
         })
       } catch (err) {

@@ -37,7 +37,7 @@ export const {
     FUNDING_DATA, FUNDING_DATA_BACKUP, SEEDS, ACCOUNT_LINKS, DAO_LINKS, GAS, SEED_PHRASE_LOCAL_COPY, REDIRECT, 
     KEY_REDIRECT, APP_OWNER_ACCOUNT, IPFS_PROVIDER, IPFS_CALL, FACTORY_DEPOSIT, CERAMIC_API_URL, APPSEED_CALL, 
     networkId, nodeUrl, walletUrl, helperUrl, explorerUrl, nameSuffix,
-    contractName, didRegistryContractName, factoryContractName,
+    contractName, registryContractName, factoryContractName,
     TOKEN_CALL, AUTH_TOKEN, ALIASES, FUNDING_SEED_CALL
 } = config
 
@@ -343,7 +343,7 @@ class Ceramic {
     let keyPair = KeyPair.fromString(retrieveSeed.data.seed)
  
     // Step 2:  load up an inMemorySigner using the keyPair for the account
-    let signer = await InMemorySigner.fromKeyPair(networkId, didRegistryContractName, keyPair)
+    let signer = await InMemorySigner.fromKeyPair(networkId, registryContractName, keyPair)
 
     // Step 3:  create a connection to the network using the signer's keystore and default config for testnet
     //const myKeyStore = new BrowserLocalStorageKeyStore();
@@ -360,10 +360,10 @@ class Ceramic {
     const near = await connect(connectionConfig)
 
     // Step 4:  get the account object of the currentAccount.  At this point, we should have full control over the account.
-    let account = new Account(near.connection, didRegistryContractName)
+    let account = new Account(near.connection, registryContractName)
    
     // initiate the contract so its associated with this current account and exposing all the methods
-    let contract = new Contract(account, didRegistryContractName, {
+    let contract = new Contract(account, registryContractName, {
       changeMethods: ['putDID', 'deleteDID', 'adjustKeyAllowance', 'storeAlias']
     })
 

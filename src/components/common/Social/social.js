@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
-import { daoRootName } from '../../../state/near'
+import { daoRootName } from '../../../state/user'
 
 // Material-UI Components
 import { Grid } from '@mui/material'

@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import { get, set, del } from '../../utils/storage'
+import { isAccountTaken } from '../../utils/helpers'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
-import { GAS, 
+import {
   parseNearAmount, 
-  didRegistryContractName, 
+  registryContractName, 
   fundingContractName,
   nameSuffix,
   getSendyAPI,
   formatNearAmount,
-  networkId,
-  MAIL_URL } from '../../state/near'
+   } from '../../state/user'
 import { ceramic } from '../../utils/ceramic'
 import AdminCard from '../Cards/AdminCard/adminCard'
 import VerifierCard from '../Cards/VerifierCard/verifierCard'
@@ -20,6 +20,7 @@ import { EditorState, convertFromRaw, convertToRaw, ContentState } from 'draft-j
 import { Editor } from "react-draft-wysiwyg"
 import qs from 'qs'
 import axios from 'axios'
+import { config } from '../../state/config'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -79,23 +80,50 @@ export default function Admin(props) {
   const [messagePlainText, setMessagePlainText] = useState('')
   const [newMessageFinished, setNewMessageFinished] = useState(true)
   const [subject, setSubject] = useState('')
+  const [accountTaken, setAccountTaken] = useState(false)
 
   const {
-    fundingContract,
-    didRegistryContract,
-    factoryContract,
-    contract,
-    account,
-    isUpdated,
-    near,
-    admins,
-    currentVerifiers,
-    app,
-    wallet,
+    MAIL_URL  
+  } = config
+
+  const {
+    userInitialized,
+    curUserIdx,
+    did,
+    isVerifier,
+    isVerified,
     isAdmin,
+    accountType,
+    account,
     accountId,
-    appIdx
-  } = state  
+    signedIn,
+    balance,
+    wallet,
+    walletContract, 
+    registryContract, 
+    factoryContract, 
+    nftContract, 
+    fundingContract,
+    catalystContract
+} = state.user
+
+const {
+    mounted,
+    appIdx,
+    near,
+    appRegistryContract,
+    ceramicClient,
+    appAccount,
+    superAdmin,
+    admins,
+    announcements,
+    isUpdated,
+    currentGuilds, 
+    currentCommunities, 
+    guildsAwaitingVerification,
+    currentIndividuals,
+    currentVerifiers
+} = state.app
 
   useEffect(() => {
     let keyAmount
@@ -112,7 +140,7 @@ export default function Admin(props) {
           accessKey = await near.connection.provider.query({
               request_type: "view_access_key",
               finality: "final",
-              account_id: didRegistryContractName,
+              account_id: registryContractName,
               public_key: publicKey
           })
           keyAmount = formatNearAmount(accessKey.permission.FunctionCall.allowance, 7)
@@ -173,14 +201,14 @@ export default function Admin(props) {
   }
 
   async function isRegistered(account, type) {
-    let adminDid = await ceramic.getDid(account, factoryContract, didRegistryContract)
+    let adminDid = await ceramic.getDid(account, factoryContract, registryContract)
     adminDid && type == 'admin' ? setAdminRegistered(true) : null
     adminDid && type == 'verifier' ? setVerifierRegistered(true) : null
   }
   
   async function isVerified(account){
     try{
-      let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: account})
+      let verificationStatus = await registryContract.getVerificationStatus({accountId: account})
         if(verificationStatus != 'null'){
           setVerified(verificationStatus)
         }
@@ -224,7 +252,7 @@ export default function Admin(props) {
     event.preventDefault()
     setNewAdminFinished(false)
     try {
-        await didRegistryContract.addAdmin({
+        await registryContract.addAdmin({
           accountId: newAdmin + nameSuffix
         })
       } catch (err) {
@@ -236,7 +264,7 @@ export default function Admin(props) {
     event.preventDefault()
     setNewVerifierFinished(false)
     try {
-        await didRegistryContract.addVerifier({
+        await registryContract.addVerifier({
           accountId: verifier + nameSuffix
         })
       } catch (err) {
@@ -458,7 +486,7 @@ export default function Admin(props) {
                 value={newAdmin}
                 inputRef={register({
                   validate: {
-                  exists: value => app.accountTaken,
+                  exists: value => accountTaken,
                   registered: value => adminRegistered
                   }        
                 })}
@@ -472,7 +500,7 @@ export default function Admin(props) {
                 onChange={(e) => {
                   const v = e.target.value.toLowerCase()
                   setNewAdmin(v)
-                  wallet.isAccountTaken(v)
+                  setAccountTaken(isAccountTaken(v, near))
                   isRegistered(v + nameSuffix, 'admin')
                   isVerified(v + nameSuffix)
                 }}
@@ -488,7 +516,7 @@ export default function Admin(props) {
               }
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="left">
-              {newAdmin != '' && (!app.accountTaken || !adminRegistered || !verified) ? <><Typography variant="overline">Not a valid admin account.</Typography><br></br></>: null}
+              {newAdmin != '' && (!accountTaken || !adminRegistered || !verified) ? <><Typography variant="overline">Not a valid admin account.</Typography><br></br></>: null}
             </Grid>  
           </Grid>
         </AccordionDetails>
@@ -536,7 +564,7 @@ export default function Admin(props) {
               value={verifier}
               inputRef={register({
                 validate: {
-                exists: value => app.accountTaken,
+                exists: value => accountTaken,
                 registered: value => verifierRegistered,
                 verified: value => verified
                 }        
@@ -551,7 +579,7 @@ export default function Admin(props) {
               onChange={(e) => {
                 const v = e.target.value.toLowerCase()
                 setVerifier(v)
-                wallet.isAccountTaken(v)
+                setAccountTaken(isAccountTaken(v, near))
                 isRegistered(v + nameSuffix, 'verifier')
                 isVerified(v + nameSuffix)
               }}
@@ -567,7 +595,7 @@ export default function Admin(props) {
             }
           </Grid>
           <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="left">
-            {verifier != '' && (!app.accountTaken || !verifierRegistered || !verified) ? <><Typography variant="overline">Not a valid verifier account.</Typography><br></br></>: null}
+            {verifier != '' && (!accountTaken || !verifierRegistered || !verified) ? <><Typography variant="overline">Not a valid verifier account.</Typography><br></br></>: null}
           </Grid> 
         </Grid>
       </AccordionDetails>

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import { ceramic } from '../../utils/ceramic'
-import { updateCurrentGuilds } from '../../state/near'
+import { updateCurrentGuilds } from '../../state/user'
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'

@@ -6,8 +6,8 @@ import { ceramic } from '../../../utils/ceramic'
 import { catalystDao } from '../../../utils/catalystDao'
 import Purpose from '../Purpose/purpose'
 import Social from '../../common/Social/social'
-import { signalCounter, guildRootName } from '../../../state/near'
-import { updateCurrentGuilds } from '../../../state/near'
+import { signalCounter, guildRootName } from '../../../state/user'
+import { updateCurrentGuilds } from '../../../state/user'
 
 
 // Material UI Components
@@ -101,12 +101,16 @@ export default function GuildCard(props) {
      appIdx,
      isUpdated,
      near,
-     didRegistryContract,
+     registryContract,
      factoryContract,
      admins,
-     isVerifier,
+   
      isAdmin
    } = state
+
+   const {
+    isVerifier
+   } = state.user
 
     useEffect(
       () => {
@@ -144,9 +148,9 @@ export default function GuildCard(props) {
         }
 
         // Get Verification Status
-        if(didRegistryContract){
+        if(registryContract){
           try{
-            let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: contractId})
+            let verificationStatus = await registryContract.getVerificationStatus({accountId: contractId})
          
             if(verificationStatus != 'null'){
               setVerified(verificationStatus)
@@ -157,9 +161,9 @@ export default function GuildCard(props) {
         }
 
         // Get Tier
-        if(didRegistryContract){
+        if(registryContract){
           try{
-            let tierStatus = await didRegistryContract.getTier({accountId: contractId})
+            let tierStatus = await registryContract.getTier({accountId: contractId})
       
             if(tierStatus != 'null'){
               setTier(tierStatus)
@@ -337,7 +341,7 @@ export default function GuildCard(props) {
   async function changeVerify(){
     setChangeFinished(false)
     try{
-      await didRegistryContract.changeVerificationStatus(
+      await registryContract.changeVerificationStatus(
         {
           accountId: contractId,
           verified: !verified
@@ -349,20 +353,14 @@ export default function GuildCard(props) {
   }
 
   async function handleSignal(sig, contractId){
-    await signalCounter(sig, contractId, accountId, 'guild', near, appIdx, didRegistryContract, guildDid, factoryContract)
+    await signalCounter(sig, contractId, accountId, 'guild', near, appIdx, registryContract, guildDid, factoryContract)
     update('', {isUpdated: !isUpdated})
-  }
-  
-  function formatDate(timestamp) {
-    let stringDate = timestamp.toString()
-    let options = {year: 'numeric', month: 'long', day: 'numeric'}
-    return new Date(parseInt(stringDate.slice(0,13))).toLocaleString('en-US', options)
   }
 
   async function handleTier(event){
     setChangeFinished(false)
     try{
-      await didRegistryContract.changeTier({
+      await registryContract.changeTier({
         accountId: contractId,
         tier: event.target.value
       })

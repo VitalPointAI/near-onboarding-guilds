@@ -4,7 +4,7 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import FileUpload from '../common/IPFSUpload/fileUpload'
 import { IPFS_PROVIDER } from '../../utils/ceramic' 
 import { config } from '../../state/config'
-import { formatDate } from '../../state/near'
+import { formatDate } from '../../state/user'
 import draftToHtml from 'draftjs-to-html'
 import htmlToDraft from 'html-to-draftjs'
 import { EditorState, convertFromRaw, convertToRaw, ContentState } from 'draft-js'
@@ -87,7 +87,7 @@ export const {
   FUNDING_DATA, FUNDING_DATA_BACKUP, ACCOUNT_LINKS, DAO_LINKS, GAS, SEED_PHRASE_LOCAL_COPY, FACTORY_DEPOSIT, DAO_FIRST_INIT, CURRENT_DAO, REDIRECT,
   NEW_PROPOSAL, NEW_SPONSOR, NEW_CANCEL, KEY_REDIRECT, OPPORTUNITY_REDIRECT, NEW_PROCESS, NEW_VOTE, NEW_DONATION, NEW_EXIT, NEW_RAGE, NEW_DELEGATION, NEW_REVOCATION,
   networkId, nodeUrl, walletUrl, nameSuffix, factorySuffix, explorerUrl,
-  contractName, didRegistryContractName, factoryContractName
+  contractName, registryContractName, factoryContractName
 } = config
 
 export default function EditProfileForm(props) {

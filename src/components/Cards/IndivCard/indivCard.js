@@ -5,7 +5,7 @@ import { appStore, onAppMount } from '../../../state/app'
 import { ceramic } from '../../../utils/ceramic'
 import Intro from '../Intro/intro'
 import Social from '../../common/Social/social'
-import { signal } from '../../../state/near'
+import { signal } from '../../../state/user'
 
 
 // Material UI Components
@@ -68,7 +68,7 @@ export default function IndivCard(props) {
      appIdx,
      isUpdated,
      near,
-     didRegistryContract,
+     registryContract,
      factoryContract,
      admin,
    } = state
@@ -85,7 +85,7 @@ export default function IndivCard(props) {
             
             // Verification Status
             try{
-              let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: personId})
+              let verificationStatus = await registryContract.getVerificationStatus({accountId: personId})
                 if(verificationStatus != 'null'){
                   setVerified(verificationStatus)
                 }
@@ -96,7 +96,7 @@ export default function IndivCard(props) {
             let thisCurUserIdx
             try{
               let personAccount = new nearAPI.Account(near.connection, personId)
-              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, factoryContract, didRegistryContract)
+              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, factoryContract, registryContract)
               setCurUserIdx(thisCurUserIdx)
               } catch (err) {
                 console.log('problem getting curuseridx', err)
@@ -160,12 +160,6 @@ export default function IndivCard(props) {
     update('', {isUpdated: !isUpdated})
   }
   
-  function formatDate(timestamp) {
-    let stringDate = timestamp.toString()
-    let options = {year: 'numeric', month: 'long', day: 'numeric'}
-    return new Date(parseInt(stringDate.slice(0,13))).toLocaleString('en-US', options)
-  }
-
     return(
         <>
         {!display ? <LinearProgress /> : 

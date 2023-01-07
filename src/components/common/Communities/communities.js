@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../../state/app'
 import GuildCard from '../../Cards/GuildCard/guildCard'
-import { updateCurrentGuilds } from '../../../state/near'
+import { updateCurrentGuilds } from '../../../state/user'
 
 // Material UI components
 import { makeStyles } from '@material-ui/core/styles'

@@ -38,7 +38,7 @@ export default function Announcements(props) {
     const {
         announcements,
         isUpdated
-    } = state
+    } = state.app
 
     useEffect(()=> {
         if(announcements && !announcements.length){

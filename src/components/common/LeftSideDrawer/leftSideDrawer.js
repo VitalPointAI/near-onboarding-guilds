@@ -74,14 +74,17 @@ const [drawerState, setDrawerState] = useState({
   });
 
 const {
-  wallet,
-  accountId,
   isUpdated,
-  curUserIdx,
-  did,
-  accountType,
   admins
-} = state
+} = state.app
+
+const {
+  wallet,
+  accountType,
+  did,
+  curUserIdx,
+  accountId,
+} = state.user
 
 // useEffect(
 //   () => {

@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "3id-did-provider": "^1.1.1",
-    "@apollo/client": "^3.4.17",
+    "@apollo/client": "^3.7.3",
     "@azure/identity": "^1.5.2",
     "@azure/keyvault-secrets": "^4.3.0",
     "@ceramicnetwork/3id-did-resolver": "^1.4.16",
@@ -74,6 +74,7 @@
     "jsonwebtoken": "^8.5.1",
     "key-did-provider-ed25519": "^1.1.0",
     "key-did-resolver": "^1.4.4",
+    "lodash": "^4.17.21",
     "near-api-js": "^1.1.0",
     "near-seed-phrase": "^0.2.0",
     "qs": "^6.10.3",

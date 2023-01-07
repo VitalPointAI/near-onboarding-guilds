@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import { STORAGE, GAS, parseNearAmount } from '../../state/near'
+import { STORAGE, GAS, parseNearAmount } from '../../state/user'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -36,7 +36,7 @@ export default function IndivRegister(props) {
     const { state, dispatch, update } = useContext(appStore)
 
     const {
-      didRegistryContract,
+      registryContract,
       accountId,
       did,
       accountType,
@@ -55,7 +55,7 @@ export default function IndivRegister(props) {
    async function onSubmit(){
       if(did){
         try{
-          await didRegistryContract.register({
+          await registryContract.register({
             publicKey: pKey,
             accountId: accountId,
             did: did,

@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { makeStyles } from '@mui/styles'
-import { login } from '../../../state/near'
+import { login } from '../../../utils/helpers'
+import { appStore, onAppMount } from '../../../state/app'
 
 // Material UI components
 import Button from '@mui/material/Button'
@@ -22,6 +23,11 @@ const useStyles = makeStyles((theme) => ({
 export default function LoginButton(props) {
 
     const classes = useStyles()
+    const { update } = useContext(appStore)
+
+    const {
+      wallet
+    } = state.user
 
     return (
         <> 
@@ -31,7 +37,7 @@ export default function LoginButton(props) {
         className={classes.button}
         style={{marginTop: '-5px'}}
         startIcon={<LockOpenTwoToneIcon />}
-        onClick={login}
+        onClick={()=> login(wallet)}
         >Sign In</Button>
            
       </>

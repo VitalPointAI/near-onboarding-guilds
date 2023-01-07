@@ -66,7 +66,7 @@ export default function ExploreIndividuals(props) {
       near,
       isUpdated,
       did,
-      didRegistryContract,
+      registryContract,
       nearPrice,
       appIdx
     } = state

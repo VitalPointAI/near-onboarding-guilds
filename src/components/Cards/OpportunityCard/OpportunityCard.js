@@ -4,9 +4,9 @@ import PropTypes from 'prop-types'
 import { appStore, onAppMount } from '../../../state/app'
 import { useParams } from 'react-router-dom'
 import { get, set, del } from '../../../utils/storage'
-import {OPPORTUNITY_NOTIFICATION, PROPOSAL_NOTIFICATION} from '../../../state/near' 
+import {OPPORTUNITY_NOTIFICATION, PROPOSAL_NOTIFICATION} from '../../../state/user' 
 import { catalystDao } from '../../../utils/catalystDao'
-import { getStatus, daoRootName } from '../../../state/near'
+import { getStatus, daoRootName } from '../../../state/user'
 import { parseNearAmount, formatNearAmount } from 'near-api-js/lib/utils/format'
 
 // Material UI Components
@@ -153,7 +153,7 @@ export default function OpportunityCard(props) {
     const [progress, setProgress] = useState(0)
 
     const {
-      didRegistryContract,
+      registryContract,
       near, 
       appIdx,
       accountId,
@@ -331,12 +331,6 @@ export default function OpportunityCard(props) {
       })
     }, [wallet, passedContractId])
     
-   
-    function formatDate(timestamp) {
-      let stringDate = timestamp.toString()
-      let options = {year: 'numeric', month: 'long', day: 'numeric'}
-      return new Date(parseInt(stringDate.slice(0,13))).toLocaleString('en-US', options)
-    }
 
      // Opportunity Proposal Functions
 

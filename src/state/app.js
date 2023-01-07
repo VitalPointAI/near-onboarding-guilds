@@ -1,101 +1,171 @@
-import anime from 'animejs/lib/anime.es.js'
-import { generateSeedPhrase } from 'near-seed-phrase'
-import { get, set, del } from '../utils/storage'
 import { State } from '../utils/state'
-import { initNear, hasKey } from './near'
+import { initUser, hasKey } from './user'
 import * as nearAPI from 'near-api-js'
 import { registry } from '../utils/registry'
-import { factory } from '../utils/factory'
 import { ceramic } from '../utils/ceramic'
 import { config } from './config'
+import { 
+    updateCurrentGuilds, 
+    updateCurrentCommunities, 
+    getGuildsAwaitingVerification, 
+    getCurrentVerifiers, 
+    getCurrentIndividuals } from '../utils/helpers'
 
 export const {
-    FUNDING_DATA, FUNDING_DATA_BACKUP, ACCOUNT_LINKS, DAO_LINKS, GAS, SEED_PHRASE_LOCAL_COPY, FACTORY_DEPOSIT, DAO_FIRST_INIT, CURRENT_DAO, REDIRECT,
-    NEW_PROPOSAL, NEW_SPONSOR, NEW_CANCEL, KEY_REDIRECT, NEW_PROCESS, NEW_VOTE, IPFS_PROVIDER,
-    networkId, nodeUrl, walletUrl, nameSuffix, factorySuffix,
-    contractName, didRegistryContractName, factoryContractName
+    APP_OWNER_ACCOUNT,
+    networkId,
+    nodeUrl,
+    walletUrl,
+    helperUrl,
+    explorerUrl
 } = config
 
 const initialState = {
 	app: {
         mounted: false,
-        wasValidated: false,
-        accountTaken: false,
-        alert: null,
-        initialized: false
+        appIdx: null,
+        near: null,
+        appRregistryContract: null,
+        ceramicClient: null,
+        appAccount: null,
+        superAdmin: null,
+        admins: [],
+        announcements: [],
+        isUpdated: false,
+        currentGuilds: [], 
+        currentCommunities: [], 
+        guildsAwaitingVerification: [],
+        currentVerifiers: [],
+        currentIndividuals: []
     },
-    links: []
+    user: {
+        userInitialized: false,
+        curUserIdx: null,
+        did: null,
+        isVerifier: false,
+        isVerified: false,
+        isAdmin: false,
+        accountType: 'none',
+        account: null,
+        accountId: null,
+        signedIn: false,
+        balance: null,
+        wallet: null,
+        walletContract: null, 
+        registryContract: null, 
+        factoryContract: null, 
+        nftContract: null, 
+        fundingContract: null,
+        catalystContract: null,
+        keyExists: false
+    }
 }
 
 export const { appStore, AppProvider } = State(initialState, 'app')
 
-let alertAnimation
-export const onAlert = (message) => async ({update}) => {
-    await update('app.alert', message)
-    if (alertAnimation) {
-        alertAnimation.pause()
-    }
-    alertAnimation = anime({
-        targets: '.alert',
-        easing: 'easeOutElastic',
-        keyframes: [
-            {scaleX: 0, scaleY: 0, duration: 0},
-            {scaleX: 1, scaleY: 1, duration: 500},
-            {duration: 2000},
-            {scaleX: 0, scaleY: 0, duration: 500, easing: 'easeInCubic'},
-        ],
-        complete: function () {
-            update('app.alert', null)
-        }
-    })
-}
+const { connect, keyStores } = nearAPI
 
 export const onAppMount = () => async ({ update, getState, dispatch }) => {
-    update('app', { mounted: true })
-   
-    const url = new URL(window.location.href)
-    const key = url.searchParams.get('key')
-    const from = url.searchParams.get('from')
-    const message = decodeURIComponent(url.searchParams.get('message') || '')
-    const link = url.searchParams.get('link') || ''
-    const accountId = url.searchParams.get('accountId')
-    const owner = url.searchParams.get('owner')
-
-    if (key && accountId) {
-     
-        const { seedPhrase, publicKey } = generateSeedPhrase()
-        const keyExists = await hasKey(key, accountId)
-        update('accountData', { key, from, message, link, accountId, seedPhrase, publicKey, keyExists, owner })
-
-        const near = await nearAPI.connect({
-            networkId, nodeUrl, walletUrl, deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
-        })
-
-        update('app', {near: near})
-
-        // set temporary key - remains until it's changed on the user's next login
-        set('near-api-js:keystore:'+accountId+':'+near.connection.networkId, key)
-
-
-        const wallet = new nearAPI.WalletAccount(near)
-
-        wallet.signedIn = wallet.isSignedIn()
-        if (wallet.signedIn) {
-
-             // ********* Initiate Dids Registry Contract ************
-
-            const account = wallet.account()
-            const loggedInAccountId = account.accountId
-            const didRegistryContract = await registry.initiateDidRegistryContract(account)
-            const factoryContract = await factory.initFactoryContract(account)
-            //Initiate App Ceramic Components
     
-            const appIdx = await ceramic.getAppIdx(didRegistryContract, account, near)
-            let curUserIdx = await ceramic.getUserIdx(account, appIdx, factoryContract, didRegistryContract)
-            update('accountData', { curUserIdx })
-           
-        }
-    } else {
-        dispatch(initNear())
+    update('app', { mounted: true })
+
+    const ceramicClient = await ceramic.getAppCeramic(APP_OWNER_ACCOUNT)
+
+    update('app', {ceramicClient})
+
+    const appKeyStore = new keyStores.BrowserLocalStorageKeyStore()
+
+    const connectionConfig = {
+    networkId: networkId,
+    keyStore: appKeyStore,
+    nodeUrl: nodeUrl,
+    walletUrl: walletUrl,
+    helperUrl: helperUrl,
+    explorerUrl: explorerUrl,
     }
+
+    const near = await connect(connectionConfig);
+    
+    update('app', {near})
+
+    const appAccount = await nearConnection.account(APP_OWNER_ACCOUNT)
+
+    const appRegistryContract = await registry.initiateregistryContract(account)
+    
+    const appIdx = await ceramic.getAppIdx(appRegistryContract, appAccount)
+
+    update('app', {appAccount, appRegistryContract, appIdx })
+
+    try{
+        let nearPriceUpdate = await updateNearPriceAPI(APP_OWNER_ACCOUNT, appIdx, registryContract, update)
+    } catch (err) {
+        console.log('problem updating NEAR price history')
+    }
+
+    // ********* Get Registry Admin ****************
+    try{
+        let superAdmin = await appRegistryContract.getSuperAdmin()
+        update('app', {superAdmin})
+        } catch (err) {
+            console.log('problem getting super admin', err)
+        }
+
+    // ********* Account Admin Status ****************
+    try{
+        let admins = await appRegistryContract.getAdmins()
+        update('app', {admins})
+    } catch (err) {
+        console.log('problem getting admins', err)
+    }
+
+    // ********* All Announcements ****************
+    try{
+        let announcements = await appIdx.get('announcements', appIdx.id)
+        update('app', {announcements})
+    
+    } catch (err) {
+        console.log('problem getting all announcements', err)
+    }
+
+    // ********* GraphQL Queries ****************
+
+    let currentVerifiers = await getCurrentVerifiers()
+    let currentIndividuals = await getCurrentIndividuals()
+    let currentCommunities = await updateCurrentCommunities()
+    let currentGuilds = await updateCurrentGuilds()
+    let guildsAwaitingVerification = await getGuildsAwaitingVerification()
+    update('app', {
+        currentGuilds, 
+        currentCommunities, 
+        guildsAwaitingVerification,
+        currentIndividuals,
+        currentVerifiers
+    })
+
+    // Admin Functions (to move to admin page at some point)
+    // ********* Clear Ceramic Price Data****************
+    //  await clearCeramicPriceData(appIdx)
+
+    // ********* Initialize Registry/Funding Contract****************
+    //  let thisAllowance = parseNearAmount('2')
+    //  await appRegistryContract.init({
+    //     adminId: 'vitalpointai.testnet',
+    //     fundingPublicKey: '',
+    //     allowance: thisAllowance})
+    //  await fundingContract.init({adminId: 'vitalpointai.testnet'})
+
+
+
+    // if (key && accountId) {
+     
+    //     const { seedPhrase, publicKey } = generateSeedPhrase()
+    //     const keyExists = await hasKey(key, accountId)
+    //     update('accountData', { key, from, message, link, accountId, seedPhrase, publicKey, keyExists, owner })
+
+    //     // set temporary key - remains until it's changed on the user's next login
+    //     set('near-api-js:keystore:'+accountId+':'+near.connection.networkId, key)
+
+    // } else {
+        dispatch(initUser())
+   // }
 }

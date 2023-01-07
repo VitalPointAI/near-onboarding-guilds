@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext } from 'react'
 import * as nearAPI from 'near-api-js'
 import { Link } from 'react-router-dom'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
-import { appStore, onAppMount } from '../../../state/app'
+import { appStore } from '../../../state/app'
 import { ceramic } from '../../../utils/ceramic'
 import Intro from '../Intro/intro'
 import Social from '../../common/Social/social'
-import { signal, nameSuffix } from '../../../state/near'
+import { signal, nameSuffix } from '../../../state/user'
 
 
 // Material UI Components
@@ -68,10 +68,13 @@ export default function AdminCard(props) {
      appIdx,
      isUpdated,
      near,
-     didRegistryContract,
+     registryContract,
      factoryContract,
-     superAdmin
    } = state
+
+   const {
+    superAdmin
+   } = state.app
 
     useEffect(
       () => {
@@ -79,14 +82,14 @@ export default function AdminCard(props) {
       async function fetchData() {
           if(isUpdated){}
           if(personId && appIdx && near){
-            let did = await ceramic.getDid(personId, factoryContract, didRegistryContract)
+            let did = await ceramic.getDid(personId, factoryContract, registryContract)
             setDid(did)
             // Registration Status
             did ? setRegistered(true) : setRegistered(false)
             
             // Verification Status
             try{
-              let verificationStatus = await didRegistryContract.getVerificationStatus({accountId: personId})
+              let verificationStatus = await registryContract.getVerificationStatus({accountId: personId})
                 if(verificationStatus != 'null'){
                   setVerified(verificationStatus)
                 }
@@ -97,7 +100,7 @@ export default function AdminCard(props) {
             let thisCurUserIdx
             try{
               let personAccount = new nearAPI.Account(near.connection, personId)
-              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, factoryContract, didRegistryContract)
+              thisCurUserIdx = await ceramic.getUserIdx(personAccount, appIdx, factoryContract, registryContract)
               setCurUserIdx(thisCurUserIdx)
               } catch (err) {
                 console.log('problem getting curuseridx', err)
@@ -160,17 +163,13 @@ export default function AdminCard(props) {
     update('', {isUpdated: !isUpdated})
   }
 
-  function formatDate(timestamp) {
-    let stringDate = timestamp.toString()
-    let options = {year: 'numeric', month: 'long', day: 'numeric'}
-    return new Date(parseInt(stringDate.slice(0,13))).toLocaleString('en-US', options)
-  }
+ 
 
   async function removeAdmin() {
     event.preventDefault()
     setRemoveAdminFinished(false)
     try {
-        await didRegistryContract.removeAdmin({
+        await registryContract.removeAdmin({
           accountId: personId
         })
       } catch (err) {

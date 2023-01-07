@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore } from '../../../state/app'
-import { 
-  formatDate, 
-  getPrice,
-  buildPriceTable,
-  buildTransactionTable,
-  formatNearAmount } from '../../../state/near'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { CSVLink, CSVDownload } from 'react-csv'
 import { currencies } from '../../../utils/currencies'
+import { 
+  formatDate,
+  getPrice,
+  buildPriceTable,
+  buildTransactionTable,
+  formatNearAmount } from '../../../utils/helpers'
 
 // Material UI components
 import { makeStyles } from '@mui/styles'
@@ -64,14 +64,14 @@ export default function AccountTransactionActivity(props) {
       appIdx,
       did,
       factoryContract,
-      didRegistryContract
+      registryContract
     } = state
 
     // useEffect(() => {
     //   async function update(){
     //     if(appIdx){
-    //       await updateNearPriceAPI(accountId, appIdx, didRegistryContract, update)
-    //       await updateNearTransactionAPI(accountId, appIdx, factoryContract, didRegistryContract, account)
+    //       await updateNearPriceAPI(accountId, appIdx, registryContract, update)
+    //       await updateNearTransactionAPI(accountId, appIdx, factoryContract, registryContract, account)
     //     }
     //   }
 
@@ -126,9 +126,9 @@ export default function AccountTransactionActivity(props) {
       }
     }
 
-    async function fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract){
+    async function fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, registryContract){
       if(fromDate && toDate){
-        let transactions = await buildTransactionTable(fromDate.replace(/-/g, '\/'), toDate.replace(/-/g, '\/'), accountId, account, factoryContract, didRegistryContract, appIdx)
+        let transactions = await buildTransactionTable(fromDate.replace(/-/g, '\/'), toDate.replace(/-/g, '\/'), accountId, account, factoryContract, registryContract, appIdx)
         setTransactionTable(transactions)
         return transactions
       }
@@ -139,7 +139,7 @@ export default function AccountTransactionActivity(props) {
       setClicked(true)
 
       let priceArray = await fetchPriceTable(fromDate, toDate, accountId)
-      let transactionArray = await fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, didRegistryContract)
+      let transactionArray = await fetchTransactionTable(fromDate, toDate, accountId, account, factoryContract, registryContract)
       
       let csvSingle = [] 
       let totalFees = 0

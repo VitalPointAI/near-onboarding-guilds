@@ -2,16 +2,16 @@ import * as nearApiJs from 'near-api-js'
 import { config } from '../state/config'
 
 const {
-    didRegistryContractName
+    registryContractName
 } = config
 
 class Registry {
 
     constructor(){}
 
-    async initiateDidRegistryContract(account) {    
+    async initiateregistryContract(account) {    
         // initiate the contract so its associated with this current account and exposing all the methods
-        let didRegistryContract = new nearApiJs.Contract(account, didRegistryContractName, {
+        let registryContract = new nearApiJs.Contract(account, registryContractName, {
           viewMethods: [
               'getDID',
               'hasDID',
@@ -41,7 +41,7 @@ class Registry {
               'changeTier'
           ],
       })
-        return didRegistryContract
+        return registryContract
     }
     
 }

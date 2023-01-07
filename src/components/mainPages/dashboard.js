@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useContext, useRef } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import { getStatus, 
+  } from '../../state/user'
+import { 
+  getStatus,
   MAIL_URL, 
   getSendyAPI, 
   getCommunityMemberStatus,
-  getCombinedSkills } from '../../state/near'
+  getCombinedSkills } from '../../utils/helpers'
 import qs from 'qs'
 import { ceramic } from '../../utils/ceramic'
 import Communities from '../common/Communities/communities'
@@ -70,21 +73,48 @@ export default function Dashboard(props) {
     const matches = useMediaQuery('(max-width:500px)')
 
     let communities = []
-    
+
     const {
-      accountId,
-      account,
-      currentGuilds,
-      near,
+      userInitialized,
+      curUserIdx,
       did,
+      isVerifier,
+      isVerified,
+      isAdmin,
       accountType,
+      account,
+      accountId,
+      signedIn,
+      balance,
       wallet,
+      walletContract, 
+      registryContract, 
+      factoryContract, 
+      nftContract, 
+      fundingContract
+  } = state.user
+  
+  const {
+      mounted,
       appIdx,
-      didRegistryContract,
-      factoryContract,
-      isUpdated,
-      currentActiveDaos
-    } = state
+      near,
+      appRegistryContract,
+      ceramicClient,
+      appAccount,
+      superAdmin,
+      admins,
+      announcements,
+      isUpdated
+  } = state.app
+          
+  const {
+      currentGuilds, 
+      currentCommunities, 
+      guildsAwaitingVerification,
+      currentIndividuals,
+      currentVerifiers
+  } = state.app
+   
 
     useEffect(
         () => {
@@ -200,8 +230,8 @@ export default function Dashboard(props) {
                   if(appIdx){
                     // 1. Build complete list of all opportuntities for all active DAOs
                     let allOpportunities = []
-                    if(currentActiveDaos && currentActiveDaos.length > 0){
-                      for(let x = 0; x < currentActiveDaos.length; x++){
+                    if(currentCommunities && currentCommunities.length > 0){
+                      for(let x = 0; x < currentCommunities.length; x++){
                         // let catalystContract
                         // try{
                         //   catalystContract = await dao.initDaoContract(account, currentGuilds[x].contractId)
@@ -211,7 +241,7 @@ export default function Dashboard(props) {
                         let singleDaoOpportunity
                      
                         try{
-                          singleDaoOpportunity = await appIdx.get('opportunities', currentActiveDaos[x].did)
+                          singleDaoOpportunity = await appIdx.get('opportunities', currentCommunities[x].did)
                         
                           if(singleDaoOpportunity && Object.keys(singleDaoOpportunity).length > 0){
                             let j = 0
@@ -318,9 +348,9 @@ export default function Dashboard(props) {
                             let status = getStatus(propFlags)
                          
                             let contractDid
-                            for(let x = 0; x < currentActiveDaos.length;x++){
-                              if(currentActiveDaos[x].contractId == allOpportunities[j].contractId){
-                                contractDid = currentActiveDaos[x].did
+                            for(let x = 0; x < currentCommunities.length;x++){
+                              if(currentCommunities[x].contractId == allOpportunities[j].contractId){
+                                contractDid = currentCommunities[x].did
                               }
                             }
                          

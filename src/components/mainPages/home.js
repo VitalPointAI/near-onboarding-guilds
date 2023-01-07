@@ -41,12 +41,43 @@ export const Home = ({ children }) => {
     const { state, update } = useContext(appStore)
    
     const {
-        wallet, 
-        finished,
-        key,
+        userInitialized,
+        curUserIdx,
+        did,
+        isVerifier,
+        isVerified,
+        isAdmin,
         accountType,
-        isUpdated
-    } = state
+        account,
+        accountId,
+        signedIn,
+        balance,
+        wallet,
+        walletContract, 
+        registryContract, 
+        factoryContract, 
+        nftContract, 
+        fundingContract,
+        catalystContract
+    } = state.user
+    
+    const {
+        mounted,
+        appIdx,
+        near,
+        appRegistryContract,
+        ceramicClient,
+        appAccount,
+        superAdmin,
+        admins,
+        announcements,
+        isUpdated,
+        currentGuilds, 
+        currentCommunities, 
+        guildsAwaitingVerification,
+        currentIndividuals,
+        currentVerifiers
+    } = state.app
     
     const classes = useStyles();
 
@@ -58,12 +89,12 @@ export const Home = ({ children }) => {
             } else (
                 update('', {key: false})
             )
-    }, [finished, isUpdated]
+    }, [userInitialized, isUpdated]
     )
    
     return (
         <>
-        {finished ? 
+        {userInitialized ? 
             wallet && wallet.signedIn ?  
                 key ? (<SeedSetup />) : 
                     accountType == 'individual' ? (<Dashboard />) :
@@ -78,18 +109,6 @@ export const Home = ({ children }) => {
                 </div>
             </>)
         }    
-       
-        { state.app.alert &&
-            <div class="container-alert">
-                <div class={flexClass + ' mt-0'}>
-                    <div class="container container-custom mt-0">
-                        <div class="alert alert-primary mt-0" role="alert">
-                            {state.app.alert}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
         
     </>
     )

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import oath from '../../img/oath.png'
-import { login } from '../../state/near'
+import { login } from '../../utils/helpers'
 
 // Material UI Components
 import { makeStyles } from '@mui/styles'
@@ -40,7 +40,7 @@ export default function Pledge(props) {
 
     const {
         wallet
-    } = state
+    } = state.user
   
     return(
     <>
@@ -64,7 +64,7 @@ export default function Pledge(props) {
                         variant="contained"
                         color="primary"
                         className={classes.button}
-                        onClick={login}
+                        onClick={() => login(wallet)}
                     ><GavelIcon style={{marginRight: '5px'}}/>
                         <Typography variant="body1" style={{fontSize: '26px'}}>
                             I Pledge

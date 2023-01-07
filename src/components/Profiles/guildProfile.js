@@ -102,7 +102,7 @@ export default function GuildProfile(props) {
       accountType,
       verificationStatus,
       factoryContact,
-      didRegistryContract
+      registryContract
     } = state
 
     const {

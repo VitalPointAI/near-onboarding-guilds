@@ -2,11 +2,10 @@ import React, { useState, useEffect, useContext } from 'react'
 import { appStore } from '../../../state/app'
 import { queries } from '../../../utils/graphQueries'
 import { 
-  formatDate, 
-  getPrice, 
+  formatDate,
+  getPrice,
   buildPriceTable,
-  formatNearAmount, 
-  } from '../../../state/near'
+  formatNearAmount } from '../../../utils/helpers'
 import { useForm } from 'react-hook-form'
 import { CSVLink } from 'react-csv'
 import Decimal from 'decimal.js'
