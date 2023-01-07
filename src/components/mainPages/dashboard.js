@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useContext, useRef } from 'react'
 import { appStore, onAppMount } from '../../state/app'
-import { getStatus, 
-  } from '../../state/user'
 import { 
   getStatus,
   MAIL_URL, 
