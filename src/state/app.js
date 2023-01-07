@@ -88,7 +88,7 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
     
     update('app', {near})
 
-    const appAccount = await nearConnection.account(APP_OWNER_ACCOUNT)
+    const appAccount = await near.account(APP_OWNER_ACCOUNT)
 
     const appRegistryContract = await registry.initiateregistryContract(account)
     
