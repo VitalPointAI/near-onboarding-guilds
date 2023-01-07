@@ -5,12 +5,11 @@ import { isAccountTaken } from '../../utils/helpers'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import {
   parseNearAmount, 
-  registryContractName, 
-  fundingContractName,
-  nameSuffix,
   getSendyAPI,
   formatNearAmount,
-   } from '../../state/user'
+  isVerified,
+  isRegistered
+   } from '../../utils/helpers'
 import { ceramic } from '../../utils/ceramic'
 import AdminCard from '../Cards/AdminCard/adminCard'
 import VerifierCard from '../Cards/VerifierCard/verifierCard'
@@ -83,7 +82,10 @@ export default function Admin(props) {
   const [accountTaken, setAccountTaken] = useState(false)
 
   const {
-    MAIL_URL  
+    MAIL_URL,
+    registryContractName, 
+    fundingContractName,
+    nameSuffix,
   } = config
 
   const {
@@ -91,7 +93,6 @@ export default function Admin(props) {
     curUserIdx,
     did,
     isVerifier,
-    isVerified,
     isAdmin,
     accountType,
     account,
@@ -200,22 +201,8 @@ const {
     setExpanded(isExpanded ? panel : false);
   }
 
-  async function isRegistered(account, type) {
-    let adminDid = await ceramic.getDid(account, factoryContract, registryContract)
-    adminDid && type == 'admin' ? setAdminRegistered(true) : null
-    adminDid && type == 'verifier' ? setVerifierRegistered(true) : null
-  }
+ 
   
-  async function isVerified(account){
-    try{
-      let verificationStatus = await registryContract.getVerificationStatus({accountId: account})
-        if(verificationStatus != 'null'){
-          setVerified(verificationStatus)
-        }
-      } catch (err) {
-        console.log('error retrieving verification status', err)
-      }
-  }
   
   const adjustKeyAllowance = async (values) => {
     event.preventDefault()
@@ -497,11 +484,12 @@ const {
                   </Tooltip>
                   </>
                 }}
-                onChange={(e) => {
+                onChange={async (e) => {
                   const v = e.target.value.toLowerCase()
                   setNewAdmin(v)
                   setAccountTaken(isAccountTaken(v, near))
-                  isRegistered(v + nameSuffix, 'admin')
+                  let registrations = await isRegistered(v + nameSuffix, 'admin', factoryContract, registryContract)
+                  setAdminRegistered(registrations.didAdmin)
                   isVerified(v + nameSuffix)
                 }}
               />
@@ -576,11 +564,12 @@ const {
                 </Tooltip>
                 </>
               }}
-              onChange={(e) => {
+              onChange={async (e) => {
                 const v = e.target.value.toLowerCase()
                 setVerifier(v)
                 setAccountTaken(isAccountTaken(v, near))
-                isRegistered(v + nameSuffix, 'verifier')
+                let registrations = await isRegistered(v + nameSuffix, 'verifier', factoryContract, registryContract)
+                setVerifierRegistered(registrations.didVerifier)
                 isVerified(v + nameSuffix)
               }}
             />

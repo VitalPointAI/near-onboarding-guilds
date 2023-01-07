@@ -350,6 +350,17 @@ export async function isVerified(accountId) {
     }
 }
 
+export async function isRegistered(account, type, factoryContract, registryContract) {
+    let didAdmin = false
+    let didVerifier = false
+    let adminDid = await ceramic.getDid(account, factoryContract, registryContract)
+    adminDid && type == 'admin' ? didAdmin = true : null
+    adminDid && type == 'verifier' ? didVerifier = true : null
+    return {
+        didAdmin,
+        didVerifier
+    }
+}
 
 // these are the guild communities (an account)
 export async function updateCurrentGuilds() {
