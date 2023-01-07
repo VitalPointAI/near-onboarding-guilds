@@ -7,7 +7,8 @@ import { config } from './config'
 import { 
     updateCurrentGuilds, 
     updateCurrentCommunities, 
-    getGuildsAwaitingVerification, 
+    getGuildsAwaitingVerification,
+    updateNearPriceAPI,
     getCurrentVerifiers, 
     getCurrentIndividuals } from '../utils/helpers'
 
@@ -66,7 +67,8 @@ export const { appStore, AppProvider } = State(initialState, 'app')
 const { connect, keyStores } = nearAPI
 
 export const onAppMount = () => async ({ update, getState, dispatch }) => {
-    
+    let state = getState()
+    console.log('state at start app', state)
     update('app', { mounted: true })
 
     const ceramicClient = await ceramic.getAppCeramic(APP_OWNER_ACCOUNT)
@@ -166,6 +168,7 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
     //     set('near-api-js:keystore:'+accountId+':'+near.connection.networkId, key)
 
     // } else {
+        console.log('state at end app', state)
         dispatch(initUser())
    // }
 }
