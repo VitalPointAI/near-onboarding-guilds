@@ -3,7 +3,6 @@ import { appStore, onAppMount } from '../../state/app'
 import EditProfileForm from '../EditProfile/editProfile'
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
@@ -16,23 +15,10 @@ import Divider from '@mui/material/Divider'
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle'
 import LinearProgress from '@mui/material/LinearProgress'
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column'
-    },
-    spacing: {
-      marginTop: '15px',
-      marginBottom: '15px'
-    },
-  }));
   
 export default function CreateIndivProfile(props) {
 
-    const classes = useStyles()
+    
     const [editProfileClicked, setEditProfileClicked] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
     const [profileEdit, setProfileEdit] = useState(false)
@@ -89,7 +75,8 @@ export default function CreateIndivProfile(props) {
         <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
         <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
           <List>
-              <ListItem className={classes.spacing}>
+              <ListItem sx={{marginTop: '15px',
+              marginBottom: '15px'}}>
                 <ListItemIcon>
                   <AccountBoxIcon />
                 </ListItemIcon>
@@ -98,7 +85,8 @@ export default function CreateIndivProfile(props) {
                 />
               </ListItem>
               <Divider variant="middle" />
-              <ListItem className={classes.spacing}>
+              <ListItem sx={{marginTop: '15px',
+              marginBottom: '15px'}}>
                 <ListItemIcon>
                   <SupervisedUserCircleIcon />
                 </ListItemIcon>
@@ -107,7 +95,8 @@ export default function CreateIndivProfile(props) {
                 />
               </ListItem>
               <Divider variant="middle" />
-              <ListItem className={classes.spacing}>
+              <ListItem sx={{marginTop: '15px',
+              marginBottom: '15px'}}>
               <ListItemIcon>
                 <MonetizationOnIcon />
               </ListItemIcon>
@@ -118,7 +107,8 @@ export default function CreateIndivProfile(props) {
             <Divider variant="middle" />
           </List>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                <Button className={classes.spacing} style={{float: 'left', marginRight: '15px'}} variant="contained" color="primary" onClick={handleEditProfileClick}>
+                <Button sx={{marginTop: '15px',
+                marginBottom: '15px'}} style={{float: 'left', marginRight: '15px'}} variant="contained" color="primary" onClick={handleEditProfileClick}>
                 Get Started
                 </Button> <Typography variant="body2" style={{marginTop: '15px'}}>It only takes a few minutes and you can edit it later.</Typography>
             </Grid>

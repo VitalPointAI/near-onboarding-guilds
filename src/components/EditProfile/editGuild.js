@@ -11,7 +11,6 @@ import { EditorState, convertFromRaw, convertToRaw, ContentState } from 'draft-j
 import { Editor } from "react-draft-wysiwyg"
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Dialog from '@mui/material/Dialog'
@@ -47,27 +46,9 @@ import { InputAdornment } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import AddBoxIcon from '@mui/icons-material/AddBox'
+import Box from '@mui/material/Box'
 
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
-const useStyles = makeStyles((theme) => ({
-    progress: {
-      width: '100%',
-      '& > * + *': {
-        marginTop: '10px',
-      },
-    },
-    input: {
-        minWidth: 100,
-        maxWidth: 400,
-    },
-    waiting: {
-      minWidth: '100%',
-      minHeight: '100%',
-      overflow: 'hidden',
-      padding: '20px'
-    }
-    }));
 
 const logoName = require('../../img/default_logo.png') // default no-image avatar
 const discordIcon = require('../../img/discord-icon.png')
@@ -209,7 +190,7 @@ export default function EditGuildProfileForm(props) {
       account
     } = state
     
-    const classes = useStyles()
+    
 
     useEffect(() => {
         if(logo != logoName && avatarLoaded){
@@ -637,10 +618,12 @@ export default function EditGuildProfileForm(props) {
                     </Grid>
 
                     <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                      <FormControl className={classes.input}>
+                      <FormControl sx={{minWidth: 100,
+                        maxWidth: 400}}>
                           <InputLabel id="country-label">Classification</InputLabel>
                           <Select
-                          className={classes.input}
+                          sx={{minWidth: 100,
+                            maxWidth: 400}}
                           required
                           label = "Classification"
                           id = "profile-classification"
@@ -659,10 +642,12 @@ export default function EditGuildProfileForm(props) {
                     </Grid>
 
                     <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                        <FormControl className={classes.input}>
+                        <FormControl  sx={{minWidth: 100,
+                          maxWidth: 400}}>
                             <InputLabel id="country-label">Country</InputLabel>
                             <Select
-                            className={classes.input}
+                            sx={{minWidth: 100,
+                              maxWidth: 400}}
                             label = "Country"
                             id = "profile-country"
                             value = {country}
@@ -681,8 +666,9 @@ export default function EditGuildProfileForm(props) {
                     <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                         <FormControl>
                         <InputLabel id="language-label">Languages</InputLabel>
-                        <Select multiple
-                            className={classes.input}
+                        <Select multiple 
+                            sx={{minWidth: 100,
+                              maxWidth: 400}}
                             label = "Language"
                             id = "profile-language"
                             value = {language}
@@ -872,7 +858,8 @@ export default function EditGuildProfileForm(props) {
                 <FormControl>
                 <InputLabel id="language-label">DAO/Community Platform</InputLabel>
                   <Select
-                      className={classes.input}
+                      sx={{minWidth: 100,
+                        maxWidth: 400}}
                       label = "DAO Platform"
                       id = "profile-platform"
                       value = {platform}
@@ -1422,7 +1409,12 @@ export default function EditGuildProfileForm(props) {
             </Accordion>
               </DialogContent>
                
-              {!finished ? <LinearProgress className={classes.progress} style={{marginBottom: '25px' }}/> : (
+              {!finished ? <LinearProgress sx={{
+                width: '100%',
+                '& > * + *': {
+                  marginTop: '10px',
+                }
+              }} style={{marginBottom: '25px' }}/> : (
               <DialogActions>
               <Button onClick={handleSubmit(onSubmit)} color="primary" type="submit">
                   Submit Details
@@ -1433,12 +1425,15 @@ export default function EditGuildProfileForm(props) {
               </DialogActions>)}
               <Divider style={{marginBottom: 10}}/>
               
-              </>) : <><div className={classes.waiting}><div class={flexClass}><CircularProgress/></div><Grid container spacing={1} alignItems="center" justifyContent="center" >
+              </>) : <><Box sx={{  minWidth: '100%',
+              minHeight: '100%',
+              overflow: 'hidden',
+              padding: '20px'}}><div class={flexClass}><CircularProgress/></div><Grid container spacing={1} alignItems="center" justifyContent="center" >
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Typography variant="h5" align="center">Loading Guild Details</Typography>
               </Grid>
               </Grid>
-              </div></> }
+              </Box></> }
             </Dialog>
            
           </div>

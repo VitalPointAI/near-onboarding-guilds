@@ -5,7 +5,7 @@ import { get, set, del } from '../../utils/storage'
 import confidential from '../../img/confidential.png'
 
 // Material UI components
-import { makeStyles, withStyles } from '@mui/styles'
+import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Grid from '@mui/material/Grid'
@@ -26,27 +26,15 @@ import { ACCOUNT_LINKS } from '../../state/user'
 const bip39 = require('bip39')
 const base58 = require('bs58')
 
-const useStyles = makeStyles((theme) => ({
-  heading: {
-    fontSize: '24px',
-    flexBasis: '33.33%',
-    flexShrink: 0,
+const HtmlTooltip = styled(Tooltip)(({theme}) => ({
+  tooltip: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: '100px',
+    fontSize: '12px',
+    border: '1px solid #dadde9',
   },
-  secondaryHeading: {
-    fontSize: '18px',
-    color: '#000000',
-  },
-  }));
-
-  const HtmlTooltip = withStyles((theme) => ({
-    tooltip: {
-      backgroundColor: '#f5f5f9',
-      color: 'rgba(0, 0, 0, 0.87)',
-      maxWidth: '100px',
-      fontSize: '12px',
-      border: '1px solid #dadde9',
-    },
-  }))(Tooltip)
+}))
 
 const imageName = require('../../img/default-profile.png') // default no-image avatar
 
@@ -57,7 +45,7 @@ export default function Import(props) {
     const [recoverSeed, setRecoverSeed] = useState('')
     const [expanded, setExpanded] = useState(false)
     
-    const classes = useStyles()
+    
     const matches = useMediaQuery('(max-width:500px)')
 
     const { register, handleSubmit, watch, errors } = useForm()
@@ -170,8 +158,11 @@ export default function Import(props) {
           aria-controls="panel1bh-content"
           id="panel1bh-header"
         >
-          <Typography className={classes.heading}>Option 1</Typography>
-          <Typography className={classes.secondaryHeading}>
+          <Typography sx={{fontSize: '24px',
+    flexBasis: '33.33%',
+    flexShrink: 0}}>Option 1</Typography>
+          <Typography sx={{fontSize: '18px',
+    color: '#000000'}}>
             New Seed Phrase
           </Typography>
         </AccordionSummary>
@@ -208,8 +199,11 @@ export default function Import(props) {
           aria-controls="panel2bh-content"
           id="panel2bh-header"
         >
-          <Typography className={classes.heading}>Option 2</Typography>
-          <Typography className={classes.secondaryHeading}>Restore Seed Phrase</Typography>
+          <Typography sx={{fontSize: '24px',
+    flexBasis: '33.33%',
+    flexShrink: 0}}>Option 2</Typography>
+          <Typography sx={{fontSize: '18px',
+    color: '#000000'}}>Restore Seed Phrase</Typography>
         </AccordionSummary>
         <AccordionDetails>
         <Card>
@@ -292,8 +286,11 @@ export default function Import(props) {
           aria-controls="panel1bh-content"
           id="panel1bh-header"
         >
-          <Typography className={classes.heading}>Option 1</Typography>
-          <Typography className={classes.secondaryHeading}>
+          <Typography sx={{fontSize: '24px',
+    flexBasis: '33.33%',
+    flexShrink: 0}}>Option 1</Typography>
+          <Typography sx={{fontSize: '18px',
+    color: '#000000'}}>
             New Seed Phrase
           </Typography>
         </AccordionSummary>
@@ -330,8 +327,11 @@ export default function Import(props) {
           aria-controls="panel2bh-content"
           id="panel2bh-header"
         >
-          <Typography className={classes.heading}>Option 2</Typography>
-          <Typography className={classes.secondaryHeading}>Recover Persona</Typography>
+          <Typography sx={{fontSize: '24px',
+    flexBasis: '33.33%',
+    flexShrink: 0}}>Option 2</Typography>
+          <Typography sx={{fontSize: '18px',
+    color: '#000000'}}>Recover Persona</Typography>
         </AccordionSummary>
         <AccordionDetails>
         <Card>

@@ -11,7 +11,6 @@ import { EditorState, convertFromRaw, convertToRaw, ContentState } from 'draft-j
 import { Editor } from "react-draft-wysiwyg"
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import InfoIcon from '@mui/icons-material/Info'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -48,37 +47,9 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import AddBoxIcon from '@mui/icons-material/AddBox'
 import { Paper } from '@mui/material'
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
+import Box from '@mui/material/Box'
 
 const axios = require('axios').default
-
-const useStyles = makeStyles((theme) => ({
-    progress: {
-      width: '100%',
-      '& > * + *': {
-        marginTop: '10px',
-      },
-    },
-    input: {
-      minWidth: 100,
-      maxWidth: 400,
-    },
-    square: {
-      width: '175px',
-      height: 'auto'
-    },
-    formControl: {
-      margin: '20px',
-    },
-    hide: {
-      display: 'none'
-    },
-    waiting: {
-      minWidth: '100%',
-      minHeight: '100%',
-      overflow: 'hidden',
-      padding: '20px'
-    }
-    }));
 
 const imageName = require('../../img/default-profile.png') // default no-image avatar
 const discordIcon = require('../../img/discord-icon.png')
@@ -167,7 +138,7 @@ export default function EditProfileForm(props) {
     } = state
 
     
-    const classes = useStyles()
+    
 
     let base 
 
@@ -398,7 +369,12 @@ export default function EditProfileForm(props) {
                         <Avatar
                           alt={accountId}
                           src={avatar} 
-                          className={avatarLoaded ? classes.square : classes.hide}
+                          sx={
+                            avatarLoaded ?
+                            {width: '175px',
+                            height: 'auto'}
+                            : {display: 'none'}
+                          }
                           imgProps={{
                             onLoad:(e) => { handleAvatarLoaded(true) }
                           }}  
@@ -457,10 +433,12 @@ export default function EditProfileForm(props) {
                               />
                             </Grid> 
                               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                                <FormControl className={classes.input}>
+                                <FormControl sx={{minWidth: 100,
+                                  maxWidth: 400}}>
                                   <InputLabel id="country-label">Country</InputLabel>
                                   <Select
-                                    className={classes.input}
+                                  sx={{minWidth: 100,
+                                    maxWidth: 400}}
                                     label = "Country"
                                     id = "profile-country"
                                     value = {country}
@@ -479,7 +457,8 @@ export default function EditProfileForm(props) {
                                 <FormControl>
                                 <InputLabel id="language-label">Languages</InputLabel>
                                 <Select multiple
-                                  className={classes.input}
+                                sx={{minWidth: 100,
+                                  maxWidth: 400}}
                                   label = "Language"
                                   id = "profile-language"
                                   value = {language}
@@ -533,7 +512,7 @@ export default function EditProfileForm(props) {
                     <AccordionDetails>
                       <Grid container spacing={2}>
                       <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                      <FormControl component="fieldset" className={classes.formControl}>
+                      <FormControl component="fieldset" sx={{ margin: '20px'}}>
                         
                         
                       <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -788,7 +767,10 @@ export default function EditProfileForm(props) {
                   </div>
                 </DialogContent>
                
-              {!finished ? <LinearProgress className={classes.progress} style={{marginBottom: '25px' }}/> : (
+              {!finished ? <LinearProgress sx={{width: '100%',
+              '& > * + *': {
+                marginTop: '10px',
+              }}} style={{marginBottom: '25px' }}/> : (
               <DialogActions>
               <Button onClick={handleSubmit(onSubmit)} color="primary" type="submit">
                   Submit Details
@@ -799,14 +781,17 @@ export default function EditProfileForm(props) {
               </DialogActions>)}
               <Divider style={{marginBottom: 10}}/>
               </>) : (
-              <div className={classes.waiting}>
+              <Box sx={{minWidth: '100%',
+              minHeight: '100%',
+              overflow: 'hidden',
+              padding: '20px'}}>
               <Grid container spacing={1} alignItems="center" justifyContent="center" >
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                 <CircularProgress/>  
                 <Typography variant="h5" align="center">Loading Profile</Typography>
               </Grid>
               </Grid>
-              </div>
+              </Box>
               )}
             </Dialog>
            

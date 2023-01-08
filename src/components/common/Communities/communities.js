@@ -4,45 +4,16 @@ import GuildCard from '../../Cards/GuildCard/guildCard'
 import { updateCurrentGuilds } from '../../../state/user'
 
 // Material UI components
-import { makeStyles } from '@material-ui/core/styles'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column'
-    },
-    featureDAO: {
-        minHeight: '200px',
-        backgroundColor:'#eff3fb',
-        padding: '20px',
-    },
-    paper: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-    },
-    menuButton: {
-      marginRight: theme.spacing(0),
-    },
-    title: {
-      flexGrow: 1,
-      textAlign: 'left'
-    },
-    drawer: {
-        marginTop: '5px'
-    }
-  }));
+import Grid from '@mui/material/Grid'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
   
 export default function Communities(props) {
    
     const[communities, setCommunities] = useState([])
-    const classes = useStyles()
+    
 
     const { state, dispatch, update } = useContext(appStore)
 
@@ -93,7 +64,10 @@ export default function Communities(props) {
 
     return (
         <>
-        <div className={classes.root}>
+        <Box sx={{ flexGrow: 1,
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column'}}>
         
        
         <Grid container alignItems="center" justifyContent="space-between" spacing={3} style={{padding: '20px'}} >
@@ -137,7 +111,7 @@ export default function Communities(props) {
               )
             } 
         </Grid>
-        </div>
+        </Box>
        
         </>
     )

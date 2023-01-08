@@ -4,7 +4,6 @@ import { ceramic } from '../../utils/ceramic'
 import { updateCurrentGuilds } from '../../state/user'
 
 // Material UI Components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
@@ -18,39 +17,10 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox'
 import Divider from '@mui/material/Divider'
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle'
 import StarsIcon from '@mui/icons-material/Stars'
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column'
-      },
-    center: {
-        textAlign: 'center',
-        fontWeight: 700,
-        paddingTop: 30, 
-        paddingBottom: 60, 
-    },
-    loading: {
-        position: 'fixed',
-        top: '40%',
-        left: 'calc(50% - 80px)',
-    },
-    button: {
-        width: '80%',
-        fontSize: '40px'
-    },
-    waiting: {
-        minWidth: '100%',
-        minHeight: '100%',
-        overflow: 'hidden',
-        padding: '20px'
-    }
-}));
+import Box from '@mui/material/Box'
 
 const Registration = () => {
-    const classes = useStyles()
+    
     const matches = useMediaQuery('(max-width:500px)')
     const [loaded, setLoaded] = useState(false)
     const [isAdmin, setIsAdmin] = useState()
@@ -150,7 +120,10 @@ async function unregister(){
                     <Button
                         variant="contained"
                         color="primary"
-                        className={classes.button}
+                        sx={{
+                            width: '80%',
+                            fontSize: '40px'
+                        }}
                         onClick={unregister}
                         disabled={isAdmin}
                     >
@@ -178,7 +151,7 @@ async function unregister(){
                    
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                     <List>
-                        <ListItem className={classes.spacing}>
+                        <ListItem>
                             <ListItemIcon>
                             <AccountBoxIcon />
                             </ListItemIcon>
@@ -187,7 +160,7 @@ async function unregister(){
                             />
                         </ListItem>
                         <Divider variant="middle" />
-                        <ListItem className={classes.spacing}>
+                        <ListItem>
                             <ListItemIcon>
                             <SupervisedUserCircleIcon />
                             </ListItemIcon>
@@ -196,7 +169,7 @@ async function unregister(){
                             />
                         </ListItem>
                         <Divider variant="middle" />
-                        <ListItem className={classes.spacing}>
+                        <ListItem>
                         <ListItemIcon>
                             <StarsIcon />
                         </ListItemIcon>
@@ -208,7 +181,7 @@ async function unregister(){
                     </List>
                     <Grid container spacing={1} style={{marginLeft: '20px', marginRight: '20px', width:'95%'}}>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                        <Button className={classes.spacing} style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('guild')}>
+                        <Button style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('guild')}>
                             Register
                         </Button>
                         <Typography variant="body2" style={{marginTop: '30px'}}>
@@ -247,7 +220,10 @@ async function unregister(){
                 <Button
                     variant="contained"
                     color="primary"
-                    className={classes.button}
+                    sx={{
+                        width: '80%',
+                        fontSize: '40px'
+                    }}
                     onClick={unregister}
                     disabled={isAdmin}
                 >
@@ -275,7 +251,7 @@ async function unregister(){
                 <Grid item xs={12} sm={12} md={3} lg={3} xl={3} ></Grid>
                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <List>
-                    <ListItem className={classes.spacing}>
+                    <ListItem>
                         <ListItemIcon>
                         <AccountBoxIcon />
                         </ListItemIcon>
@@ -284,7 +260,7 @@ async function unregister(){
                         />
                     </ListItem>
                     <Divider variant="middle" />
-                    <ListItem className={classes.spacing}>
+                    <ListItem>
                         <ListItemIcon>
                         <SupervisedUserCircleIcon />
                         </ListItemIcon>
@@ -293,7 +269,7 @@ async function unregister(){
                         />
                     </ListItem>
                     <Divider variant="middle" />
-                    <ListItem className={classes.spacing}>
+                    <ListItem>
                     <ListItemIcon>
                         <StarsIcon />
                     </ListItemIcon>
@@ -305,7 +281,7 @@ async function unregister(){
                 </List>
                 <Grid container spacing={1} style={{marginLeft: '20px', marginRight: '20px', width:'95%'}}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
-                    <Button className={classes.spacing} style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('guild')}>
+                    <Button style={{float: 'left', marginTop: '20px'}} variant="contained" color="primary" onClick={(e) => register('guild')}>
                         Register
                     </Button>
                     <Typography variant="body2" style={{marginTop: '30px'}}>
@@ -320,7 +296,9 @@ async function unregister(){
         }
     </Grid>
     : <>
-    <div className={classes.loading}>
+    <Box sx={{ position: 'fixed',
+    top: '40%',
+    left: 'calc(50% - 80px)'}}>
     <Grid container spacing={1} alignItems="center" justifyContent="center" >
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
             <CircularProgress/>
@@ -329,7 +307,7 @@ async function unregister(){
             <Typography variant="h5" align="center">Loading...</Typography>
         </Grid>
     </Grid>
-    </div>
+    </Box>
     </> 
     }    
     </>

@@ -3,7 +3,6 @@ import globe from '../../img/globe.png'
 import { Link } from 'react-router-dom'
 
 // Material UI Components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
@@ -13,27 +12,6 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite'
-
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column'
-      },
-    center: {
-        textAlign: 'center',
-        fontWeight: 700,
-        paddingTop: 30, 
-        paddingBottom: 60, 
-    },
-    button: {
-        width: '80%',
-        fontSize: '40px',
-        marginBottom: '20px'
-    }
-}));
 
 const steps = [
     {
@@ -63,7 +41,7 @@ const steps = [
 ]
 
 const Landing = (state) => {
-    const classes = useStyles()
+    
     const matches = useMediaQuery('(max-width:500px)')
     const [activeStep, setActiveStep] = useState(0)
   
@@ -129,7 +107,11 @@ const Landing = (state) => {
                     <Button
                         variant="contained"
                         color="primary"
-                        className={classes.button}
+                        sx={{
+                          width: '80%',
+                          fontSize: '40px',
+                          marginBottom: '20px'
+                        }}
                         style={{marginTop: '20px', marginBottom: '20px'}}
                     ><PlayCircleFilledWhiteIcon style={{marginRight: '5px'}}/>
                         <Typography variant="body1" style={{fontSize: '26px'}}>
@@ -196,8 +178,11 @@ const Landing = (state) => {
                    <Link to="/pledge">
                     <Button
                         variant="contained"
-                        color="primary"
-                        className={classes.button}
+                        color="primary" sx={{
+                          width: '80%',
+                          fontSize: '40px',
+                          marginBottom: '20px'
+                        }}
                         style={{marginTop: '20px', marginBottom: '20px'}}
                     ><PlayCircleFilledWhiteIcon style={{marginRight: '5px'}}/>
                         <Typography variant="body1" style={{fontSize: '26px'}}>

@@ -10,47 +10,26 @@ import { getStatus, daoRootName } from '../../../state/user'
 import { parseNearAmount, formatNearAmount } from 'near-api-js/lib/utils/format'
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CardHeader from '@material-ui/core/CardHeader'
-import CardActions from '@material-ui/core/CardActions'
-import Button from '@material-ui/core/Button'
-import Chip from '@material-ui/core/Chip'
-import Grid from '@material-ui/core/Grid'
-import Avatar from '@material-ui/core/Avatar'
-import Typography from '@material-ui/core/Typography'
-import { green, red } from '@material-ui/core/colors'
-import DoneIcon from '@material-ui/icons/Done'
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
-import BlockIcon from '@material-ui/icons/Block'
-import LinearProgress from '@material-ui/core/LinearProgress'
-import Box from '@material-ui/core/Box'
-import Tooltip from '@material-ui/core/Tooltip'
-import Zoom from '@material-ui/core/Zoom'
-import InfoIcon from '@material-ui/icons/Info'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CardHeader from '@mui/material/CardHeader'
+import CardActions from '@mui/material/CardActions'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import Grid from '@mui/material/Grid'
+import Avatar from '@mui/material/Avatar'
+import Typography from '@mui/material/Typography'
+import { green, red } from '@mui/material/colors'
+import DoneIcon from '@mui/icons-material/Done'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import BlockIcon from '@mui/icons-material/Block'
+import LinearProgress from '@mui/material/LinearProgress'
+import Box from '@mui/material/Box'
+import Tooltip from '@mui/material/Tooltip'
+import Zoom from '@mui/material/Zoom'
+import InfoIcon from '@mui/icons-material/Info'
 
 const axios = require('axios').default
-
-const useStyles = makeStyles((theme) => ({
-    pos: {
-        marginTop: 0,
-    },
-    card: {
-      maxWidth: '250px',
-      margin: '10px 10px 10px 10px'
-    },
-    logoImage: {
-      width: 'fit-content',
-      height: '60px'
-    },
-    avatar: {
-      backgroundColor: red[500],
-    },
-    header: {
-      display: 'inherit'
-    }
-  }));
 
   function LinearProgressWithLabel(props) {
     return (<>
@@ -165,7 +144,7 @@ export default function OpportunityCard(props) {
       proposalDeposit
     } = state
 
-    const classes = useStyles();
+    ;
 
     const {
       creator,
@@ -390,7 +369,10 @@ export default function OpportunityCard(props) {
     return(
         <>
    
-        <Card raised={true} className={classes.card}>
+        <Card raised={true} sx={{
+          maxWidth: '250px',
+          margin: '10px 10px 10px 10px'
+        }}>
 
           <Grid container alignItems="center" justifyContent="center" spacing={1} style={{padding: '5px'}}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -439,9 +421,9 @@ export default function OpportunityCard(props) {
               <Typography variant="h6" align="center">Reward</Typography>
               <Typography variant="h6" align="center">{reward} Ⓝ</Typography>
               <Typography variant="subtitle1" color="textSecondary" align="center">~${usd ? usd + ' USD': null}</Typography><br></br>
-                <div className={classes.root}>
+                <Box>
                   <LinearProgressWithLabel value={progress} />
-                </div>
+                </Box>
                 
                   
               </Grid>

@@ -3,47 +3,17 @@ import { appStore } from '../../../state/app'
 import GuildCard from '../../Cards/GuildCard/guildCard'
 
 // Material UI components
-import { makeStyles } from '@material-ui/core/styles'
-import Grid from '@material-ui/core/Grid'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column'
-    },
-    featureDAO: {
-        minHeight: '200px',
-        backgroundColor:'#eff3fb',
-        padding: '20px',
-    },
-    paper: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-    },
-    menuButton: {
-      marginRight: theme.spacing(0),
-    },
-    title: {
-      flexGrow: 1,
-      textAlign: 'left'
-    },
-    drawer: {
-        marginTop: '5px'
-    }
-  }));
+import Grid from '@mui/material/Grid'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
   
 export default function MemberCommunities(props) {
    
     const [daos, setDaos] = useState([])
     const [contract, setContract] = useState()
 
-    const classes = useStyles()
+    
 
     const { state, dispatch, update } = useContext(appStore)
 

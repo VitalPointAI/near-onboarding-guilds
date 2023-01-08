@@ -22,7 +22,6 @@ import axios from 'axios'
 import { config } from '../../state/config'
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import { TextField, Paper } from '@mui/material'
@@ -34,24 +33,10 @@ import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  spacing: {
-      marginTop: '15px',
-      marginBottom: '15px'
-  },
-}));
-
   
 export default function Admin(props) {
 
-  const classes = useStyles()
+  
   const { state, dispatch, update } = useContext(appStore)
   
   const { register, handleSubmit, watch, errors, control, reset, setValue, getValues } = useForm()

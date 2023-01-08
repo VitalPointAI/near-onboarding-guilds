@@ -4,7 +4,6 @@ import oath from '../../img/oath.png'
 import { login } from '../../utils/helpers'
 
 // Material UI Components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
@@ -12,28 +11,8 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import GavelIcon from '@mui/icons-material/Gavel'
 import { Paper } from '@mui/material'
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column'
-      },
-    center: {
-        textAlign: 'center',
-        fontWeight: 700,
-        paddingTop: 30, 
-        paddingBottom: 60, 
-    },
-    button: {
-        width: '80%',
-        fontSize: '40px',
-        marginBottom: '20px'
-    }
-}));
-
 export default function Pledge(props) {
-    const classes = useStyles()
+    
     const matches = useMediaQuery('(max-width:500px)')
 
     const { state, dispatch, update } = useContext(appStore)
@@ -63,7 +42,11 @@ export default function Pledge(props) {
                     <Button
                         variant="contained"
                         color="primary"
-                        className={classes.button}
+                        sx={{
+                            width: '80%',
+                            fontSize: '40px',
+                            marginBottom: '20px'
+                        }}
                         onClick={() => login(wallet)}
                     ><GavelIcon style={{marginRight: '5px'}}/>
                         <Typography variant="body1" style={{fontSize: '26px'}}>
@@ -93,7 +76,11 @@ export default function Pledge(props) {
                     <Button
                         variant="contained"
                         color="primary"
-                        className={classes.button}
+                        sx={{
+                            width: '80%',
+                            fontSize: '40px',
+                            marginBottom: '20px'
+                        }}
                         onClick={login}
                     ><GavelIcon style={{marginRight: '5px'}}/>
                         <Typography variant="body1" style={{fontSize: '26px'}}>

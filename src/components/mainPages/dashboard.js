@@ -29,8 +29,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Chip from '@mui/material/Chip'
 import MailIcon from '@mui/icons-material/Mail'
 import { LinearProgress } from '@mui/material'
-import Switch from '@material-ui/core/Switch'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@mui/material/Switch'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
 const axios = require('axios').default
 

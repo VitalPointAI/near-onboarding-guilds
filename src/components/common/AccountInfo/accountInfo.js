@@ -3,12 +3,12 @@ import { useParams } from 'react-router-dom'
 import { appStore, onAppMount } from '../../../state/app'
 
 // Material UI Components
-import Avatar from '@material-ui/core/Avatar'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
-import { LinearProgress } from '@material-ui/core'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
-import Button from '@material-ui/core/Button'
+import Avatar from '@mui/material/Avatar'
+import Grid from '@mui/material/Grid'
+import Typography from '@mui/material/Typography'
+import { LinearProgress } from '@mui/material'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import Button from '@mui/material/Button'
 
 const imageName = require('../../../img/default-profile.png') // default no-image avatar
 const logoName = require('../../../img/default_logo.png') // default no-logo

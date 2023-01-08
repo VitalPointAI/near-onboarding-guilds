@@ -1,5 +1,6 @@
 {
 	"extends": "@parcel/config-default",
+	"resolvers": ["@parcel/resolver-glob", "..."],
 	"transformers": {
 		"*.png": ["@parcel/transformer-raw"],
 		"*.svg": ["@parcel/transformer-raw"],

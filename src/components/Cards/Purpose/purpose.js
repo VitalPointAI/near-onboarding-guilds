@@ -3,7 +3,6 @@ import { appStore, onAppMount } from '../../../state/app'
 import { ceramic } from '../../../utils/ceramic'
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -12,18 +11,10 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 
-const useStyles = makeStyles((theme) => ({
-  rootForm: {
-    '& > *': {
-      margin: '10px',
-    },
-  },
-  }));
-
 export default function Purpose(props) {
   const [open, setOpen] = useState(true)
   const [purpose, setPurpose] = useState('')
-  const classes = useStyles()
+  
  
   const { state, dispatch, update } = useContext(appStore)
   
@@ -65,7 +56,13 @@ export default function Purpose(props) {
     <div>
       <Dialog open={open} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Guild Purpose</DialogTitle>
-        <DialogContent className={classes.rootForm}>
+        <DialogContent sx={{
+          rootForm: {
+            '& > *': {
+              margin: '10px',
+            },
+          }
+        }}>
               <Card>
               <CardContent>
                 <div dangerouslySetInnerHTML={{ __html: purpose}}></div>

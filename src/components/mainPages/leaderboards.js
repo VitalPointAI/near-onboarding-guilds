@@ -2,35 +2,13 @@ import React, { useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 
 // Material UI Components
-import { makeStyles } from '@mui/styles'
-import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { Paper } from '@mui/material'
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column'
-      },
-    center: {
-        textAlign: 'center',
-        fontWeight: 700,
-        paddingTop: 30, 
-        paddingBottom: 60, 
-    },
-    button: {
-        width: '80%',
-        fontSize: '40px',
-        marginBottom: '20px'
-    }
-}));
-
 export default function Leaderboards(props) {
-    const classes = useStyles()
+    
     const matches = useMediaQuery('(max-width:500px)')
 
     const { state, dispatch, update } = useContext(appStore)

@@ -9,7 +9,7 @@ class Registry {
 
     constructor(){}
 
-    async initiateregistryContract(account) {    
+    async initiateRegistryContract(account) {    
         // initiate the contract so its associated with this current account and exposing all the methods
         let registryContract = new nearApiJs.Contract(account, registryContractName, {
           viewMethods: [

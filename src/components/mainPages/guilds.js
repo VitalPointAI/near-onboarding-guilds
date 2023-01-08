@@ -6,42 +6,12 @@ import SearchBar from '../common/SearchBar/search'
 import { updateCurrentGuilds } from '../../state/user'
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import List from '@mui/material/List'
 
 const axios = require('axios').default
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column'
-    },
-    featureDAO: {
-        minHeight: '200px',
-        backgroundColor:'#eff3fb',
-        padding: '20px',
-    },
-    paper: {
-        padding: '5px',
-        textAlign: 'center',
-    },
-    menuButton: {
-      marginRight: '5px',
-    },
-    title: {
-      flexGrow: 1,
-      textAlign: 'left'
-    },
-    drawer: {
-        marginTop: '5px'
-    }
-  }));
-
   
 export default function ExploreGuilds(props) {
    
@@ -57,7 +27,7 @@ export default function ExploreGuilds(props) {
     
     const [anchorEl, setAnchorEl] = useState(null)
    
-    const classes = useStyles()
+    
 
     const { state, dispatch, update } = useContext(appStore)
 

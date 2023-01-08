@@ -3,7 +3,6 @@ import { appStore, onAppMount } from '../../state/app'
 import EditGuildProfileForm from '../EditProfile/editGuild'
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Grid from '@mui/material/Grid'
 import Avatar from '@mui/material/Avatar'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -25,21 +24,7 @@ import Stack from '@mui/material/Stack'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import { Button } from '@mui/material'
-
-// CSS Styles
-
-const useStyles = makeStyles((theme) => ({
-    centered: {
-        position: 'fixed',
-        top: '40%',
-        left: '40%',
-      },
-    noProfile: {
-        position: 'fixed',
-        top: '40%',
-        left: 'calc(50% - 105px)',
-    },
-    }));
+import Box from '@mui/material/Box'
 
 const imageName = require('../../img/default-profile.png') // default no-image avatar
 const logoName = require('../../img/default_logo.png') // default logo
@@ -89,7 +74,7 @@ export default function UnregisteredProfile(props) {
     const [editGuildProfileClicked, setEditGuildProfileClicked] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
 
-    const classes = useStyles()
+    
 
     const { state, dispatch, update } = useContext(appStore)
 
@@ -241,7 +226,7 @@ export default function UnregisteredProfile(props) {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                         <Typography variant="h6">General Information</Typography>
                         <TableContainer component={Paper}>
-                        <Table className={classes.table} size="small" aria-label="a dense table">
+                        <Table size="small" aria-label="a dense table">
                             <TableHead>
                             
                             </TableHead>
@@ -269,7 +254,7 @@ export default function UnregisteredProfile(props) {
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                 <Typography variant="h6">Values</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -307,7 +292,7 @@ export default function UnregisteredProfile(props) {
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Typography variant="h6">Skills & Competencies</Typography>
                             <TableContainer component={Paper}>
-                                <Table className={classes.table} size="small" aria-label="a dense table">
+                                <Table size="small" aria-label="a dense table">
                                 <TableHead>
                                 
                                 </TableHead>
@@ -353,7 +338,7 @@ export default function UnregisteredProfile(props) {
                             </Grid>
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <TableContainer component={Paper}>
-                                <Table className={classes.table} size="small" aria-label="a dense table">
+                                <Table size="small" aria-label="a dense table">
                                 <TableHead>
                                 
                                 </TableHead>
@@ -394,7 +379,7 @@ export default function UnregisteredProfile(props) {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                         <Typography variant="h6">General Information</Typography>
                         <TableContainer component={Paper}>
-                        <Table className={classes.table} size="small" aria-label="a dense table">
+                        <Table size="small" aria-label="a dense table">
                             <TableHead>
                             
                             </TableHead>
@@ -443,7 +428,7 @@ export default function UnregisteredProfile(props) {
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant="h6">Guild Values</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -465,7 +450,7 @@ export default function UnregisteredProfile(props) {
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant="h6">Desired Skills</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -489,7 +474,7 @@ export default function UnregisteredProfile(props) {
                             </Grid>
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <TableContainer component={Paper}>
-                                <Table className={classes.table} size="small" aria-label="a dense table">
+                                <Table size="small" aria-label="a dense table">
                                 <TableHead>
                                 
                                 </TableHead>
@@ -511,18 +496,24 @@ export default function UnregisteredProfile(props) {
               </Grid>
               </>)
               : (
-                    <div className={classes.centered}>
+                    <Box sx={{position: 'fixed',
+                    top: '40%',
+                    left: '40%'}}>
                         <CircularProgress size={100} color="primary"  />
-                   </div>
+                   </Box>
               )
-              : (<div className={classes.noProfile}>
+              : (<Box sx={{
+                position: 'fixed',
+                top: '40%',
+                left: 'calc(50% - 105px)'
+              }}>
                     <Typography variant="h4">No Profile Yet.</Typography>
                     <br></br>
                     <Button className={classes.spacing} variant="contained" color="primary" onClick={handleEditGuildProfileClick}>
                         Create Profile
                     </Button>
  
-                </div>
+                </Box>
                 )}
 
                 {editGuildProfileClicked ? <EditGuildProfileForm

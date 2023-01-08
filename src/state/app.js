@@ -26,7 +26,7 @@ const initialState = {
         mounted: false,
         appIdx: null,
         near: null,
-        appRregistryContract: null,
+        appRegistryContract: null,
         ceramicClient: null,
         appAccount: null,
         superAdmin: null,
@@ -58,7 +58,7 @@ const initialState = {
         nftContract: null, 
         fundingContract: null,
         catalystContract: null,
-        keyExists: false
+        key: true
     }
 }
 
@@ -92,14 +92,14 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
 
     const appAccount = await near.account(APP_OWNER_ACCOUNT)
 
-    const appRegistryContract = await registry.initiateregistryContract(appAccount)
+    const appRegistryContract = await registry.initiateRegistryContract(appAccount)
     
     const appIdx = await ceramic.getAppIdx(appRegistryContract, appAccount)
 
     update('app', {appAccount, appRegistryContract, appIdx })
 
     try{
-        let nearPriceUpdate = await updateNearPriceAPI(APP_OWNER_ACCOUNT, appIdx, registryContract, update)
+        let updateAppIdx = await updateNearPriceAPI(APP_OWNER_ACCOUNT, appIdx, appRegistryContract, ceramicClient)
     } catch (err) {
         console.log('problem updating NEAR price history')
     }
@@ -168,7 +168,6 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
     //     set('near-api-js:keystore:'+accountId+':'+near.connection.networkId, key)
 
     // } else {
-        console.log('state at end app', state)
         dispatch(initUser())
    // }
 }

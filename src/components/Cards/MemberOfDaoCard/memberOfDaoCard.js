@@ -4,27 +4,13 @@ import { appStore, onAppMount } from '../../../state/app'
 import { dao } from '../../../utils/dao'
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
-import { LinearProgress } from '@material-ui/core'
-import Chip from '@material-ui/core/Chip'
-import PauseCircleFilledIcon from '@material-ui/icons/PauseCircleFilled'
-import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled'
-
-const useStyles = makeStyles((theme) => ({
-    card: {
-      verticalAlign: 'middle',
-      margin: '10px 10px 10px 10px',
-      padding: '2px'
-    },
-    square: {
-      float: 'left',
-      marginRight: '10px',
-      marginTop: '5px',
-    }
-  }));
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import { LinearProgress } from '@mui/material'
+import Chip from '@mui/material/Chip'
+import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled'
+import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled'
 
 const imageName = require('../../../img/default_logo.png') // default no-image avatar
 
@@ -36,7 +22,7 @@ export default function MemberOfDaoCard(props) {
     const [finished, setFinished] = useState(false)
     const [totalMembers, setTotalMembers] = useState()
 
-    const classes = useStyles()
+    
 
     const { state, dispatch, update } = useContext(appStore)
 
@@ -96,7 +82,11 @@ export default function MemberOfDaoCard(props) {
                      
           finished ? 
           (
-            <Card className={classes.card}>
+            <Card sx={{
+              verticalAlign: 'middle',
+              margin: '10px 10px 10px 10px',
+              padding: '2px'
+            }}>
               <CardContent align="center">
               <Link to={`/dao/${contractId}`}>
                 <div style={{width: '100%', 

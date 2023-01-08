@@ -3,7 +3,6 @@ import { appStore, onAppMount } from '../../state/app'
 import Social from '../common/Social/social'
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Grid from '@mui/material/Grid'
 import Avatar from '@mui/material/Avatar'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -26,20 +25,7 @@ import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import MailIcon from '@mui/icons-material/Mail'
 import { Button, LinearProgress, Divider } from '@mui/material'
-
-const axios = require('axios').default
-
-// CSS Styles
-
-const useStyles = makeStyles((theme) => ({
-    progress: {
-        display: 'flex',
-        justifyContent: 'center',
-        height: '200px',
-        width: '200px',
-        alignItems: 'center',
-    },
-    }));
+import Box from '@mui/material/Box'
 
 const logoName = require('../../img/default_logo.png') // default logo
 
@@ -88,7 +74,7 @@ export default function GuildProfile(props) {
     const [nftContract, setNftContract] = useState('')
     const [nftTokenId, setNftTokenId] = useState('')
 
-    const classes = useStyles()
+    
 
     const { state, dispatch, update } = useContext(appStore)
 
@@ -245,7 +231,7 @@ export default function GuildProfile(props) {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                         <Typography variant="h6">General Information</Typography>
                         <TableContainer component={Paper}>
-                        <Table className={classes.table} size="small" aria-label="a dense table">
+                        <Table size="small" aria-label="a dense table">
                             <TableHead>
                             
                             </TableHead>
@@ -292,7 +278,7 @@ export default function GuildProfile(props) {
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant="h6">Guild Values</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -316,7 +302,7 @@ export default function GuildProfile(props) {
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant="h6">Desired General Skills</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -340,7 +326,7 @@ export default function GuildProfile(props) {
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant="h6">Desired Specific Skills</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -364,7 +350,7 @@ export default function GuildProfile(props) {
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant="h6">Focus Areas</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -388,7 +374,7 @@ export default function GuildProfile(props) {
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant="h6">Subjects Taught</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -412,7 +398,7 @@ export default function GuildProfile(props) {
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant="h6">Current Projects</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -436,7 +422,7 @@ export default function GuildProfile(props) {
                             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                                 <Typography variant="h6">Services Offered</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -473,7 +459,7 @@ export default function GuildProfile(props) {
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                 <Typography variant="h6">Staking Validators</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -502,9 +488,13 @@ export default function GuildProfile(props) {
               </Grid>
               </>)
               : (
-                    <div className={classes.progress}>
+                    <Box sx={{ display: 'flex',
+                    justifyContent: 'center',
+                    height: '200px',
+                    width: '200px',
+                    alignItems: 'center'}}>
                         <CircularProgress size={100} color="primary"  />
-                   </div>
+                   </Box>
               )
             }
            

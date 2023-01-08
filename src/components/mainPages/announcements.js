@@ -3,33 +3,12 @@ import { appStore, onAppMount } from '../../state/app'
 import AnnouncementCard from '../Cards/AnnouncementCard/announcementCard'
 
 // Material UI Components
-import { makeStyles } from '@mui/styles'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import List from '@mui/material/List'
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column'
-      },
-    center: {
-        textAlign: 'center',
-        fontWeight: 700,
-        paddingTop: 30, 
-        paddingBottom: 60, 
-    },
-    button: {
-        width: '80%',
-        fontSize: '40px',
-        marginBottom: '20px'
-    }
-}));
-
 export default function Announcements(props) {
-    const classes = useStyles()
+    
     const matches = useMediaQuery('(max-width:500px)')
 
     const { state, dispatch, update } = useContext(appStore)
@@ -84,7 +63,10 @@ export default function Announcements(props) {
                     })
                 }
                 </>)
-                : <Typography variant="h5" className={classes.center}>No Announcements Yet</Typography>
+                : <Typography variant="h5" sx={{textAlign: 'center',
+                fontWeight: 700,
+                paddingTop: 30, 
+                paddingBottom: 60}}>No Announcements Yet</Typography>
             }
 
         </List>

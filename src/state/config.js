@@ -85,6 +85,8 @@ if(process.env.ENV === 'localhost') {
     APPSEED_CALL: 'http://localhost:3000/appseed',
     FUNDING_SEED_CALL: 'http://localhost:3000/funding-seed',
     SENDY_API_KEY_CALL: 'http://localhost:3000/sendy',
+    GRAPH_REGISTRY_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/registry-near-mnet',
+    VALIDATORS_API_URL: 'https://api.thegraph.com/subgraphs/name/vitalpointai/near-validators-poolv1'
   }
 }
 

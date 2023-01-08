@@ -24,18 +24,50 @@ const logoStyle = {
     marginTop: '10px'
 }
 
-const Header = ({ state, handleUpdate }) => {
+const Header = ({ handleUpdate }) => {
     const [newNotifications, setNewNotifications] = useState(0)
     const [popoverOpen, setPopoverOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null);
-    const { update } = useContext(appStore);
+    const { state, update } = useContext(appStore);
 
     const {
+        userInitialized,
+        curUserIdx,
+        did,
+        isVerifier,
+        isVerified,
+        isAdmin,
+        accountType,
+        account,
+        accountId,
+        signedIn,
+        balance,
         wallet,
+        walletContract, 
+        registryContract, 
+        factoryContract, 
+        nftContract, 
+        fundingContract,
+        catalystContract
+    } = state.user
+    
+    const {
+        mounted,
         appIdx,
+        near,
+        appRegistryContract,
+        ceramicClient,
+        appAccount,
+        superAdmin,
+        admins,
+        announcements,
         isUpdated,
-        accountId
-    } = state
+        currentGuilds, 
+        currentCommunities, 
+        guildsAwaitingVerification,
+        currentIndividuals,
+        currentVerifiers
+    } = state.app
 
     useEffect(
         () => {

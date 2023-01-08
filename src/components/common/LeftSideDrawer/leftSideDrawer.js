@@ -6,7 +6,6 @@ import EditGuildProfileForm from '../../EditProfile/editGuild'
 import GoToPersonas from '../../Cards/GoToPersonas/goToPersonas'
 
 // Material UI
-import { makeStyles, useTheme } from '@mui/styles'
 import Drawer from '@mui/material/Drawer'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
@@ -31,30 +30,11 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import LeaderboardIcon from '@mui/icons-material/Leaderboard'
 import CampaignIcon from '@mui/icons-material/Campaign'
-
-const useStyles = makeStyles((theme) => ({
-    list: {
-        width: 250,
-        padding: '10px',
-      },
-    fullList: {
-        width: 'auto',
-    },
-    menuButton: {
-        marginTop: '5px',
-        float: 'left',
-        
-    },
-    small: {
-        width: '50',
-        height: '50',
-        float: 'right',
-      },
-  }));
+import Box from '@mui/material/Box'
 
 export default function LeftSideDrawer(props) {
 
-const classes = useStyles()
+
 const matches = useMediaQuery('(max-width:500px)')
 
 const [anchorEl, setAnchorEl] = useState(null);
@@ -188,14 +168,12 @@ setDrawerState({ ...drawerState, [anchor]: open });
 }
 
 const list = (anchor) => (
-<div
-    className={clsx(classes.list, {
-    [classes.fullList]: anchor === 'top' || anchor === 'bottom',
-    })}
+  <Box
+    sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
     role="presentation"
     onClick={toggleDrawer(anchor, false)}
     onKeyDown={toggleDrawer(anchor, false)}
->
+  >
 {!matches && wallet.signedIn ? (
   <div className='toolbar'>
   <List>
@@ -373,7 +351,7 @@ const list = (anchor) => (
     </a>
     </List>
     
-</div>
+</Box>
 )
 
 return (

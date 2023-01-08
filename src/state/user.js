@@ -9,8 +9,6 @@ import { catalystDao } from '../utils/catalystDao'
 import { isVerified, synchAccountLinks, hasKey } from '../utils/helpers'
 import { config } from './config'
 
-const axios = require('axios').default
-
 export const {
     FUNDING_DATA, 
     FUNDING_DATA_BACKUP, 
@@ -106,7 +104,8 @@ export const initUser = () => async ({ update, getState, dispatch }) => {
 
     // initiate wallet
     const wallet = new WalletConnection(near)
-    update('user', {wallet})
+    console.log('wallet', wallet)
+    
 
     wallet.signIn = () => {
         wallet.requestSignIn({
@@ -120,7 +119,7 @@ export const initUser = () => async ({ update, getState, dispatch }) => {
     const walletContract = new Contract(wallet.account(), contractName, {
         changeMethods: ['send'],
     })
-    const registryContract = await registry.initiateregistryContract(wallet.account())
+    const registryContract = await registry.initiateRegistryContract(wallet.account())
     const factoryContract = await factory.initFactoryContract(wallet.account())
     const nftContract = await nft.initNFTContract(wallet.account())
     const fundingContract = await funding.initFundingContract(wallet.account())
@@ -130,7 +129,7 @@ export const initUser = () => async ({ update, getState, dispatch }) => {
     wallet.signedIn = wallet.isSignedIn()
 
     if(wallet.signedIn){
-
+        console.log('here')
         wallet.balance = formatNearAmount((await wallet.account().getAccountBalance()).available, 2)
         update('user', {signedIn: wallet.signedIn, balance: wallet.balance})
 
@@ -138,13 +137,13 @@ export const initUser = () => async ({ update, getState, dispatch }) => {
 
         const account = wallet.account()
 
-        // confirm key exists
-        try{
-            let keyExists = await hasKey(account)
-            update('user', {keyExists})
-        } catch (err) {
-            console.log('problem confirming key exists', err)
-        }
+        // // confirm key exists
+        // try{
+        //     let keyExists = await hasKey(account)
+        //     update('user', {keyExists})
+        // } catch (err) {
+        //     console.log('problem confirming key exists', err)
+        // }
 
         const accountId = account.accountId
         update('user', {account, accountId})
@@ -171,8 +170,8 @@ export const initUser = () => async ({ update, getState, dispatch }) => {
 
         // ********* Account Verification Status ****************
         try{
-            let isVerified = await isVerified(accountId)
-            if(isVerified){
+            let verified = await isVerified(accountId)
+            if(verified){
                 update('user', {isVerified: true})
             }
         } catch (err) {
@@ -201,11 +200,11 @@ export const initUser = () => async ({ update, getState, dispatch }) => {
         }
 
         // ********* NEAR Account Transactions Update ************
-        try{
-            await updateNearTransactionAPI(accountId, appIdx, factoryContract, registryContract, account, update)
-        } catch (err) {
-            console.log('problem updating user near transactions', err)
-        }
+        // try{
+        //     await updateNearTransactionAPI(accountId, appIdx, factoryContract, registryContract, account, update)
+        // } catch (err) {
+        //     console.log('problem updating user near transactions', err)
+        // }
 
         // Admin Functions
         // ********* Clear User's Ceramic Transaction Data ****************
@@ -215,5 +214,8 @@ export const initUser = () => async ({ update, getState, dispatch }) => {
         console.log('state inituser finished', state)
 
     }
+    update('user', {wallet, userInitialized: true})
+    state = getState()
+    console.log('state end user', state)
 }
 

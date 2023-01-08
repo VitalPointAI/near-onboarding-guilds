@@ -5,41 +5,13 @@ import IndivCard from '../Cards/IndivCard/indivCard'
 import SearchBar from '../common/SearchBar/search'
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Typography from '@mui/material/Typography'
 import Grid from '@mui/material/Grid'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import List from '@mui/material/List'
+import Box from '@mui/material/Box'
 
 const axios = require('axios').default
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column'
-    },
-    featureDAO: {
-        minHeight: '200px',
-        backgroundColor:'#eff3fb',
-        padding: '20px',
-    },
-    paper: {
-        padding: '5px',
-        textAlign: 'center',
-    },
-    menuButton: {
-      marginRight: '5px',
-    },
-    title: {
-      flexGrow: 1,
-      textAlign: 'left'
-    },
-    drawer: {
-        marginTop: '5px'
-    }
-  }));
 
   
 export default function ExploreIndividuals(props) {
@@ -56,7 +28,7 @@ export default function ExploreIndividuals(props) {
     
     const [anchorEl, setAnchorEl] = useState(null)
    
-    const classes = useStyles()
+    
 
     const { state, dispatch, update } = useContext(appStore)
 
@@ -149,7 +121,12 @@ export default function ExploreIndividuals(props) {
 
     return (
         <>
-        <div className={classes.root}>
+        <Box sx={{
+            flexGrow: 1,
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column'
+        }}>
     
         {!matches ? (<>
             <Grid container alignItems="center" justifyContent="space-evenly" spacing={1}>
@@ -218,7 +195,7 @@ export default function ExploreIndividuals(props) {
         </List>
         </Grid>
      
-        </div>
+        </Box>
     
         </>
     )

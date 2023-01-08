@@ -12,29 +12,10 @@ import Dashboard from '../../components/mainPages/dashboard'
 import { KEY_REDIRECT } from '../../utils/ceramic'
 
 // Material UI & styling
-import { makeStyles } from '@mui/styles'
 import Typography from '@mui/material/Typography'
 import CircularProgress from '@mui/material/CircularProgress'
+import Box from '@mui/material/Box'
 import '../../global.css'
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column'
-      },
-      centered: {
-        width: '200px',
-        height: '100px',
-        textAlign: 'center',
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        marginTop: '-100px',
-        marginLeft: '-100px'
-      },
-  }));
 
 export const Home = ({ children }) => {
 
@@ -58,7 +39,8 @@ export const Home = ({ children }) => {
         factoryContract, 
         nftContract, 
         fundingContract,
-        catalystContract
+        catalystContract,
+        key
     } = state.user
     
     const {
@@ -79,15 +61,15 @@ export const Home = ({ children }) => {
         currentVerifiers
     } = state.app
     
-    const classes = useStyles();
+    ;
 
     useEffect(
         () => {
             let needsKey = get(KEY_REDIRECT, [])
             if(needsKey.action == true){
-                update('', {key: true})
+                update('user', {key: true})
             } else (
-                update('', {key: false})
+                update('user', {key: false})
             )
     }, [userInitialized, isUpdated]
     )
@@ -102,11 +84,18 @@ export const Home = ({ children }) => {
             :  (<Landing state={state} />)
             : state.accountData ? ({children}) 
             : (<>
-                <div className={classes.centered}>
+                <Box sx={{width: '200px',
+                height: '100px',
+                textAlign: 'center',
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                marginTop: '-100px',
+                marginLeft: '-100px'}}>
                     <CircularProgress/><br></br>
                     <Typography variant="h6">Preparing...</Typography><br></br>
                     <RandomPhrase />
-                </div>
+                </Box>
             </>)
         }    
         

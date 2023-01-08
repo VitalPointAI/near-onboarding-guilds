@@ -3,7 +3,6 @@ import { appStore, onAppMount } from '../../state/app'
 import Social from '../common/Social/social'
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Grid from '@mui/material/Grid'
 import Avatar from '@mui/material/Avatar'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -25,18 +24,7 @@ import Stack from '@mui/material/Stack'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import VerifiedIcon from '@mui/icons-material/Verified'
 import { Divider } from '@mui/material'
-
-// CSS Styles
-
-const useStyles = makeStyles((theme) => ({
-    progress: {
-        display: 'flex',
-        justifyContent: 'center',
-        height: '200px',
-        width: '200px',
-        alignItems: 'center',
-    },
-    }));
+import Box from '@mui/material/Box'
 
 const imageName = require('../../img/default-profile.png') // default no-image avatar
 const logoName = require('../../img/default_logo.png') // default logo
@@ -69,7 +57,7 @@ export default function IndivProfile(props) {
     const [reddit, setReddit] = useState('')
     const [discord, setDiscord] = useState('')
 
-    const classes = useStyles()
+    
 
     const { state, dispatch, update } = useContext(appStore)
 
@@ -193,7 +181,7 @@ export default function IndivProfile(props) {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} align="center">
                         <Typography variant="h6">General Information</Typography>
                         <TableContainer component={Paper}>
-                        <Table className={classes.table} size="small" aria-label="a dense table">
+                        <Table size="small" aria-label="a dense table">
                             <TableHead>
                             
                             </TableHead>
@@ -220,7 +208,7 @@ export default function IndivProfile(props) {
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                 <Typography variant="h6">Values</Typography>
                                 <TableContainer component={Paper}>
-                                    <Table className={classes.table} size="small" aria-label="a dense table">
+                                    <Table size="small" aria-label="a dense table">
                                     <TableHead>
                                     
                                     </TableHead>
@@ -258,7 +246,7 @@ export default function IndivProfile(props) {
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Typography variant="h6">Skills & Competencies</Typography>
                             <TableContainer component={Paper}>
-                                <Table className={classes.table} size="small" aria-label="a dense table">
+                                <Table size="small" aria-label="a dense table">
                                 <TableHead>
                                 
                                 </TableHead>
@@ -306,9 +294,13 @@ export default function IndivProfile(props) {
               </Grid>
               </>)
               : (
-                    <div className={classes.progress}>
+                    <Box sx={{ display: 'flex',
+                    justifyContent: 'center',
+                    height: '200px',
+                    width: '200px',
+                    alignItems: 'center'}}>
                         <CircularProgress size={100} color="primary"  />
-                   </div>
+                   </Box>
               )
         }
            

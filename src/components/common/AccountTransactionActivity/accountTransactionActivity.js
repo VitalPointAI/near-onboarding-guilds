@@ -11,7 +11,6 @@ import {
   formatNearAmount } from '../../../utils/helpers'
 
 // Material UI components
-import { makeStyles } from '@mui/styles'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -29,15 +28,6 @@ import Tooltip from '@mui/material/Tooltip'
 import InfoIcon from '@mui/icons-material/Info'
 
 import csvIcon from '../../../img/csv-icon.png'
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column'
-    },    
-  }));
   
 export default function AccountTransactionActivity(props) {
    
@@ -54,18 +44,48 @@ export default function AccountTransactionActivity(props) {
     const [clicked, setClicked] = useState(false)
     const [transactionCount, setTransactionCount] = useState(0)
 
-    const classes = useStyles()
+    
     const { register, handleSubmit, watch, errors, control, reset, setValue, getValues } = useForm()
     const { state, dispatch, update } = useContext(appStore)
-
+   
     const {
-      accountId,
-      account,
-      appIdx,
-      did,
-      factoryContract,
-      registryContract
-    } = state
+        userInitialized,
+        curUserIdx,
+        did,
+        isVerifier,
+        isVerified,
+        isAdmin,
+        accountType,
+        account,
+        accountId,
+        signedIn,
+        balance,
+        wallet,
+        walletContract, 
+        registryContract, 
+        factoryContract, 
+        nftContract, 
+        fundingContract,
+        catalystContract
+    } = state.user
+    
+    const {
+        mounted,
+        appIdx,
+        near,
+        appRegistryContract,
+        ceramicClient,
+        appAccount,
+        superAdmin,
+        admins,
+        announcements,
+        isUpdated,
+        currentGuilds, 
+        currentCommunities, 
+        guildsAwaitingVerification,
+        currentIndividuals,
+        currentVerifiers
+    } = state.app
 
     // useEffect(() => {
     //   async function update(){
@@ -120,7 +140,7 @@ export default function AccountTransactionActivity(props) {
 
     async function fetchPriceTable(fromDate, toDate, accountId){
       if(fromDate && toDate){
-        let prices = await buildPriceTable(fromDate, toDate, accountId)
+        let prices = await buildPriceTable(fromDate, toDate, appClient)
         setPriceTable(prices)
         return prices
       }
