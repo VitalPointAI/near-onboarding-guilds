@@ -1,37 +1,24 @@
+import { readFile, writeFile } from 'fs/promises'
 import { CeramicClient } from '@ceramicnetwork/http-client'
 import * as nearApiJs from 'near-api-js'
 import { get, set, del } from './storage'
-import { IDX } from '@ceramicstudio/idx'
-import { TileDocument } from '@ceramicnetwork/stream-tile'
-import { createDefinition, publishSchema } from '@ceramicstudio/idx-tools'
+//import { IDX } from '@ceramicstudio/idx'
+//import { TileDocument } from '@ceramicnetwork/stream-tile'
+import { ModelManager } from '@glazed/devtools'
+import { DataModel } from '@glazed/datamodel'
+//import { createDefinition, publishSchema } from '@ceramicstudio/idx-tools'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
-import { getResolver as getKeyResolver} from 'key-did-resolver'
-import { getResolver as get3IDResolver} from '@ceramicnetwork/3id-did-resolver'
-import { ThreeIdProvider } from '@3id/did-provider'
+//import { ThreeIdProvider } from '@3id/did-provider'
+import { getResolver as getKeyResolver } from 'key-did-resolver'
+//import { getResolver as get3IDResolver } from '@ceramicnetwork/3id-did-resolver'
 import { DID } from 'dids'
 
-// schemas
-import { profileSchema } from '../schemas/profile'
-import { guildProfileSchema } from '../schemas/guildProfile'
-import { accountKeysSchema } from '../schemas/accountKeys'
-import { definitionsSchema } from '../schemas/definitions'
-import { schemaSchema } from '../schemas/schemas'
-import { commentsSchema } from '../schemas/comments'
-import { notificationSchema } from '../schemas/notifications'
-import { metadataSchema } from '../schemas/metadata'
-import { apiKeysSchema } from '../schemas/apiKeys'
-import { announcementSchema } from '../schemas/announcements'
-import { opportunitiesSchema } from '../schemas/opportunities'
-import { daoProfileSchema } from '../schemas/daoProfile'
-import { nearPriceHistorySchema } from '../schemas/nearPriceHistory'
-import { nearTransactionHistorySchema } from '../schemas/nearTransactionHistory'
-import { yearPriceHistorySchema } from '../schemas/yearPriceHistory'
-import { yearTransactionHistorySchema } from '../schemas/yearTransactionHistory'
-
-
 import { config } from '../state/config'
+import { DIDDataStore } from '@glazed/did-datastore'
 
 const axios = require('axios').default
+const encoder = new TextEncoder()
+
 
 export const {
   CERAMIC_API_URL,
@@ -89,15 +76,36 @@ class Ceramic {
   }
 
 
-  async getLocalAccountSeed(account, appIdx, contract){
+  // async getLocalAccountSeed(account, appIdx, contract){
 
-    let newAccountKeys =  await this.downloadKeysSecret(appIdx, 'accountsKeys')
+  //   let newAccountKeys =  await this.downloadKeysSecret(appIdx, 'accountsKeys')
 
-    // add legacy dao keys
-    let legacyAppIdx = await this.getLegacyAppIdx(contract, account)
-    let oldAccountKeys =  await this.downloadKeysSecret(legacyAppIdx, 'accountsKeys')
+  //   // add legacy dao keys
+  //   let legacyAppIdx = await this.getLegacyAppIdx(contract, account)
+  //   let oldAccountKeys =  await this.downloadKeysSecret(legacyAppIdx, 'accountsKeys')
+  //   let localAccounts = get(ACCOUNT_LINKS, [])
+  //   let accounts = localAccounts.concat(oldAccountKeys, newAccountKeys)
+    
+  //   if(accounts && accounts.length > 0){
+  //     let i = 0
+  //     while (i < accounts.length){
+  //       if(accounts[i].accountId == account.accountId){
+  //         let seed = Buffer.from((accounts[i].key).slice(0,32))
+  //         return seed
+  //       }
+  //       i++
+  //     }
+  //   } 
+  //   return false
+  // }
+
+  async getLocalIdentitySeed(account, appIdx, contract){
+
+    let identityKeys =  await this.downloadKeysSecret(appIdx, 'accountsKeys')
+
+    // add identity keys to local storage
     let localAccounts = get(ACCOUNT_LINKS, [])
-    let accounts = localAccounts.concat(oldAccountKeys, newAccountKeys)
+    let accounts = localAccounts.concat(identityKeys)
     
     if(accounts && accounts.length > 0){
       let i = 0
@@ -112,8 +120,7 @@ class Ceramic {
     return false
   }
 
-
-  async makeSeed(account){
+  async makeIdentitySeed(account){
       let keyPair = KeyPair.fromRandom('ed25519')
       let publicKey = keyPair.getPublicKey().toString().split(':')[1]
       let owner = account.accountId
@@ -137,95 +144,116 @@ class Ceramic {
       }
   }
 
-
-  async getCeramic(account, seed) {
+  async getUserCeramic(account, seed) {
     if (seed == undefined || seed == false){
-      seed = await this.getLocalAccountSeed(account.accountId)
+      seed = await this.getLocalIdentitySeed(account.accountId)
       if(seed == false || seed == undefined){
-        await this.makeSeed(account)
-        seed = await this.getLocalAccountSeed(account.accountId)
+        await this.makeIdentitySeed(account)
+        seed = await this.getLocalIdentitySeed(account.accountId)
       }
     }
-    const ceramic = new CeramicClient(CERAMIC_API_URL, {cacheDocCommits: true, docSyncEnabled: false, docSynchInterval: 30000})
-    const authId = 'NearAuthProvider'
-    let authSecret = seed
-    const getPermission = async (request) => {
-       return request.payload.paths
-    }
-
-    const threeId = await ThreeIdProvider.create({
-      ceramic,
-      getPermission,
-      authSecret,
-      authId
-    })
-   
-    const provider = threeId.getDidProvider()
-   
-    const resolver = {...get3IDResolver(ceramic), ...getKeyResolver(), }
-    const did = new DID({ resolver })
-    ceramic.setDID(did)
-    ceramic.did.setProvider(provider)
-    await ceramic.did.authenticate()
-    return ceramic
-  }
-
-
-  async getLegacyCeramic(account, seed) {
-    if (seed == undefined || seed == false){
-      seed = await this.getLocalAccountSeed(account.accountId)
-      if(seed == false || seed == undefined){
-        await this.makeSeed(account)
-        seed = await this.getLocalAccountSeed(account.accountId)
-      }
-    }
-    const ceramic = new CeramicClient(CERAMIC_API_URL, {cacheDocCommits: true, docSyncEnabled: false, docSynchInterval: 30000})
-   
+    const ceramic = new CeramicClient(CERAMIC_API_URL)
+    
     const provider = new Ed25519Provider(seed)
-
-    const resolver = {...getKeyResolver() }
-  
-    const did = new DID({ resolver })
-    
-    ceramic.setDID(did)
-    ceramic.did.setProvider(provider)
-  
-    await ceramic.did.authenticate()
-    
-    return ceramic
-  }
-
-  async getCeramicWithSeed(seed) {
-    if (seed == undefined || seed == false){
-      return false
-    }
-    
-    let authSecret = Buffer.from((seed).slice(0,32))
-
-    const authId = 'NearAuthProvider'
-
-    const getPermission = async (request) => {
-       return request.payload.paths
-    }
-
-    const threeId = await ThreeIdProvider.create({
-      ceramic,
-      getPermission,
-      authSecret,
-      authId
+    const did = new DID({
+      provider,
+      resolver: getKeyResolver()
     })
     
-    const provider = threeId.getDidProvider()
-   
-    const resolver = {...get3IDResolver(ceramic), ...getKeyResolver() }
-    const did = new DID({ resolver })
-    
-    ceramic.setDID(did)
-    ceramic.did.setProvider(provider)
-    await ceramic.did.authenticate()
+    await did.authenticate()
+    ceramic.did = did
     
     return ceramic
   }
+
+  // async getCeramic(account, seed) {
+  //   if (seed == undefined || seed == false){
+  //     seed = await this.getLocalAccountSeed(account.accountId)
+  //     if(seed == false || seed == undefined){
+  //       await this.makeSeed(account)
+  //       seed = await this.getLocalAccountSeed(account.accountId)
+  //     }
+  //   }
+  //   const ceramic = new CeramicClient(CERAMIC_API_URL, {cacheDocCommits: true, docSyncEnabled: false, docSynchInterval: 30000})
+  //   const authId = 'NearAuthProvider'
+  //   let authSecret = seed
+  //   const getPermission = async (request) => {
+  //      return request.payload.paths
+  //   }
+
+  //   const threeId = await ThreeIdProvider.create({
+  //     ceramic,
+  //     getPermission,
+  //     authSecret,
+  //     authId
+  //   })
+   
+  //   const provider = threeId.getDidProvider()
+   
+  //   const resolver = {...get3IDResolver(ceramic), ...getKeyResolver(), }
+  //   const did = new DID({ resolver })
+  //   ceramic.setDID(did)
+  //   ceramic.did.setProvider(provider)
+  //   await ceramic.did.authenticate()
+  //   return ceramic
+  // }
+
+
+  // async getLegacyCeramic(account, seed) {
+  //   if (seed == undefined || seed == false){
+  //     seed = await this.getLocalAccountSeed(account.accountId)
+  //     if(seed == false || seed == undefined){
+  //       await this.makeSeed(account)
+  //       seed = await this.getLocalAccountSeed(account.accountId)
+  //     }
+  //   }
+  //   const ceramic = new CeramicClient(CERAMIC_API_URL, {cacheDocCommits: true, docSyncEnabled: false, docSynchInterval: 30000})
+   
+  //   const provider = new Ed25519Provider(seed)
+
+  //   const resolver = {...getKeyResolver() }
+  
+  //   const did = new DID({ resolver })
+    
+  //   ceramic.setDID(did)
+  //   ceramic.did.setProvider(provider)
+  
+  //   await ceramic.did.authenticate()
+    
+  //   return ceramic
+  // }
+
+  // async getCeramicWithSeed(seed) {
+  //   if (seed == undefined || seed == false){
+  //     return false
+  //   }
+    
+  //   let authSecret = Buffer.from((seed).slice(0,32))
+
+  //   const authId = 'NearAuthProvider'
+
+  //   const getPermission = async (request) => {
+  //      return request.payload.paths
+  //   }
+
+  //   const threeId = await ThreeIdProvider.create({
+  //     ceramic,
+  //     getPermission,
+  //     authSecret,
+  //     authId
+  //   })
+    
+  //   const provider = threeId.getDidProvider()
+   
+  //   const resolver = {...get3IDResolver(ceramic), ...getKeyResolver() }
+  //   const did = new DID({ resolver })
+    
+  //   ceramic.setDID(did)
+  //   ceramic.did.setProvider(provider)
+  //   await ceramic.did.authenticate()
+    
+  //   return ceramic
+  // }
 
 
   async getAppCeramic(accountId) {
@@ -249,74 +277,48 @@ class Ceramic {
     })
  
     const ceramic = new CeramicClient(CERAMIC_API_URL)
-  console.log('ceramic', ceramic)
-  //  let authSecret = retrieveSeed.data.seed
-   console.log('seed', retrieveSeed.data.seed)
-   let enc = new TextEncoder()
-    let seed = enc.encode(retrieveSeed.data.seed)
-    console.log('seed1', seed)
-    const authId = 'myAuthID'
+    console.log('ceramic', ceramic)
 
-    let request = {
-      type: 'authenticate',
-      origin: 'http://localhost:5644',
-      payload: {
-        paths: ['*']
-      }
+    const getPermission = async (request) => {
+       return request.payload.paths
     }
-
-   // const getPermission = () => Promise.resolve([])
-   
-    const threeId = await ThreeIdProvider.create({
-      ceramic,
-      seed,
-      getPermission: (request) => Promise.resolve(request.payload.paths), 
-     })
-
-     const provider = threeId.getDidProvider()
-     console.log('provider', provider)
-
-    // console.log('threeid', threeId)
-    // const did = new DID({
-    //   provider: threeId.getDidProvider(),
-    //   resolver: {
-    //     ...get3IDResolver(ceramic),
-    //     ...getKeyResolver()
-    //   }
+    const provider = new Ed25519Provider(retrieveSeed.data.seed)
+    // const threeID = await ThreeIdProvider.create({
+    //   ceramic,
+    //   authId: 'NEARAuthID',
+    //   authSecret: encoder.encode(retrieveSeed.data.seed),
+    //   getPermission
     // })
-    //const provider = new Ed25519Provider(seed)
+  
     const did = new DID({
+   //   provider: threeID.getDidProvider(),
       provider,
-      resolver: get3IDResolver()
+      resolver: {
+     //   ...get3IDResolver(ceramic),
+        ...getKeyResolver(),
+      },
     })
-    console.log('did', did)
-    // const provider = threeId.getDidProvider()
-   
-    // const resolver = {...get3IDResolver(ceramic), ...getKeyResolver(), }
-    // const did = new DID({ resolver })
-    
-    // ceramic.setDID(did)
-    // ceramic.did.setProvider(provider)
-    // await ceramic.did.authenticate()
+  
+    // Authenticate the DID using the 3ID provider
     await did.authenticate()
-    ceramic.did = did
-    
+  
+    // The Ceramic client can create and update streams using the authenticated DID
+    ceramic.did = did    
     return ceramic
   }
 
-
-  // needed to find accounts that had been registered with key did provider
-  async getLegacyAppCeramic(accountId) {
+  async getKeyCeramic(accountId) {
 
     let token = await axios.post(TOKEN_CALL, 
       {
       accountId: accountId
       }    
     )
-   
+    console.log('token', token)
     set(AUTH_TOKEN, token.data.token)
-
-    let authToken = get(AUTH_TOKEN, [])   
+  
+    let authToken = get(AUTH_TOKEN, [])
+   
     let retrieveSeed = await axios.post(APPSEED_CALL, {
       // ...data
     },{
@@ -327,18 +329,52 @@ class Ceramic {
  
     const ceramic = new CeramicClient(CERAMIC_API_URL)
     const provider = new Ed25519Provider(retrieveSeed.data.seed)
-
-    const resolver = {...getKeyResolver()}
+    const resolver = {...getKeyResolver() }
+    const did = new DID({ provider, resolver })
   
-    const did = new DID({ resolver })
-    
-    ceramic.setDID(did)
-    ceramic.did.setProvider(provider)
+    // Authenticate the DID using the 3ID provider
+    await did.authenticate()
   
-    await ceramic.did.authenticate()
-    
+    // The Ceramic client can create and update streams using the authenticated DID
+    ceramic.did = did    
     return ceramic
   }
+
+
+  // // accounts registered with key did provider
+  // async getLegacyAppCeramic(accountId) {
+
+  //   let token = await axios.post(TOKEN_CALL, 
+  //     {
+  //     accountId: accountId
+  //     }    
+  //   )
+   
+  //   set(AUTH_TOKEN, token.data.token)
+
+  //   let authToken = get(AUTH_TOKEN, [])   
+  //   let retrieveSeed = await axios.post(APPSEED_CALL, {
+  //     // ...data
+  //   },{
+  //     headers: {
+  //       'Authorization': `Basic ${authToken}`
+  //     }
+  //   })
+ 
+  //   const ceramic = new CeramicClient(CERAMIC_API_URL)
+  //   const provider = new Ed25519Provider(retrieveSeed.data.seed)
+
+  //   const resolver = {...getKeyResolver()}
+  
+  //   const did = new DID({ resolver })
+    
+  //   ceramic.setDID(did)
+  //   ceramic.did.setProvider(provider)
+  
+  //   await ceramic.did.authenticate()
+    
+  //   return ceramic
+  // }
 
 
 
@@ -387,7 +423,35 @@ class Ceramic {
    
     // initiate the contract so its associated with this current account and exposing all the methods
     let contract = new Contract(account, registryContractName, {
-      changeMethods: ['putDID', 'deleteDID', 'adjustKeyAllowance', 'storeAlias']
+      viewMethods: [
+        'getDID',
+        'hasDID',
+        'getAdmins',
+        'getSuperAdmin',
+        'retrieveAlias',
+        'getType',
+        'hasAlias',
+        'getVerificationStatus',
+        'getTier',
+        'hasSchema',
+        'retrieveSchema',
+        'hasDefinition',
+        'retrieveDefinition',
+        'hasTile',
+        'retrieveTile'
+      ],
+      changeMethods: [
+        'putDID', 
+        'deleteDID', 
+        'adjustKeyAllowance', 
+        'storeAlias',
+        'storeSchema',
+        'deleteSchema',
+        'storeDefinition',
+        'deleteDefinition',
+        'storeTile',
+        'deleteTile'
+      ]
     })
 
     return {
@@ -460,239 +524,583 @@ class Ceramic {
   }
 
 
-  async changeDefinition(accountId, aliasName, client, schema, description, contract) {
+  // async changeDefinition(accountId, aliasName, client, schema, description, contract) {
   
-    let alias
+  //   let alias
   
-      let aliasExists = await contract.hasAlias({alias: accountId+':'+aliasName})
+  //     let aliasExists = await contract.hasAlias({alias: accountId+':'+aliasName})
     
-      if(aliasExists){
-        try{
-          alias = await contract.retrieveAlias({alias: accountId+':'+aliasName})
+  //     if(aliasExists){
+  //       try{
+  //         alias = await contract.retrieveAlias({alias: accountId+':'+aliasName})
         
-        } catch (err) {
-          console.log('alias is misformed', err)
-          alias = false
-        }
-      } 
+  //       } catch (err) {
+  //         console.log('alias is misformed', err)
+  //         alias = false
+  //       }
+  //     } 
       
-      let newSchemaURL = await publishSchema(client, {content: schema})
-      const doc = await TileDocument.load(client, alias)
+  //     let newSchemaURL = await publishSchema(client, {content: schema})
+  //     const doc = await TileDocument.load(client, alias)
     
-      try {
-        await doc.update({name: aliasName, description: description, schema: newSchemaURL.commitId.toUrl()})
-        return true
-      } catch (err) {
-        console.log('error updating definition schema', err)
-        return false
-      }
+  //     try {
+  //       await doc.update({name: aliasName, description: description, schema: newSchemaURL.commitId.toUrl()})
+  //       return true
+  //     } catch (err) {
+  //       console.log('error updating definition schema', err)
+  //       return false
+  //     }
+  // }
+
+
+  // async getAlias(accountId, aliasName, client, schema, description, contract) {
+  //   let alias
+  //   console.log('get alias accountid', accountId)
+  //   console.log('aliasname', aliasName)
+  //   try {
+  //     let aliasExists = await contract.hasAlias({alias: accountId+':'+aliasName})
+  //     console.log('aliasExists', aliasExists)
+  //     if(aliasExists){
+  //       try{
+  //         alias = await contract.retrieveAlias({alias: accountId+':'+aliasName})
+  //         console.log('retrieved alias', alias)
+  //         return alias
+  //       } catch (err) {
+  //         console.log('alias is misformed', err)
+  //         alias = false
+  //       }
+  //     }
+  //     if(!aliasExists || alias == false){
+  //       let schemaURL = await publishSchema(client, {content: schema})
+  //       let definition = await createDefinition(client, {
+  //         name: aliasName,
+  //         description: description,
+  //         schema: schemaURL.commitId.toUrl()
+  //       })
+  //       let didContract = await this.useFundingAccount(accountId)
+  //       console.log('didcontract', didContract)
+  //       await didContract.contract.storeAlias({alias: accountId+':'+aliasName, definition: definition.id.toString(), description: description})
+  //       return definition.id.toString()
+  //     }
+  //   } catch (err) {
+  //     console.log('problem retrieving alias', err)
+  //     return false
+  //   }
+  // }
+
+  async getAlias(contract, schemaName, definitionName, schemaURL, definition){
+  console.log('get contract', contract)
+    try {
+        let schemaExists = await contract.hasSchema({schemaName: schemaName})
+        console.log('schemaExists', schemaExists)
+        if(schemaExists){
+          try{
+            schemaURL = await contract.retrieveSchema({schemaName: schemaName})
+          } catch (err) {
+            console.log('error retrieving existing schema', err)
+          }
+        } else {
+          schemaURL = false
+        }
+    
+        let definitionExists = await contract.hasDefinition({definitionName: definitionName})
+        console.log('definitionExists', definitionExists)
+        if(definitionExists){
+          try{
+            definition = await contract.retrieveDefinition({definitionName: definitionName})
+            console.log('retrieved definition', definition)
+          } catch (err) {
+            console.log('error retrieving existing definition', err)
+          }
+        } else {
+          definition = false
+        }
+    } catch (err) {
+      console.log('problem with alias retrieval', err)
+    }
+  
+    return {
+      schemaName: schemaName,
+      schemaURL: schemaURL,
+      definitionName: definitionName,
+      definition: definition
+    }
   }
 
 
-  async getAlias(accountId, aliasName, client, schema, description, contract) {
-    let alias
-    console.log('get alias accountid', accountId)
-    console.log('aliasname', aliasName)
+  async storeAlias(schemaName, schemaDescription, definitionName, definitionDescription, accountId, appName, schemaURL, definition){
+
+    let registryContract = await this.useFundingAccount(accountId)
+    console.log('registrycontract', registryContract)
+
+    let tile
+    // try{
+    //   await registryContract.contract.deleteSchema({schemaName: schemaName})
+    //   console.log('deleted schema', schemaName)
+    // } catch (err) {
+    //   console.log('problem deleteing schema', err)
+    // }
+    // try {
+    //   await registryContract.contract.deleteDefinition({definitionName: definitionName})
+    //   console.log('deleted definition', definitionName)
+    // } catch (err) {
+    //   console.log('problem delteing defn', err)
+    // }
+
     try {
-      let aliasExists = await contract.hasAlias({alias: accountId+':'+aliasName})
-      console.log('aliasExists', aliasExists)
-      if(aliasExists){
+      let schemaExists = await registryContract.contract.hasSchema({schemaName: schemaName})
+      console.log('schemaExists', schemaExists)
+      if(schemaExists) {
+        return false
+      } else {
         try{
-          alias = await contract.retrieveAlias({alias: accountId+':'+aliasName})
-          console.log('retrieved alias', alias)
-          return alias
-        } catch (err) {
-          console.log('alias is misformed', err)
-          alias = false
-        }
+          await registryContract.contract.storeSchema({schemaName: schemaName, schemaURL: schemaURL, description: schemaDescription, appName: appName})
+          } catch (err) {
+            console.log('error storing schema', err)
+          }
       }
-      if(!aliasExists || alias == false){
-        let schemaURL = await publishSchema(client, {content: schema})
-        let definition = await createDefinition(client, {
-          name: aliasName,
-          description: description,
-          schema: schemaURL.commitId.toUrl()
-        })
-        let didContract = await this.useFundingAccount(accountId)
-        console.log('didcontract', didContract)
-        await didContract.contract.storeAlias({alias: accountId+':'+aliasName, definition: definition.id.toString(), description: description})
-        return definition.id.toString()
+  
+      let definitionExists = await registryContract.contract.hasDefinition({definitionName: definitionName})
+      console.log('definitionExists', definitionExists)
+      if(definitionExists){
+        return false
+      } else {
+        try{
+          await registryContract.contract.storeDefinition({definitionName: definitionName, definition: definition, description: definitionDescription, appName: appName})
+        } catch (err) {
+          console.log('error storing definition', err)
+        }
       }
     } catch (err) {
-      console.log('problem retrieving alias', err)
+      console.log('problem with alias storage', err)
+    }
+  
+    return true
+  }
+
+  async createDataAliases(contract, aliasData) {
+    let keyDidCeramic = await this.getKeyCeramic(APP_OWNER_ACCOUNT)
+    const manager = new ModelManager({ceramic: keyDidCeramic})
+    console.log('manager', manager)
+   
+    let aliases = {}
+    let schemas = {}
+    let definitions = {}
+    let tiles = {}
+    let schemaURL
+    let definition
+
+    for(let x = 0; x < aliasData.length; x++){
+
+      // let alias = await this.getAlias(
+      //   contract,
+      //   aliasData[x].schemaName,
+      //   aliasData[x].definitionName
+      // )
+
+      // console.log('alias', alias)
+
+      // if(!alias.definition && !alias.schemaURL) {
+      
+        //schemaURL = await manager.createSchema(aliasData[x].schemaName, aliasData[x].schema)
+        schemaURL = await manager.createSchema('nearPriceHistory', 
+          {
+          $schema: 'http://json-schema.org/draft-07/schema#',
+          title: 'NEARPriceHistory',
+          type: 'object',
+          properties: {
+            history: {
+              type: 'array',
+              items: {
+                type: 'string'
+              }
+            },
+          },
+        }
+        )
+        console.log('schemaurl', schemaURL)
+
+        schemas={...schemas, [aliasData[x].schemaName]: schemaURL}
+
+        definition = await manager.createDefinition(aliasData[x].definitionName, {
+          name: aliasData[x].definitionName,
+          description: aliasData[x].definitionDescription,
+          schema: manager.getSchemaURL(schemaURL)
+        })
+        console.log('definition', definition)
+
+        definitions={...definitions, [aliasData[x].definitionName]: definition}
+        
+        let result = await this.storeAlias(aliasData[x].schemaName,
+          aliasData[x].schemaDescription,
+          aliasData[x].definitionName,
+          aliasData[x].definitionDescription,
+          aliasData[x].accountId,
+          aliasData[x].appName,
+          schemaURL,
+          definition
+          )
+
+        console.log('result', result)
+
+      // } else {
+      //   schemas={...schemas, [aliasData[x].schemaName]: 'ceramic://'+alias.schemaURL}
+      //   console.log('schemas', schemas)
+      //   definitions={...definitions, [aliasData[x].definitionName]: alias.definition}
+      // }
+    }
+
+    aliases = {
+      schemas: schemas,
+      definitions: definitions,
+      tiles: tiles
+    }
+    
+    return aliases
+  }
+
+  async getDataModel(contract, client, aliases, aliasData) {
+    if(!aliases || aliases.length == 0) {
+      aliases = await this.createDataAliases(contract, aliasData)
+      set('DATA_MODEL_ALIASES', aliases)
+    }
+    let model = new DataModel({ceramic: client, aliases})
+    return model
+  }
+
+
+  // async getAlias(accountId, aliasName, client, schema, description, contract, manager) {
+  //   let alias = false
+  //   console.log('get alias accountid', accountId)
+  //   console.log('aliasname', aliasName)
+  //   try {
+  //     // let aliasExists = await contract.hasAlias({alias: accountId+':'+aliasName})
+  //     // console.log('aliasExists', aliasExists)
+  //     // if(aliasExists){
+  //     //   try{
+  //     //     alias = await contract.retrieveAlias({alias: accountId+':'+aliasName})
+  //     //     console.log('retrieved alias', alias)
+  //     //     return alias
+  //     //   } catch (err) {
+  //     //     console.log('alias is misformed', err)
+  //     //     alias = false
+  //     //   }
+  //     // }
+  //    // if(!aliasExists || alias == false){
+  //     //  let schemaURL = await publishSchema(client, {content: schema})
+  //       let keyDidCeramic = await this.getKeyCeramic(accountId)
+  //       const manager = new ModelManager({ ceramic: keyDidCeramic })
+  //       console.log('manager', manager)
+  //       let schemaURL = await manager.createSchema(aliasName, {schema})
+  //       console.log('manager again', manager)
+  //       console.log('schemaurl', schemaURL)
+  //       let definition = await manager.createDefinition(aliasName, {
+  //         name: aliasName,
+  //         description: description,
+  //         schema: manager.getSchemaURL(schemaURL)
+  //       })
+  //       console.log('manager final', manager)
+  //       console.log('definition', definition)
+  //       return
+  //       let didContract = await this.useFundingAccount(accountId)
+  //       console.log('didcontract', didContract)
+  //       await didContract.contract.storeAlias({alias: accountId+':'+aliasName, definition: definition, description: description})
+  //       return definition
+  //   //  }
+  //   } catch (err) {
+  //     console.log('problem retrieving alias', err)
+  //     return false
+  //   }
+  // }
+
+  // // application IDX - maintains most up to date schemas and definitions ensuring chain always has the most recent commit
+  // async getAppIdx(contract, account, appClient){
+
+  //   const manager = new ModelManager({ ceramic: appClient })
+  //   console.log('manager', manager)
+  
+   
+
+  //   const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
+
+  //   const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient)
+  
+  //   // Retrieve cached aliases
+  //   // let rootAliases = get(ALIASES, [])
+  //   // if(rootAliases.length > 0){
+  //   //const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases[0]})
+  //   //     return appIdx
+  //   // } else {
+
+  //   // uncomment below to change a definition
+  //   //  let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
+  //   //  let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
+  //   //  console.log('changed schema', changed)
+  //   //  console.log('changed1 schema', changed1)
+
+  //     const definitions = this.getAlias(APP_OWNER_ACCOUNT, 'Definitions', appClient, definitionsSchema, 'alias definitions', contract)
+  //     const schemas = this.getAlias(APP_OWNER_ACCOUNT, 'Schemas', appClient, schemaSchema, 'user schemas', contract)
+  //     const profile = this.getAlias(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
+  //     const accountsKeys = this.getAlias(APP_OWNER_ACCOUNT, 'accountsKeys', appClient, accountKeysSchema, 'user account info', contract)
+  //     const comments = this.getAlias(APP_OWNER_ACCOUNT, 'comments', appClient, commentsSchema, 'comments', contract)
+  //     const notifications = this.getAlias(APP_OWNER_ACCOUNT, 'notifications', appClient, notificationSchema, 'notifications', contract)
+  //     const guildProfile = this.getAlias(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
+  //     const apiKeys = this.getAlias(APP_OWNER_ACCOUNT, 'apiKeys', appClient, apiKeysSchema, 'guild api keys', contract)
+  //     const announcements = this.getAlias(APP_OWNER_ACCOUNT, 'announcements', appClient, announcementSchema, 'guild announcements', contract)
+  //     const opportunities = this.getAlias(APP_OWNER_ACCOUNT, 'opportunities', appClient, opportunitiesSchema, 'opportunities to complete', contract)
+  //     const daoProfile = this.getAlias(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'dao profiles', contract)
+  //     const nearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, 'nearPriceHistory', appClient, nearPriceHistorySchema, 'near price history', contract)
+  //     const nearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, 'nearTransactionHistory', appClient, nearTransactionHistorySchema, 'near transaction history', contract)
+      
+  //     // const November2020NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const December2020NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const January2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JanuaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const February2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021FebruaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const March2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MarchNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const April2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AprilNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const May2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MayNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const June2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JuneNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const July2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JulyNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const August2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AugustNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const September2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021SeptemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const October2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021OctoberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const November2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const December2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+
+  //     // const January2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JanuaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const February2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022FebruaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const March2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MarchNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const April2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AprilNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const May2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MayNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const June2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JuneNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const July2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JulyNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const August2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AugustNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const September2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022SeptemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const October2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022OctoberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const November2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+  //     // const December2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
+      
+
+  //     // const November2020NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020NovemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const December2020NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020DecemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const January2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JanuaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const February2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021FebruaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const March2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MarchNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const April2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AprilNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const May2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MayNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const June2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JuneNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const July2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JulyNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const August2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AugustNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const September2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021SeptemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const October2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021OctoberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const November2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021NovemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const December2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021DecemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+
+  //     // const January2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JanuaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const February2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022FebruaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const March2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MarchNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const April2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AprilNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const May2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MayNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const June2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JuneNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const July2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JulyNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const August2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AugustNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const September2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022SeptemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const October2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022OctoberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const November2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022NovemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+  //     // const December2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022DecemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
+    
+  //     const done = await Promise.all([
+  //       appDid, 
+  //       definitions, 
+  //       schemas, 
+  //       profile, 
+  //       accountsKeys, 
+  //       comments,
+  //       notifications,
+  //       guildProfile,
+  //       apiKeys,
+  //       announcements,
+  //       opportunities,
+  //       daoProfile,
+  //       nearPriceHistory,
+  //       nearTransactionHistory
+  //     ])
+      
+  //     let rootAliases = {
+  //       definitions: done[1],
+  //       schemas: done[2],
+  //       profile: done[3],
+  //       accountsKeys: done[4],
+  //       comments: done[5],
+  //       notifications: done[6],
+  //       guildProfile: done[7],
+  //       apiKeys: done[8],
+  //       announcements: done[9],
+  //       opportunities: done[10],
+  //       daoProfile: done[11],
+  //       nearPriceHistory: done[12],
+  //       nearTransactionHistory: done[13]
+  //     }
+
+  //     // cache aliases
+  //     let aliases = []
+  //     aliases.push(rootAliases)
+  //     set(ALIASES, aliases)
+
+  //     const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases})
+
+  //     return appIdx
+  //   // }
+  // }
+
+  // IDX - DataStores
+  async getDataStore(client, model){
+    const dataStore = new DIDDataStore({ceramic: client, model})
+    return dataStore
+  }
+
+
+  // async getLegacyAppIdx(contract, account){
+
+  //   const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
+  
+  //   const accountsKeys = this.getAlias(APP_OWNER_ACCOUNT, 'accountsKeys', legacyAppClient, accountKeysSchema, 'user account info', contract)
+  //   const done = await Promise.all([
+  //     accountsKeys
+  //   ])
+    
+  //   let rootAliases = {
+  //     accountsKeys: done[0]
+  //   }
+
+  //   const appIdx = new IDX({ ceramic: legacyAppClient, aliases: rootAliases})
+  //   return appIdx
+  // }
+
+  // async getSpaceIDX(seed, nftContract){
+  //   let client = await this.getCeramicWithSeed(seed)
+  //   let spaceProfile = this.getAlias(APP_OWNER_ACCOUNT, 'metadata', client, metadataSchema, 'space metadata info', nftContract)
+  //   const done = await Promise.all([
+  //     spaceProfile,
+  //   ])
+  //   let alias = {
+  //     spaceProfile: done[0]
+  //   }
+  //   let spaceIdx = new IDX({ ceramic: client, aliases: alias})
+  //   return spaceIdx
+  // }
+
+   // retrieve user identity
+   async getCurrentUserIdx(account, appIdx, factoryContract, registryContract, alias){
+    let theseAliases
+    if(alias){
+      for (const al in alias) {
+        theseAliases = {...theseAliases, [al]: alias[al]}
+       
+      }
+      for (const alapp in appIdx._aliases) {
+        theseAliases = {...theseAliases, [alapp]: appIdx._aliases[alapp]}
+      }
+    } else {
+      theseAliases = appIdx._aliases
+    }
+    
+    let seed = false
+    set(KEY_REDIRECT, {action: false, link: ''})
+
+    let accountKeys =  await this.downloadKeysSecret(appIdx, 'accountsKeys')
+   
+    let localAccounts = get(ACCOUNT_LINKS, [])
+    
+    if(oldAccountKeys && oldAccountKeys.length > 0){
+      let i = 0
+      while (i < oldAccountKeys.length){
+        if(oldAccountKeys[i].accountId == account.accountId){
+          seed = Buffer.from((oldAccountKeys[i].key).slice(0,32))
+        }
+        i++
+      }
+      try{
+        let oldAccountUserCeramicClient
+        let did = await this.getDid(account.accountId, factoryContract, registryContract)
+        if(did){
+          let part = did.split(':')[1]
+          if(part == '3'){
+            oldAccountUserCeramicClient = await this.getCeramic(account, seed)
+          } else {
+            oldAccountUserCeramicClient = await this.getLegacyCeramic(account, seed)
+          }
+        } else {
+          oldAccountUserCeramicClient = await this.getCeramic(account, seed)
+        }
+        let curUserIdx = new IDX({ ceramic: oldAccountUserCeramicClient, aliases: theseAliases})
+        return curUserIdx
+      } catch (err) {
+        console.log('no did from oldaccounts', err)
+      }
+    }
+
+    if(newAccountKeys && newAccountKeys.length > 0){
+      let i = 0
+      while (i < newAccountKeys.length){
+        if(newAccountKeys[i].accountId == account.accountId){
+          seed = Buffer.from((newAccountKeys[i].key).slice(0,32))
+        }
+        i++
+      }
+      try{
+        let did = await this.getDid(account.accountId, factoryContract, registryContract)
+        let currentUserCeramicClient
+        if(did){
+          let part = did.split(':')[1]
+          if(part == '3'){
+            currentUserCeramicClient = await this.getCeramic(account, seed)
+          } else {
+            currentUserCeramicClient = await this.getLegacyCeramic(account, seed)
+          }
+        } else {
+          currentUserCeramicClient = await this.getCeramic(account, seed)
+        }
+        let curUserIdx = new IDX({ ceramic: currentUserCeramicClient, aliases: theseAliases})
+        return curUserIdx
+      } catch (err) {
+        console.log('no did from newaccounts', err)
+      }
+    }
+
+    if(localAccounts && localAccounts.length > 0){
+      let i = 0
+      while (i < localAccounts.length){
+        if(localAccounts[i].accountId == account.accountId){
+          seed = Buffer.from((localAccounts[i].key).slice(0,32))
+        }
+        i++
+      }
+      try{
+        let did = await this.getDid(account.accountId, factoryContract, registryContract)
+        let localAccountUserCeramicClient
+        if(did){
+          let part = did.split(':')[1]
+          if(part == '3'){
+            localAccountUserCeramicClient = await this.getCeramic(account, seed)
+          } else {
+            localAccountUserCeramicClient = await this.getLegacyCeramic(account, seed)
+          }
+        } else {
+          localAccountUserCeramicClient = await this.getCeramic(account, seed)
+        }
+        let curUserIdx = new IDX({ ceramic: localAccountUserCeramicClient, aliases: theseAliases})
+        return curUserIdx
+      } catch (err) {
+        console.log('no did from localaccount', err)
+      }
+    }
+   
+    if(seed == false){
+      set(KEY_REDIRECT, {action: true, link: '/setup'})
       return false
     }
-  }
-
-
-  // application IDX - maintains most up to date schemas and definitions ensuring chain always has the most recent commit
-  async getAppIdx(contract, account){
-  
-    const appClient = await this.getAppCeramic(account.accountId)
-
-    const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
-
-    const appDid = this.associateAppDID(APP_OWNER_ACCOUNT, contract, appClient)
-  
-    // Retrieve cached aliases
-    // let rootAliases = get(ALIASES, [])
-    // if(rootAliases.length > 0){
-    //const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases[0]})
-    //     return appIdx
-    // } else {
-
-    // uncomment below to change a definition
-    //  let changed = await this.changeDefinition(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
-    //  let changed1 = await this.changeDefinition(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
-    //  console.log('changed schema', changed)
-    //  console.log('changed1 schema', changed1)
-
-      const definitions = this.getAlias(APP_OWNER_ACCOUNT, 'Definitions', appClient, definitionsSchema, 'alias definitions', contract)
-      const schemas = this.getAlias(APP_OWNER_ACCOUNT, 'Schemas', appClient, schemaSchema, 'user schemas', contract)
-      const profile = this.getAlias(APP_OWNER_ACCOUNT, 'profile', appClient, profileSchema, 'persona profiles', contract)
-      const accountsKeys = this.getAlias(APP_OWNER_ACCOUNT, 'accountsKeys', appClient, accountKeysSchema, 'user account info', contract)
-      const comments = this.getAlias(APP_OWNER_ACCOUNT, 'comments', appClient, commentsSchema, 'comments', contract)
-      const notifications = this.getAlias(APP_OWNER_ACCOUNT, 'notifications', appClient, notificationSchema, 'notifications', contract)
-      const guildProfile = this.getAlias(APP_OWNER_ACCOUNT, 'guildProfile', appClient, guildProfileSchema, 'guild profiles', contract)
-      const apiKeys = this.getAlias(APP_OWNER_ACCOUNT, 'apiKeys', appClient, apiKeysSchema, 'guild api keys', contract)
-      const announcements = this.getAlias(APP_OWNER_ACCOUNT, 'announcements', appClient, announcementSchema, 'guild announcements', contract)
-      const opportunities = this.getAlias(APP_OWNER_ACCOUNT, 'opportunities', appClient, opportunitiesSchema, 'opportunities to complete', contract)
-      const daoProfile = this.getAlias(APP_OWNER_ACCOUNT, 'daoProfile', appClient, daoProfileSchema, 'dao profiles', contract)
-      const nearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, 'nearPriceHistory', appClient, nearPriceHistorySchema, 'near price history', contract)
-      const nearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, 'nearTransactionHistory', appClient, nearTransactionHistorySchema, 'near transaction history', contract)
-      
-      // const November2020NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const December2020NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const January2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JanuaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const February2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021FebruaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const March2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MarchNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const April2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AprilNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const May2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MayNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const June2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JuneNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const July2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JulyNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const August2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AugustNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const September2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021SeptemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const October2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021OctoberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const November2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const December2021NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-
-      // const January2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JanuaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const February2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022FebruaryNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const March2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MarchNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const April2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AprilNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const May2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MayNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const June2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JuneNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const July2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JulyNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const August2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AugustNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const September2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022SeptemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const October2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022OctoberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const November2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022NovemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      // const December2022NearPriceHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022DecemberNearPriceHistory', appClient, yearPriceHistorySchema, 'near price history', contract)
-      
-
-      // const November2020NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020NovemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const December2020NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2020DecemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const January2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JanuaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const February2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021FebruaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const March2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MarchNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const April2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AprilNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const May2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021MayNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const June2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JuneNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const July2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021JulyNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const August2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021AugustNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const September2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021SeptemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const October2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021OctoberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const November2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021NovemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const December2021NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2021DecemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-
-      // const January2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JanuaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const February2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022FebruaryNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const March2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MarchNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const April2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AprilNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const May2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022MayNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const June2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JuneNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const July2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022JulyNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const August2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022AugustNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const September2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022SeptemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const October2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022OctoberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const November2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022NovemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-      // const December2022NearTransactionHistory = this.getAlias(APP_OWNER_ACCOUNT, '2022DecemberNearTransactionHistory', appClient, yearTransactionHistorySchema, 'near transaction history', contract)
-    
-      const done = await Promise.all([
-        appDid, 
-        definitions, 
-        schemas, 
-        profile, 
-        accountsKeys, 
-        comments,
-        notifications,
-        guildProfile,
-        apiKeys,
-        announcements,
-        opportunities,
-        daoProfile,
-        nearPriceHistory,
-        nearTransactionHistory
-      ])
-      
-      let rootAliases = {
-        definitions: done[1],
-        schemas: done[2],
-        profile: done[3],
-        accountsKeys: done[4],
-        comments: done[5],
-        notifications: done[6],
-        guildProfile: done[7],
-        apiKeys: done[8],
-        announcements: done[9],
-        opportunities: done[10],
-        daoProfile: done[11],
-        nearPriceHistory: done[12],
-        nearTransactionHistory: done[13]
-      }
-
-      // cache aliases
-      let aliases = []
-      aliases.push(rootAliases)
-      set(ALIASES, aliases)
-
-      const appIdx = new IDX({ ceramic: appClient, aliases: rootAliases})
-
-      return appIdx
-    // }
-  }
-
-
-  async getLegacyAppIdx(contract, account){
-
-    const legacyAppClient = await this.getLegacyAppCeramic(account.accountId)
-  
-    const accountsKeys = this.getAlias(APP_OWNER_ACCOUNT, 'accountsKeys', legacyAppClient, accountKeysSchema, 'user account info', contract)
-    const done = await Promise.all([
-      accountsKeys
-    ])
-    
-    let rootAliases = {
-      accountsKeys: done[0]
-    }
-
-    const appIdx = new IDX({ ceramic: legacyAppClient, aliases: rootAliases})
-    return appIdx
-  }
-
-  async getSpaceIDX(seed, nftContract){
-    let client = await this.getCeramicWithSeed(seed)
-    let spaceProfile = this.getAlias(APP_OWNER_ACCOUNT, 'metadata', client, metadataSchema, 'space metadata info', nftContract)
-    const done = await Promise.all([
-      spaceProfile,
-    ])
-    let alias = {
-      spaceProfile: done[0]
-    }
-    let spaceIdx = new IDX({ ceramic: client, aliases: alias})
-    return spaceIdx
-  }
-
+}
 
   // retrieve user identity
   async getUserIdx(account, appIdx, factoryContract, registryContract, alias){
@@ -815,7 +1223,7 @@ class Ceramic {
   async getDid(accountId, factoryContract, registryContract) {
     let dao
     let did = false
-    
+    console.log('accountId')
     try{
       did = await registryContract.getDID({accountId: accountId})
       if(did != 'none'){

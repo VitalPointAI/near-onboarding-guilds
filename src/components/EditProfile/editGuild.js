@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { appStore, onAppMount } from '../../state/app'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
-import FileUpload from '../common/IPFSUpload/fileUpload'
+//import FileUpload from '../common/IPFSUpload/fileUpload'
 import { flexClass } from '../../App'
 import { ceramic, IPFS_PROVIDER } from '../../utils/ceramic'
 import * as nearAPI from 'near-api-js'
@@ -538,7 +538,7 @@ export default function EditGuildProfileForm(props) {
                           }}></div>
                           </Grid>
                           <Grid item xs={10} sm={10} md={10} lg={10} xl={10}>
-                            <FileUpload handleFileHash={handleFileHash} handleAvatarLoaded={handleAvatarLoaded} accountId={accountId}/>
+                            {/* <FileUpload handleFileHash={handleFileHash} handleAvatarLoaded={handleAvatarLoaded} accountId={accountId}/> */}
                           </Grid>
                         </Grid>
                       </AccordionDetails>

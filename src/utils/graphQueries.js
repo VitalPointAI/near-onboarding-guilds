@@ -183,6 +183,83 @@ query{
 }
 `
 
+const ALL_APP_SCHEMAS = gql`
+query schemas(
+    $appName: String!
+    ){
+    storeSchemas(first:1000, where: {appName: $appName}){
+        schemaOwner
+        schemaName
+        schemaURL
+        description
+        appName
+        time
+        status
+      }
+}
+`
+
+const ALL_DELETED_SCHEMAS = `
+query{
+    deleteSchemas(first:1000){
+        schemaName
+        time
+        deletedBy
+      }
+}
+`
+
+const ALL_APP_DEFINITIONS = gql`
+query definitions(
+    $appName: String!
+    ){
+    storeDefinitions(first:1000, where: {appName: $appName}){
+        definitionOwner
+        definitionName
+        definition
+        description
+        appName
+        time
+        status
+      }
+}
+`
+
+const ALL_DELETED_DEFINITIONS = gql`
+query {
+    deleteDefinitions(first:1000){
+        definitionName
+        time
+        deletedBy
+      }
+    }
+`
+
+const ALL_APP_TILES = gql`
+query tiles(
+    $appName: String!
+    ){
+    storeTiles(first:1000, where: {appName: $appName}){
+        tileOwner
+        tileName
+        tile
+        description
+        appName
+        status
+    }
+}
+`
+
+const ALL_DELETED_TILES = `
+query{
+    deleteSchemas(first:1000){
+        tileName
+        time
+        deletedBy
+      }
+}
+`
+
 const VALIDATORS = `
 query{
     stakingPools(first: 1000)
@@ -869,6 +946,45 @@ export default class Queries {
             }
         return activity
     }
+
+    async getAppSchemas(appName){
+        let schemas = []
+        try{
+            let appSchemas = await registryClient.query({query: ALL_APP_SCHEMAS, variables: {
+                appName
+            }})
+            console.log('appschemas', appSchemas)
+            schemas = appSchemas.data.storeSchemas
+        } catch (err) {
+            console.log('error retrieving app schemas', err)
+        }
+      
+        let sortedSchemas = _.orderBy(schemas, ['schemaName', 'time'],['asc','desc'])
+        console.log('sortedSchemas', sortedSchemas)
+        let uniqueSchemas = _.uniqBy(sortedSchemas, 'schemaName')
+        console.log('unique schemas', uniqueSchemas)
+        return uniqueSchemas
+    }
+
+    async getAppDefinitions(appName){
+        let definitions = []
+        try{
+            let appDefinitions = await registryClient.query({query: ALL_APP_DEFINITIONS, variables: {
+                appName
+            }})
+            console.log('appdefs', appDefinitions)
+            definitions = appDefinitions.data.storeDefinitions
+        } catch (err) {
+            console.log('error retrieving app definitions', err)
+        }
+      
+        let sortedDefinitions = _.orderBy(definitions, ['definitionName', 'time'],['asc','desc'])
+        console.log('sorteddefinitions', sortedDefinitions)
+        let uniqueDefinitions = _.uniqBy(sortedDefinitions, 'definitionName')
+        console.log('unique defs', uniqueDefinitions)
+        return uniqueDefinitions
+    }
+
 }
 
 export const queries = new Queries();

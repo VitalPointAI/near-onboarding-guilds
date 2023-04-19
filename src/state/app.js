@@ -1,6 +1,7 @@
 import { State } from '../utils/state'
 import { initUser, hasKey } from './user'
 import * as nearAPI from 'near-api-js'
+import { get } from '../utils/storage'
 import { registry } from '../utils/registry'
 import { ceramic } from '../utils/ceramic'
 import { config } from './config'
@@ -9,8 +10,9 @@ import {
     updateCurrentCommunities, 
     getGuildsAwaitingVerification,
     updateNearPriceAPI,
-    getCurrentVerifiers, 
+    getCurrentVerifiers,
     getCurrentIndividuals } from '../utils/helpers'
+import { aliasData } from '../utils/aliasData'
 
 export const {
     APP_OWNER_ACCOUNT,
@@ -94,14 +96,18 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
 
     const appRegistryContract = await registry.initiateRegistryContract(appAccount)
     
-    const appIdx = await ceramic.getAppIdx(appRegistryContract, appAccount)
+    let aliases = get('DATA_MODEL_ALIASES', [])
+ 
+    let appDataModel = await ceramic.getDataModel(appRegistryContract, ceramicClient, aliases, aliasData)
+    
+    const appIdx = await ceramic.getDataStore(ceramicClient, appDataModel)
 
     update('app', {appAccount, appRegistryContract, appIdx })
 
     try{
         let updateAppIdx = await updateNearPriceAPI(APP_OWNER_ACCOUNT, appIdx, appRegistryContract, ceramicClient)
     } catch (err) {
-        console.log('problem updating NEAR price history')
+        console.log('problem updating NEAR price history', err)
     }
 
     // ********* Get Registry Admin ****************
@@ -122,7 +128,7 @@ export const onAppMount = () => async ({ update, getState, dispatch }) => {
 
     // ********* All Announcements ****************
     try{
-        let announcements = await appIdx.get('announcements', appIdx.id)
+        let announcements = await appIdx.get('announcements')
         update('app', {announcements})
     
     } catch (err) {

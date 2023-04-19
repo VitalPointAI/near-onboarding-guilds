@@ -24,7 +24,6 @@ export default function LoginButton(props) {
           marginTop: '5px',
           float: 'right'
         }}
-        className={classes.button}
         style={{marginTop: '-5px'}}
         startIcon={<LockOpenTwoToneIcon />}
         onClick={()=> login(wallet)}

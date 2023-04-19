@@ -1,7 +1,7 @@
 export const definitionsSchema = {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
     "title": "Definitions",
+    "type": "object",
     "properties": {
       "defs": {
         "type": "array",
